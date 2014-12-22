@@ -1,0 +1,26 @@
+<div id="container2">
+    <h1 style="color: white;">Garmin-style Example</h1>
+</div>
+<div id="container3">
+    <div id="detailsContentWrapper" class="detailsContentWrapper">
+        <div id="detailsMapBox" class="detailsBox">
+            <div class="detailsBoxTrigger expanded"></div>
+            <div class="detailsBoxTitle map">Map</div>
+            <div class="detailsBoxCollapseArea">
+                <div class="map-controls">
+                    <ul class="map-control-item map-zoom"></ul>
+                    <div class="map-control-item map-select map-provider"></div>
+                    <div class="map-control-item map-select map-type"></div>
+                    <div class="map-control-item map-select map-layers"></div>
+                </div>
+                <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
+                <div class="detailsBoxControls" id="lapToggle" style="">
+                    <input id="showLapMarkers" type="checkbox" name="showLapMarkers" class="toggle_laps">
+                    <label for="showLapMarkers">
+                        Laps
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

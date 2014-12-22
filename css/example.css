@@ -1,0 +1,77 @@
+
+
+.detailsContentWrapper {
+    position: relative;
+    width: 825px;
+}
+
+html, body, div, h1, h2, h3, h4, h5, h6, ul, ol, dl, li, dt, dd, p, blockquote, pre, form, fieldset, table, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+.detailsBox {
+    position: relative;
+    padding: 7px;
+    border: 1px solid #c8c8c8;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #eeeeee url(images/details-box-bg.png) repeat-x;
+    margin-bottom: 10px;
+}
+
+body {
+    font: 13px 'lucida grande', arial, tahoma, verdana, sans-serif;
+}
+
+.detailsBoxTrigger.expanded {
+    background-position: -5px -305px;
+}
+
+.detailsBoxTrigger {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    background: url(images/details-icons-common.png) no-repeat -5px -305px;
+    cursor: pointer;
+    float: left;
+    z-index: 100;
+}
+
+.detailsBoxTitle.map {
+    background-position: -8px -5px;
+}
+
+.detailsBoxTitle {
+    font: bold 13px/22px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+    margin-left: 28px;
+    padding-left: 24px;
+    background: url(images/details-icons.png) no-repeat -8px -5px;
+}
+
+.detailsBoxCollapseArea {
+    position: relative;
+    margin-top: 7px;
+}
+
+.detailMap {
+    border: 1px solid #c8c8c8;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4spx;
+    position: relative;
+}
+
+.detailsBoxControls {
+    text-align: right;
+    position: absolute;
+    top: -25px;
+    right: 4px;
+    font-size: 11px;
+    width: 400px;
+}
+
+.map-menu {
+    margin-top: 0;
+}

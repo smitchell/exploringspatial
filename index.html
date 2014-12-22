@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href=".">
+    <link type="image/x-icon" href="http://www.exploringspatial.com/favicon.ico" rel="icon">
+    <link type="image/x-icon" href="http://www.exploringspatial.com/favicon.ico" rel="shortcut icon">
+    <title>Exploring Spatial.- Overland Park, KS | Personal geospatial learning lab</title>
+    <meta name="Description" content="Exploring Spatial is a personal learning lab for geospatial technologies.">
+    <meta name="Keywords" content="geospatial, backbone, leaflet, OSM, google">
+    <title>Exploring Spatial</title>
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css"/>
+    <![endif]-->
+    <link rel="stylesheet" href="css/map-controls.css"/>
+    <link rel="stylesheet" href="css/example.css"/>
+    <script type="text/javascript" src="js/vendor/requireconfig.js"></script>
+    <script type="text/javascript" src="js/vendor/require.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&sensor=falsei"></script>
+    <script type="text/javascript"
+            src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&amp;mkt=en-US"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-1918559-6', 'auto');
+        ga('send', 'pageview');
+
+        google.load("feeds", "1");
+
+        requirejs(['jquery', 'apps/HomePageApp'],
+                function ($, HomePageApp) {
+                    $(document).ready(function () {
+
+                        HomePageApp.initialize();
+                    });
+                });
+    </script>
+</head>
+<body>
+<div id="outerWrapper">
+    <div id="innerWrapper">
+        <div id="navContainer"></div>
+        <div id="content"></div>
+    </div>
+</div>
+</body>
+</html>
