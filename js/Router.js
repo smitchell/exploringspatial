@@ -28,39 +28,60 @@ define([
 
         var menuView = new MenuView({el: $('#navContainer')});
         var contentWrapper = $('#content');
-        var homePageView = new HomePageView({el: contentWrapper});
-        var aboutPageView = new AboutPageView({el: contentWrapper});
-        var licensePageView = new LicensePageView({el: contentWrapper});
+        var homePageView = null;
+        var aboutPageView = null;
+        var licensePageView  = null;
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
-        var demo1PageView = new Demo1PageView(demoArgs);
-        var demo2PageView = new Demo2PageView(demoArgs);
-        var demo3PageView = new Demo3PageView(demoArgs);
-        var demo4PageView = new Demo4PageView(demoArgs);
+        var demo1PageView = null;
+        var demo2PageView = null;
+        var demo3PageView = null;
+        var demo4PageView = null;
         router.on('route:home', function (actions) {
+            if (homePageView == null) {
+                homePageView = new HomePageView({el: contentWrapper});
+            }
             homePageView.render();
             menuView.changeMenu('home')
         });
         router.on('route:demo1', function (actions) {
+            if (demo1PageView == null) {
+                demo1PageView = new Demo1PageView(demoArgs);
+            }
             demo1PageView.render();
             menuView.changeMenu('demos')
         });
         router.on('route:demo2', function (actions) {
+            if (demo2PageView == null) {
+                demo2PageView = new Demo2PageView(demoArgs);
+            }
             demo2PageView.render();
             menuView.changeMenu('demos')
         });
         router.on('route:demo3', function (actions) {
+            if (demo3PageView == null) {
+                demo3PageView = new Demo3PageView(demoArgs);
+            }
             demo3PageView.render();
             menuView.changeMenu('demos')
         });
         router.on('route:demo4', function (actions) {
+            if (demo4PageView == null) {
+                demo4PageView = new Demo4PageView(demoArgs);
+            }
             demo4PageView.render();
             menuView.changeMenu('demos')
         });
         router.on('route:about', function (actions) {
+            if (aboutPageView == null) {
+                aboutPageView = new AboutPageView({el: contentWrapper});
+            }
             aboutPageView.render();
             menuView.changeMenu('about')
         });
         router.on('route:license', function (actions) {
+            if (licensePageView == null) {
+                licensePageView = new LicensePageView({el: contentWrapper});
+            }
             licensePageView.render();
         });
         Backbone.history.start();
