@@ -5,11 +5,12 @@ define([
     'views/MenuView',
     'views/home/HomePageView',
     'views/about/AboutPageView',
+    'views/LicensePageView',
     'views/demos/Demo1PageView',
     'views/demos/Demo2PageView',
     'views/demos/Demo3PageView',
     'views/demos/demo4/Demo4PageView'
-], function ($, _, Backbone, MenuView, HomePageView, AboutPageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
+], function ($, _, Backbone, MenuView, HomePageView, AboutPageView, LicensePageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo1" : "demo1",
@@ -17,6 +18,7 @@ define([
             "demo3" : "demo3",
             "demo4" : "demo4",
             "about" : "about",
+            "license" : "license",
             "*actions": "home"
         }
     });
@@ -28,6 +30,7 @@ define([
         var contentWrapper = $('#content');
         var homePageView = new HomePageView({el: contentWrapper});
         var aboutPageView = new AboutPageView({el: contentWrapper});
+        var licensePageView = new LicensePageView({el: contentWrapper});
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
         var demo1PageView = new Demo1PageView(demoArgs);
         var demo2PageView = new Demo2PageView(demoArgs);
@@ -56,6 +59,9 @@ define([
         router.on('route:about', function (actions) {
             aboutPageView.render();
             menuView.changeMenu('about')
+        });
+        router.on('route:license', function (actions) {
+            licensePageView.render();
         });
         Backbone.history.start();
       };

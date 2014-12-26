@@ -1,0 +1,17 @@
+define([
+    'jquery',
+    'underscore',
+    'backbone',
+    'text!templates/LicenseView.html'
+], function ($, _, Backbone, templateHtml) {
+    var LicensePageView = Backbone.View.extend({
+        initialize: function () {
+            this.template = _.template(templateHtml);
+            this.render();
+        },
+        render: function () {
+            this.$('#rightContainer').html(this.template({}));
+        }
+    });
+    return LicensePageView;
+});
