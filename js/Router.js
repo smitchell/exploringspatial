@@ -3,6 +3,7 @@ define([
     'underscore',
     'backbone',
     'views/MenuView',
+    'views/FooterView',
     'views/home/HomePageView',
     'views/about/AboutPageView',
     'views/LicensePageView',
@@ -10,7 +11,7 @@ define([
     'views/demos/Demo2PageView',
     'views/demos/Demo3PageView',
     'views/demos/demo4/Demo4PageView'
-], function ($, _, Backbone, MenuView, HomePageView, AboutPageView, LicensePageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
+], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo1" : "demo1",
@@ -27,6 +28,7 @@ define([
         var router = new Router;
 
         var menuView = new MenuView({el: $('#navContainer')});
+        new FooterView({el: $('#footer')});
         var contentWrapper = $('#content');
         var homePageView = null;
         var aboutPageView = null;

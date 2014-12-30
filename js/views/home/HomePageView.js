@@ -11,6 +11,7 @@ define([
             this.template = _.template(templateHtml);
         },
         render: function () {
+
             this.$el.html(this.template({}));
             new HomeLeftSideView({el: $('#leftContainer')});
             new HomeRightSideView({el: $('#rightContainer')});
