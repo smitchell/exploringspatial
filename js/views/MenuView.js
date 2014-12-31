@@ -19,10 +19,13 @@ define([
             this.$('.about').removeClass('YouAreHere');
             this.$('.demos').removeClass('YouAreHere');
             if (route == 'home') {
+                $('title').text('Exploring Spatial Home');
                 this.$('.home').addClass('YouAreHere');
             } else if (route == 'about') {
+                $('title').text('About Exploring Spatial');
                 this.$('.about').addClass('YouAreHere');
             } else if (route == 'demos') {
+                $('title').text('Exploring Spatial Demos');
                 this.$('.demos').addClass('YouAreHere');
             }
         }

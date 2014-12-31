@@ -1,0 +1,5 @@
+<html>
+<head>
+<title>Exploring Spatial</title>
+<META NAME="robots" CONTENT="INDEX, FOLLOW">
+</head>
