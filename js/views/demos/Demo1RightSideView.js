@@ -24,12 +24,12 @@ define([
             var map = L.map('map', {
                 center: [51.505, -0.09],
                 zoom: 13,
-                layers: [cloudmadeLayer]
+                layers: [googleLayer]
             });
             var baseLayers = {
-                'Cloudmade': cloudmadeLayer,
+                'Google': googleLayer,
                 'OSM': osmLayer,
-                'Google': googleLayer
+                'Cloudmade': cloudmadeLayer
             };
             L.control.layers(baseLayers).addTo(map);
             L.marker([51.5, -0.09]).addTo(map)
