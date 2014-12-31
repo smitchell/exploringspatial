@@ -25,17 +25,17 @@ define([
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
             this.layers.osm = {};
             this.layers.osm.roadLayer = new L.OSM.TileLayer();
-            this.layers.google= {};
+            this.layers.google = {};
             this.layers.google.roadLayer = new L.Google('ROADMAP');
             this.layers.google.satelliteLayer = new L.Google('SATELLITE');
-            this.bingLayer = new L.TileLayer.Bing('AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY','Road', {subdomains: ['0', '1', '2', '3', '4']});
+            this.layers.bing = {};
+            this.layers.bing.roadLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw");
             this.map = L.map(this.mapContainer, {
                 center: [38.856018, -94.800596],
                 zoom: 10,
                 zoomControl:false,
                 layers: [this.layers.google.roadLayer]
             });
-
             var mapControlsDiv = $(this.mapControls);
 
             new MapZoomControlsView({

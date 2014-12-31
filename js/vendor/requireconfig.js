@@ -5,10 +5,10 @@ var require = {
         underscore: 'vendor/underscore',
         backbone: 'vendor/backbone',
         json2: 'vendor/json2',
-        leaflet: "vendor/leaflet",
-        leaflet_google: "vendor/leaflet-google",
-        leaflet_bing: "vendor/leaflet-bing",
-        leaflet_osm: "vendor/leaflet-osm"
+        leaflet: "vendor/leaflet/leaflet",
+        leaflet_google: 'vendor/leaflet/plugins/patel_shramov/tile/google',
+        leaflet_bing: 'vendor/leaflet/plugins/patel_shramov/tile/bing',
+        leaflet_osm: "vendor/leaflet//leaflet-osm"
     },
     shim: {
         'underscore': {
