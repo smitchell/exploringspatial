@@ -29,7 +29,7 @@ define([
             this.layers.google.roadLayer = new L.Google('ROADMAP');
             this.layers.google.satelliteLayer = new L.Google('SATELLITE');
             this.layers.bing = {};
-            this.layers.bing.roadLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw");
+            this.layers.bing.roadLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             this.map = L.map(this.mapContainer, {
                 center: [38.856018, -94.800596],
                 zoom: 10,
