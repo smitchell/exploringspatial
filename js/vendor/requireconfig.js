@@ -6,8 +6,8 @@ var require = {
         backbone: 'vendor/backbone',
         json2: 'vendor/json2',
         leaflet: "vendor/leaflet/leaflet",
-        leaflet_google: 'vendor/leaflet/plugins/patel_shramov/tile/google',
-        leaflet_bing: 'vendor/leaflet/plugins/patel_shramov/tile/bing',
+        leaflet_google: 'vendor/leaflet/plugins/patel_shramov/tile/Google',
+        leaflet_bing: 'vendor/leaflet/plugins/patel_shramov/tile/Bing',
         leaflet_osm: "vendor/leaflet//leaflet-osm"
     },
     shim: {
