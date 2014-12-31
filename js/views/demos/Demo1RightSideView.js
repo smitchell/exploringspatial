@@ -15,10 +15,7 @@ define([
         },
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
-            var cmAttr = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
-            var cmUrl = 'http://{s}.tile.cloudmade.com/e122354b91604c13a92a6df2ffb57016/{styleId}/256/{z}/{x}/{y}.png';
             var osmLayer = new L.OSM.TileLayer();
-            var cloudmadeLayer = L.tileLayer(cmUrl, {styleId: 998, attribution: cmAttr});
             var googleLayer = new L.Google('ROADMAP');
             var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map', {
@@ -29,8 +26,7 @@ define([
             var baseLayers = {
                 'Google': googleLayer,
                 'Bing' : bingLayer,
-                'OSM': osmLayer,
-                'Cloudmade': cloudmadeLayer
+                'OSM': osmLayer
             };
             L.control.layers(baseLayers).addTo(map);
             L.marker([51.5, -0.09]).addTo(map)
