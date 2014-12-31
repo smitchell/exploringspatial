@@ -20,7 +20,7 @@ define([
             var osmLayer = new L.OSM.TileLayer();
             var cloudmadeLayer = L.tileLayer(cmUrl, {styleId: 998, attribution: cmAttr});
             var googleLayer = new L.Google('ROADMAP');
-            //var bingLayer = new L.TileLayer.Bing('AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY','Road', {subdomains: ['0', '1', '2', '3', '4']});
+            var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map', {
                 center: [51.505, -0.09],
                 zoom: 13,
@@ -28,6 +28,7 @@ define([
             });
             var baseLayers = {
                 'Google': googleLayer,
+                'Bing' : bingLayer,
                 'OSM': osmLayer,
                 'Cloudmade': cloudmadeLayer
             };
