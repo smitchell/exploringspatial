@@ -30,13 +30,11 @@ define([
             this.args = args;
             this.mapContainer = 'map_container';
             this.mapControls = '.map-controls';
-            this.collection = new MapProviders(
-                [
+            this.collection = new MapProviders([
                     new BingMapProvider(),
                     new GoogleMapProvider(),
                     new OsmMapProvider()
-                ]
-            );
+                ]);
             var currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
             this.render();
@@ -72,9 +70,10 @@ define([
                 el: mapControlsDiv.find('.map-layers'),
                 map: this.map,
                 collection: this.collection,
-                mapContainer: jQuery('#' + this.mapContainer)
+                mapContainer: $('#' + this.mapContainer)
             });
             this.mapProviderControlsView.on(MapProviderControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
+            this.mapProviderControlsView.on(MapProviderControlsView.Events.ON_PROVIDE_CLICKED, this.onProviderClicked, this);
             this.mapTypeControlsView.on(MapTypeControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
             this.mapTypeControlsView.on(MapTypeControlsView.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
             this.mapOverlayControlsView.on(MapOverlayControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
@@ -88,26 +87,53 @@ define([
             mapControlsDiv.find('.map-controls .arrow-down').removeClass('clicked');
         },
 
+        onProviderClicked: function(args) {
+            var $target = args.target;
+            var mapControlsDiv = $(this.mapControls);
+            mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
+            var previousProvider = this.collection.getCurrentProvider();
+            var previousLayer = null;
+            if (previousProvider != null) {
+                previousLayer =  previousProvider.get('mapLayers').getCurrentLayer()
+            }
+            var currentProvider =  null;
+            if ($target.hasClass('map-provider-google')){
+                currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
+            } else if ($target.hasClass('map-provider-osm')){
+                currentProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
+            } else if ($target.hasClass('map-provider-bing')){
+                currentProvider = this.collection.changeCurrentProvider(MapProvider.BING);
+            }
+            if (currentProvider != null) {
+                var layerType = MapLayer.ROAD;
+                if (previousLayer != null) {
+                    layerType = previousLayer.get('type');
+                }
+                var currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(layerType);
+                if (currentLayer != null) {
+                    this.addLayer(currentLayer);
+                    if (previousLayer != null) {
+                        this.removeLayer(previousLayer);
+                    }
+                }
+            }
+        },
+
         onTypeClicked: function (args) {
             var $target = args.target;
-            if (!$target.hasClass('selected')) {
-                var mapControlsDiv = $(this.mapControls);
-                mapControlsDiv.find('.map-type a').removeClass('selected');
-                $target.addClass('selected');
-                var currentProvider = this.collection.getCurrentProvider();
-                var previousLayer = currentProvider.get('mapLayers').getCurrentLayer();
-                if (currentProvider != null) {
-                    var currentLayer = null;
-                    if ($target.hasClass('map-type-map')) {
-                        currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
-                    } else {
-                        currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.SATELLITE);
-                    }
-                    if (currentLayer != null) {
-                        this.addLayer(currentLayer);
-                        if (previousLayer != null) {
-                            this.removeLayer(previousLayer);
-                        }
+            var currentProvider = this.collection.getCurrentProvider();
+            var previousLayer = currentProvider.get('mapLayers').getCurrentLayer();
+            if (currentProvider != null) {
+                var currentLayer = null;
+                if ($target.hasClass('map-type-map')) {
+                    currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
+                } else {
+                    currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.SATELLITE);
+                }
+                if (currentLayer != null) {
+                    this.addLayer(currentLayer);
+                    if (previousLayer != null) {
+                        this.removeLayer(previousLayer);
                     }
                 }
             }

@@ -7,6 +7,7 @@ define([
 ], function(_, Backbone, MapProvider, MapLayer, templateHtml) {
 
     var Events = {
+        ON_PROVIDE_CLICKED: 'ON_PROVIDE_CLICKED',
         ON_RESET_MENU: 'ON_RESET_MENU'
     };
 
@@ -31,7 +32,7 @@ define([
 
         render: function() {
             var html = this.template();
-            jQuery(this.el).html(html);
+            this.$el.html(html);
         },
 
         onToggleSelector: function(e) {
@@ -63,51 +64,11 @@ define([
             e.preventDefault();
             var $target = $(e.target);
             if (!$target.hasClass('selected')) {
-                var mapControlsDiv = $(this.mapControls);
-                mapControlsDiv.find('.map-provider .item').removeClass('selected'); // otherwise toggle the selected provider
+                this.$('.item').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
-                mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
-                var previousProvider = this.collection.getCurrentProvider();
-                var previousLayer = null;
-                if (previousProvider != null) {
-                    previousLayer =  previousProvider.get('mapLayers').getCurrentLayer()
-                }
-                var currentProvider =  null;
-                if ($target.hasClass('map-provider-google')){
-                    currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
-                } else if ($target.hasClass('map-provider-osm')){
-                    currentProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
-                } else if ($target.hasClass('map-provider-bing')){
-                    currentProvider = this.collection.changeCurrentProvider(MapProvider.BING);
-                }
-                if (currentProvider != null) {
-                    var layerType = MapLayer.ROAD;
-                    if (previousLayer != null) {
-                        layerType = previousLayer.get('type');
-                    }
-                    var currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(layerType);
-                    if (currentLayer != null) {
-                        this.addLayer(currentLayer);
-                        if (previousLayer != null) {
-                            this.removeLayer(previousLayer);
-                        }
-                    }
-                }
+                this.trigger(Events.ON_PROVIDE_CLICKED, {target: $target});
             }
-        },
 
-        addLayer: function(layer) {
-            var leafletLayer = layer.get('leafletLayer');
-            if (!this.map.hasLayer(leafletLayer)) {
-                this.map.addLayer(leafletLayer);
-            }
-        },
-
-        removeLayer: function(layer) {
-            var leafletLayer = layer.get('leafletLayer');
-            if (this.map.hasLayer(leafletLayer)) {
-                this.map.removeLayer(leafletLayer);
-            }
         }
 
     });

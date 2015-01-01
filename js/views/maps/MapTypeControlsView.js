@@ -29,7 +29,7 @@ define([
 
         render: function() {
             var html = this.template();
-            jQuery(this.el).html(html);
+            this.$el.html(html);
         },
 
         onToggleSelector: function(e) {
@@ -59,8 +59,12 @@ define([
 
         onTypeClicked: function(e) {
             e.preventDefault();
-            var $mapType = $(e.target);
-            this.trigger(Events.ON_TYPE_CLICKED, {target: $mapType});
+            var $target = $(e.target);
+            if (!$target.hasClass('selected')) {
+                this.$('a').removeClass('selected'); // otherwise toggle the selected provider
+                $target.addClass('selected');
+                this.trigger(Events.ON_TYPE_CLICKED, {target: $target});
+            }
         }
 
     });
