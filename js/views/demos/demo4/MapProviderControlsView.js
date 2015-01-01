@@ -65,11 +65,11 @@ define([
                 mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
                 if ($target.hasClass('map-provider-google')){
                     this.addLayer(this.config.layers.google.roadLayer);
-                    //this.removeLayer(this.config.layers.bing.roadLayer);
+                    this.removeLayer(this.config.layers.bing.roadLayer);
                     this.removeLayer(this.config.layers.osm.roadLayer);
                 } else if ($target.hasClass('map-provider-osm')){
                     this.addLayer(this.config.layers.osm.roadLayer);
-                    //this.removeLayer(this.config.layers.bing.roadLayer);
+                    this.removeLayer(this.config.layers.bing.roadLayer);
                     this.removeLayer(this.config.layers.google.roadLayer);
                 }
                 else if ($target.hasClass('map-provider-bing')){
