@@ -1,7 +1,7 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/demos/demo4/MapZoomControlsView.html',
+    'text!templates/maps/MapZoomControlsView.html',
     'leaflet'
 ], function(_, Backbone, templateHtml) {
 

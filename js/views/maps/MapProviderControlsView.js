@@ -1,8 +1,10 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/demos/demo4/MapProviderControlsView.html'
-], function(_, Backbone, templateHtml) {
+    'models/MapProvider',
+    'models/MapLayer',
+    'text!templates/maps/MapProviderControlsView.html'
+], function(_, Backbone, MapProvider, MapLayer, templateHtml) {
 
     var Events = {
         ON_RESET_MENU: 'ON_RESET_MENU'
@@ -18,10 +20,12 @@ define([
         },
 
         initialize: function(args) {
-            this.config = args;
+            this.mapControls = args.mapControls;
+            this.collection = args.collection;
+            this.map = args.map;
             this.template = _.template(templateHtml);
-            this._layers = {};
             this._lastZIndex = 0;
+            this.currentLayer = null;
             this.render();
         },
 
@@ -59,36 +63,50 @@ define([
             e.preventDefault();
             var $target = $(e.target);
             if (!$target.hasClass('selected')) {
-                var mapControlsDiv = $(this.config.mapControls);
+                var mapControlsDiv = $(this.mapControls);
                 mapControlsDiv.find('.map-provider .item').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
                 mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
-                if ($target.hasClass('map-provider-google')){
-                    this.addLayer(this.config.layers.google.roadLayer);
-                    this.removeLayer(this.config.layers.bing.roadLayer);
-                    this.removeLayer(this.config.layers.osm.roadLayer);
-                } else if ($target.hasClass('map-provider-osm')){
-                    this.addLayer(this.config.layers.osm.roadLayer);
-                    this.removeLayer(this.config.layers.bing.roadLayer);
-                    this.removeLayer(this.config.layers.google.roadLayer);
+                var previousProvider = this.collection.getCurrentProvider();
+                var previousLayer = null;
+                if (previousProvider != null) {
+                    previousLayer =  previousProvider.get('mapLayers').getCurrentLayer()
                 }
-                else if ($target.hasClass('map-provider-bing')){
-                    this.addLayer(this.config.layers.bing.roadLayer);
-                    this.removeLayer(this.config.layers.osm.roadLayer);
-                    this.removeLayer(this.config.layers.google.roadLayer);
+                var currentProvider =  null;
+                if ($target.hasClass('map-provider-google')){
+                    currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
+                } else if ($target.hasClass('map-provider-osm')){
+                    currentProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
+                } else if ($target.hasClass('map-provider-bing')){
+                    currentProvider = this.collection.changeCurrentProvider(MapProvider.BING);
+                }
+                if (currentProvider != null) {
+                    var layerType = MapLayer.ROAD;
+                    if (previousLayer != null) {
+                        layerType = previousLayer.get('type');
+                    }
+                    var currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(layerType);
+                    if (currentLayer != null) {
+                        this.addLayer(currentLayer);
+                        if (previousLayer != null) {
+                            this.removeLayer(previousLayer);
+                        }
+                    }
                 }
             }
         },
 
         addLayer: function(layer) {
-            if (!this.config.map.hasLayer(layer)) {
-                this.config.map.addLayer(layer);
+            var leafletLayer = layer.get('leafletLayer');
+            if (!this.map.hasLayer(leafletLayer)) {
+                this.map.addLayer(leafletLayer);
             }
         },
 
         removeLayer: function(layer) {
-            if (this.config.map.hasLayer(layer)) {
-                this.config.map.removeLayer(layer);
+            var leafletLayer = layer.get('leafletLayer');
+            if (this.map.hasLayer(leafletLayer)) {
+                this.map.removeLayer(leafletLayer);
             }
         }
 

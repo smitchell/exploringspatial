@@ -1,7 +1,7 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/demos/demo4/MapTypeControlsView.html'
+    'text!templates/maps/MapTypeControlsView.html'
 ], function(_, Backbone, templateHtml) {
 
     var Events = {

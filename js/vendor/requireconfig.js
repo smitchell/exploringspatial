@@ -7,8 +7,7 @@ var require = {
         json2: 'vendor/json2',
         leaflet: "vendor/leaflet/leaflet",
         leaflet_google: 'vendor/leaflet/plugins/patel_shramov/tile/Google',
-        leaflet_bing: 'vendor/leaflet/plugins/patel_shramov/tile/Bing',
-        leaflet_osm: "vendor/leaflet//leaflet-osm"
+        leaflet_bing: 'vendor/leaflet/plugins/patel_shramov/tile/Bing'
     },
     shim: {
         'underscore': {
@@ -28,10 +27,6 @@ var require = {
         },
 
         'leaflet_bing': {
-            deps: ['leaflet']
-        },
-
-        'leaflet_osm': {
             deps: ['leaflet']
         }
     }

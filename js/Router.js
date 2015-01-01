@@ -10,7 +10,7 @@ define([
     'views/demos/Demo1PageView',
     'views/demos/Demo2PageView',
     'views/demos/Demo3PageView',
-    'views/demos/demo4/Demo4PageView'
+    'views/demos/Demo4PageView'
 ], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
     var Router = Backbone.Router.extend({
         routes: {

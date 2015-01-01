@@ -3,11 +3,11 @@ define([
     'underscore',
     'backbone',
     'views/demos/DemoLeftSideView',
-    'views/demos/demo4/Demo4RightSideView',
-    'views/demos/demo4/MapZoomControlsView',
-    'views/demos/demo4/MapProviderControlsView',
-    'views/demos/demo4/MapTypeControlsView',
-    'views/demos/demo4/MapOverlayControlsView',
+    'views/demos/Demo4RightSideView',
+    'views/maps/MapZoomControlsView',
+    'views/maps/MapProviderControlsView',
+    'views/maps/MapTypeControlsView',
+    'views/maps/MapOverlayControlsView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone, DemoLeftSideView, Demo4RightSideView, MapZoomControlsView, MapProviderControlsView, MapTypeControlsView, MapOverlayControlsView, templateHtml) {
     var Demo4PageView = Backbone.View.extend({
