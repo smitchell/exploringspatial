@@ -13,7 +13,9 @@ define([
             satelliteAttribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ' +
             'Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'
         },
-        initialize: function () {
+        initialize: function (args) {
+            this.dispatcher = args.dispatcher;
+            this.on('change:currentProvider', this.onMapProviderChanged, this);
             var osmLayers = [];
             osmLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,

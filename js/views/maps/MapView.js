@@ -31,12 +31,14 @@ define([
             this.args = args;
             this.mapContainer = 'map_container';
             this.mapControls = '.map-controls';
-            this.collection = new MapProviders([
-                    new BingMapProvider(),
-                    new GoogleMapProvider(),
-                    new OsmMapProvider()
-                ]);
+            this.mapOptions = args.mapOptions;
             this.dispatcher = MapEventDispatcher;
+            this.collection = new MapProviders([
+                new BingMapProvider({dispatcher: this.dispatcher}),
+                new GoogleMapProvider({dispatcher: this.dispatcher}),
+                new OsmMapProvider({dispatcher: this.dispatcher})
+                ]);
+
             var currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
             this.render();
@@ -45,12 +47,9 @@ define([
         render: function () {
             var currentProvider = this.collection.getCurrentProvider();
             var currentLayer = currentProvider.get('mapLayers').getCurrentLayer();
-            this.map = L.map(this.mapContainer, {
-                center: [38.856018, -94.800596],
-                zoom: 10,
-                zoomControl: false,
-                layers: [currentLayer.get('leafletLayer')]
-            });
+            this.mapOptions.zoomControl = false;
+            this.mapOptions.layers = [currentLayer.get('leafletLayer')];
+            this.map = L.map(this.mapContainer, this.mapOptions);
             var mapControlsDiv = $(this.mapControls);
 
             new MapZoomControlsView({
@@ -59,22 +58,16 @@ define([
             });
             this.mapProviderControlsView = new MapProviderControlsView({
                 el: mapControlsDiv.find('.map-provider'),
-                map: this.map,
-                mapControls: this.mapControls,
-                collection: this.collection,
                 dispatcher: this.dispatcher
             });
             this.mapTypeControlsView = new MapTypeControlsView({
                 el: mapControlsDiv.find('.map-type'),
-                map: this.map,
-                collection: this.collection,
                 dispatcher: this.dispatcher
             });
             this.mapOverlayControlsView = new MapOverlayControlsView({
                 el: mapControlsDiv.find('.map-layers'),
-                map: this.map,
                 collection: this.collection,
-                mapContainer: $('#' + this.mapContainer)
+                dispatcher: this.dispatcher
             });
             this.dispatcher.on(this.dispatcher.Events.ON_RESET_PROVIDER_MENU, this.onResetMenu, this);
             this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CLICKED, this.onProviderClicked, this);

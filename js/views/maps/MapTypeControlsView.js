@@ -16,7 +16,6 @@ define([
 
 
         initialize: function(args) {
-            this.map = args.map;
             this.dispatcher = args.dispatcher;
             this.template = _.template(templateHtml);
             this.render();

@@ -11,6 +11,11 @@ define([
                 }
             });
             return result;
+        },
+        onMapProviderChanged: function() {
+            if (this.get('currentProvider') == true) {
+                this.dispatcher.trigger(this.dispatcher.Events.ON_PROVIDER_CHANGED, {mapProvider: this});
+            }
         }
     });
     MapProvider.GOOGLE = 'google';

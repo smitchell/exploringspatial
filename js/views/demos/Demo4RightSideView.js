@@ -16,7 +16,11 @@ define([
         },
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
-            this.mapView = new MapView();
+            var mapOptions = {
+                center: [38.856018, -94.800596],
+                zoom: 10
+            }
+            this.mapView = new MapView({mapOptions: mapOptions});
         }
     });
     return Demo4RightSideView;

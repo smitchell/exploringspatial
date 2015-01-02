@@ -16,13 +16,8 @@ define([
         },
 
         initialize: function(args) {
-            this.mapControls = args.mapControls;
-            this.collection = args.collection;
             this.dispatcher = args.dispatcher;
-            this.map = args.map;
             this.template = _.template(templateHtml);
-            this._lastZIndex = 0;
-            this.currentLayer = null;
             this.render();
         },
 

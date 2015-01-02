@@ -10,7 +10,9 @@ define([
             currentProvider: false,
             mapLayers: new MapLayers()
         },
-        initialize: function () {
+        initialize: function (args) {
+            this.dispatcher = args.dispatcher;
+            this.on('change:currentProvider', this.onMapProviderChanged, this);
             var googleLayers = [];
             googleLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,
