@@ -1,3 +1,6 @@
+/**
+ * The purpose of the MapZoomControlsView is to control user interaction with the zoom controls.
+ */
 define([
     'underscore',
     'backbone',

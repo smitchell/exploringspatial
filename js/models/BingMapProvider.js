@@ -1,3 +1,8 @@
+/**
+ * BingMapProvider is a Backbone model that extends the MapProvider model.
+ * It contains the attributed necessary to support the Leaflet Bing plugin.
+ * Its main responsibility is initializing the various MapLayer models supported by Bing.
+ */
 define([
     'models/MapProvider',
     'models/MapLayer',
@@ -5,22 +10,35 @@ define([
     'leaflet_bing'
 ], function (MapProvider, MapLayer, MapLayers) {
     var BingMapProvider = MapProvider.extend({
+
+        /**
+         * defaults contains properties unique to Bing maps.
+         */
         defaults: {
             key: 'AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY',
             name: MapProvider.BING,
-            currentProvider: false,
+            isSelected: false,
             mapLayers: new MapLayers()
         },
+
+        /**
+         * The initialize function is responsible for initializing the MapLayer models supported by Bing.
+         * @param args - Contains a reference to the MapEventDispatcher.
+         */
         initialize: function (args) {
             this.dispatcher = args.dispatcher;
-            this.on('change:currentProvider', this.onMapProviderChanged, this);
+            this.on('change:isSelected', this.onMapProviderChanged, this);
             var bingLayers = [];
             bingLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,
+                isBaseLayer: true,
+                dispatcher: this.dispatcher,
                 leafletLayer: new L.BingLayer(this.get('key'), {type: 'Road'})
             });
             bingLayers[1]= new MapLayer({
                 type: MapLayer.SATELLITE,
+                isBaseLayer: true,
+                dispatcher: this.dispatcher,
                 leafletLayer: new L.BingLayer(this.get('key'), {type: 'Aerial'})
             });
             this.get('mapLayers').set(bingLayers);

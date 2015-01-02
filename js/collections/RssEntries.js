@@ -1,3 +1,7 @@
+/**
+ * RssEntries is a Backbone Collection of RssEntry Backbone Models.
+ * Each model represents a single entry from an RSS feed.
+ */
 define([
         'backbone',
         'models/RssEntry'

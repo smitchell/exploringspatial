@@ -1,13 +1,17 @@
+/**
+ * The purpose of the MapTypeControlsView is to control user interaction with the map type dropdown menu.
+ */
 define([
     'underscore',
     'backbone',
+    'models/MapLayer',
     'text!templates/maps/MapTypeControlsView.html'
-], function(_, Backbone, templateHtml) {
+], function(_, Backbone, MapLayer, templateHtml) {
 
     var MapTypeControlsView = Backbone.View.extend({
 
         events: {
-            'click .type-ctrl-trigger' : 'onToggleSelector',
+            'click .type-ctrl-trigger' : 'onToggleSelected',
             'click .map-type-map' : 'onTypeClicked',
             'click .map-type-satellite' : 'onTypeClicked',
             'mouseleave .map-menu' : 'onMouseLeave',
@@ -26,9 +30,14 @@ define([
             this.$el.html(html);
         },
 
-        onToggleSelector: function(e) {
+        /**
+         * The purpose of the onToggleSelected function is to first collapse any other
+         * open menus by calling ON_MENU_STATE_CHANGE, and then expand the .map-menu div.
+         * @param e - The click event.
+         */
+        onToggleSelected: function(e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.ON_RESET_TYPE_MENU);
+            this.dispatcher.trigger(this.dispatcher.Events.ON_MENU_STATE_CHANGE);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -41,7 +50,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.type-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.dispatcher.trigger(_self.dispatcher.Events.ON_RESET_TYPE_MENU);
+                _self.dispatcher.trigger(_self.dispatcher.Events.ON_MENU_STATE_CHANGE);
             });
         },
 
@@ -51,6 +60,11 @@ define([
             this.$('.type-ctrl-trigger').addClass('selected');
         },
 
+        /**
+         * The purpose of this function is to toggle the selected class on the menu item clicked,
+         * and then trigger ON_TYPE_CLICKED to change the map layer.
+         * @param e - The click event.
+         */
         onTypeClicked: function(e) {
             e.preventDefault();
             var $target = $(e.target);

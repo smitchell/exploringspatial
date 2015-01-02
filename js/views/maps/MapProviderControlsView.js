@@ -1,3 +1,6 @@
+/**
+ * The purpose of the MapProviderControlsView is to control user interaction with the map provider dropdown menu.
+ */
 define([
     'underscore',
     'backbone',
@@ -9,7 +12,7 @@ define([
     var MapProviderControlsView = Backbone.View.extend({
 
         events: {
-            'click .provider-ctrl-trigger' : 'onToggleSelector',
+            'click .provider-ctrl-trigger' : 'onToggleSelected',
             'click .item' : 'onProviderClicked',
             'mouseleave .map-menu' : 'onMouseLeave',
             'mouseenter .map-menu' : 'onMouseEnter'
@@ -26,9 +29,14 @@ define([
             this.$el.html(html);
         },
 
-        onToggleSelector: function(e) {
+        /**
+         * The purpose of the onToggleSelected function is to first collapse any other
+         * open menus by calling ON_MENU_STATE_CHANGE, and then expand the .map-menu div.
+         * @param e - The click event.
+         */
+        onToggleSelected: function(e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.ON_RESET_PROVIDER_MENU);
+            this.dispatcher.trigger(this.dispatcher.Events.ON_MENU_STATE_CHANGE);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -41,7 +49,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.provider-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.dispatcher.trigger(_self.dispatcher.Events.ON_RESET_PROVIDER_MENU);
+                _self.dispatcher.trigger(_self.dispatcher.Events.ON_MENU_STATE_CHANGE);
             });
         },
 
@@ -51,6 +59,11 @@ define([
             this.$('.provider-ctrl-trigger').addClass('selected');
         },
 
+        /**
+         * The purpose of this function is to toggle the selected class on the menu item clicked,
+         * and then trigger ON_PROVIDER_CLICKED to change the map provider.
+         * @param e - The click event.
+         */
         onProviderClicked: function(e) {
             e.preventDefault();
             var $target = $(e.target);

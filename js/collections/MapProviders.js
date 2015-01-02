@@ -1,3 +1,8 @@
+/**
+ * MapProviders is a Backbone Collection of MapProvider Backbone Models.
+ * Each map API supported by this web site is given a MapProvider model
+ * (e.g. Google, Bing, OSM, Stamen, Baidu, etc...)
+ */
 define([
         'backbone',
         'models/MapProvider'
@@ -14,21 +19,29 @@ var MapProviders = Backbone.Collection.extend({
 		return result;
 	},
 	changeCurrentProvider: function(name) {
-		var currentProvider = null;
+		var selectedProvider = null;
+		var isChanged = false;
 		this.each(function(mapProvider) {
 			if (mapProvider.get('name') == name) {
-				mapProvider.set({currentProvider: true });
-				currentProvider = mapProvider;
-			} else {
-				mapProvider.set({currentProvider: false });
+				selectedProvider = mapProvider;
+				// Only take action if the mapProvide is not already the current map provider.
+				if(!mapProvider.get('isSelected')) {
+					isChanged = true;
+				}
+			} else if (mapProvider.get('isSelected')){
+				mapProvider.set({isSelected: false });
 			}
 		});
-		return currentProvider;
+		// Defer switch until all other providers are set to false.
+		if (isChanged != null) {
+			selectedProvider.set({isSelected: true });
+		}
+		return selectedProvider;
 	},
-	getCurrentProvider: function() {
+	getSelectedProvider: function() {
 		var result = null;
 		this.each(function(mapProvider) {
-			if (mapProvider.get('currentProvider') == true) {
+			if (mapProvider.get('isSelected')) {
 				result = mapProvider;
 			}
 		});

@@ -39,16 +39,16 @@ define([
                 new OsmMapProvider({dispatcher: this.dispatcher})
                 ]);
 
-            var currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
-            currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
+            var selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
+            selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
             this.render();
         },
 
         render: function () {
-            var currentProvider = this.collection.getCurrentProvider();
-            var currentLayer = currentProvider.get('mapLayers').getCurrentLayer();
+            var selectedProvider = this.collection.getSelectedProvider();
+            var baseLayer = selectedProvider.get('mapLayers').getSelectedBaseLayer();
             this.mapOptions.zoomControl = false;
-            this.mapOptions.layers = [currentLayer.get('leafletLayer')];
+            this.mapOptions.layers = [baseLayer.get('leafletLayer')];
             this.map = L.map(this.mapContainer, this.mapOptions);
             var mapControlsDiv = $(this.mapControls);
 
@@ -69,14 +69,18 @@ define([
                 collection: this.collection,
                 dispatcher: this.dispatcher
             });
-            this.dispatcher.on(this.dispatcher.Events.ON_RESET_PROVIDER_MENU, this.onResetMenu, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_MENU_STATE_CHANGE, this.closeAllMenus, this);
             this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CLICKED, this.onProviderClicked, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_RESET_TYPE_MENU, this.onResetMenu, this);
             this.dispatcher.on(this.dispatcher.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
-            this.mapOverlayControlsView.on(MapOverlayControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_OVERLAY_CLICKED, this.onOverlayClicked, this);
         },
 
-        onResetMenu: function () {
+        /**
+         * The purpose of this method is to close all menus.
+         * Triggered from clicking on a menu (to close the other menus),
+         * or by leaving an open menus
+         */
+        closeAllMenus: function () {
             var mapControlsDiv = $(this.mapControls);
             mapControlsDiv.find('.map-menu').slideUp(20);
             mapControlsDiv.find('.map-select-trigger').removeClass('selected'); // toggle map type buttons
@@ -84,31 +88,39 @@ define([
             mapControlsDiv.find('.map-controls .arrow-down').removeClass('clicked');
         },
 
+        /**
+         * The purpose of this function is change the base map provider (e.g. Google, OSM, Bing)
+         * @param args - Contains the target of the click event.
+         */
         onProviderClicked: function(args) {
             var $target = args.target;
             var mapControlsDiv = $(this.mapControls);
             mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
-            var previousProvider = this.collection.getCurrentProvider();
+            var previousProvider = this.collection.getSelectedProvider();
             var previousLayer = null;
             if (previousProvider != null) {
-                previousLayer =  previousProvider.get('mapLayers').getCurrentLayer()
+                previousLayer =  previousProvider.get('mapLayers').getSelectedBaseLayer()
             }
-            var currentProvider =  null;
+            var selectedProvider =  null;
             if ($target.hasClass('map-provider-google')){
-                currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
+                selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             } else if ($target.hasClass('map-provider-osm')){
-                currentProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
+                selectedProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
             } else if ($target.hasClass('map-provider-bing')){
-                currentProvider = this.collection.changeCurrentProvider(MapProvider.BING);
+                selectedProvider = this.collection.changeCurrentProvider(MapProvider.BING);
             }
-            if (currentProvider != null) {
+            if (selectedProvider != null) {
                 var layerType = MapLayer.ROAD;
                 if (previousLayer != null) {
                     layerType = previousLayer.get('type');
+                    // Preserve type or overlay if supported by the new map provider.
+                    if (!selectedProvider.supportsLayerType(layerType)) {
+                        layerType = MapLayer.ROAD;
+                    }
                 }
-                var currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(layerType);
-                if (currentLayer != null) {
-                    this.addLayer(currentLayer);
+                var baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(layerType);
+                if (baseLayer != null) {
+                    this.addLayer(baseLayer);
                     if (previousLayer != null) {
                         this.removeLayer(previousLayer);
                     }
@@ -116,19 +128,60 @@ define([
             }
         },
 
+        /**
+         * The purpose of this function is the change the map layer (road or satellite).
+         * @param args - Contains the target of the click event.
+         */
         onTypeClicked: function (args) {
             var $target = args.target;
-            var currentProvider = this.collection.getCurrentProvider();
-            var previousLayer = currentProvider.get('mapLayers').getCurrentLayer();
-            if (currentProvider != null) {
-                var currentLayer = null;
+            var selectedProvider = this.collection.getSelectedProvider();
+            var previousLayer = selectedProvider.get('mapLayers').getSelectedBaseLayer();
+            if (selectedProvider != null) {
+                var baseLayer = null;
                 if ($target.hasClass('map-type-map')) {
-                    currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
+                    baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
                 } else {
-                    currentLayer = currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.SATELLITE);
+                    var labelsSelected = $(this.mapControls).find('.map-layer-labels').hasClass('selected');
+                    if (labelsSelected && selectedProvider.supportsLayerType(MapLayer.HYBRID)) {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.HYBRID);
+                    } else {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.SATELLITE);
+                    }
                 }
-                if (currentLayer != null) {
-                    this.addLayer(currentLayer);
+                if (baseLayer != null) {
+                    this.addLayer(baseLayer);
+                    if (previousLayer != null) {
+                        this.removeLayer(previousLayer);
+                    }
+                }
+            }
+        },
+
+        /**
+         * The purpose of this function is the change the overlay (e.g. from satellite to hybrid, or togget he bicycle layer).
+         * @param args - Contains the target of the click event.
+         */
+        onOverlayClicked: function(args) {
+            var $target = args.target;
+            var selectedProvider = this.collection.getSelectedProvider();
+            var previousLayer = selectedProvider.get('mapLayers').getSelectedBaseLayer();
+            if (selectedProvider != null) {
+                var baseLayer = null;
+                if ($target.hasClass('map-layer-terrain')) {
+                    if ($target.hasClass('selected')) {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.TERRAIN);
+                    } else {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
+                    }
+                } else if ($target.hasClass('map-layer-labels')) {
+                    if ($target.hasClass('selected')) {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.HYBRID);
+                    } else {
+                        baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.SATELLITE);
+                    }
+                }
+                if (baseLayer != null) {
+                    this.addLayer(baseLayer);
                     if (previousLayer != null) {
                         this.removeLayer(previousLayer);
                     }

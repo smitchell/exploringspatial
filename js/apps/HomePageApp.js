@@ -1,3 +1,7 @@
+/**
+ * The home page application bootstraps the single page web site exploringspatial.com
+ * by initialing the Backbone router for the site.
+ */
 define([
   'jquery',
   'underscore',
