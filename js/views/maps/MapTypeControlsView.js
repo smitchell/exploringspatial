@@ -4,12 +4,6 @@ define([
     'text!templates/maps/MapTypeControlsView.html'
 ], function(_, Backbone, templateHtml) {
 
-    var Events = {
-        ON_RESET_MENU: 'ON_RESET_MENU',
-        ON_TYPE_CLICKED: 'ON_TYPE_CLICKED'
-    };
-
-
     var MapTypeControlsView = Backbone.View.extend({
 
         events: {
@@ -23,6 +17,7 @@ define([
 
         initialize: function(args) {
             this.map = args.map;
+            this.dispatcher = args.dispatcher;
             this.template = _.template(templateHtml);
             this.render();
         },
@@ -34,7 +29,7 @@ define([
 
         onToggleSelector: function(e) {
             e.preventDefault();
-            this.trigger(Events.ON_RESET_MENU);
+            this.dispatcher.trigger(this.dispatcher.Events.ON_RESET_TYPE_MENU);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -47,7 +42,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.type-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.trigger(Events.ON_RESET_MENU);
+                _self.dispatcher.trigger(_self.dispatcher.Events.ON_RESET_TYPE_MENU);
             });
         },
 
@@ -63,13 +58,11 @@ define([
             if (!$target.hasClass('selected')) {
                 this.$('a').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
-                this.trigger(Events.ON_TYPE_CLICKED, {target: $target});
+                this.dispatcher.trigger(this.dispatcher.Events.ON_TYPE_CLICKED, {target: $target});
             }
         }
 
     });
-
-    MapTypeControlsView.Events = Events;
 
     return MapTypeControlsView;
 });

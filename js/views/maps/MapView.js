@@ -1,6 +1,7 @@
 define([
     'underscore',
     'backbone',
+    'apps/MapEventDispatcher',
     'models/MapProvider',
     'models/MapLayer',
     'models/BingMapProvider',
@@ -12,6 +13,7 @@ define([
     'views/maps/MapTypeControlsView',
     'views/maps/MapOverlayControlsView'
 ], function (_, Backbone,
+             MapEventDispatcher,
              MapProvider,
              MapLayer,
              BingMapProvider,
@@ -22,7 +24,6 @@ define([
              MapProviderControlsView,
              MapTypeControlsView,
              MapOverlayControlsView) {
-
 
     var MapView = Backbone.View.extend({
 
@@ -35,6 +36,7 @@ define([
                     new GoogleMapProvider(),
                     new OsmMapProvider()
                 ]);
+            this.dispatcher = MapEventDispatcher;
             var currentProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             currentProvider.get('mapLayers').changeCurrentLayer(MapLayer.ROAD);
             this.render();
@@ -59,12 +61,14 @@ define([
                 el: mapControlsDiv.find('.map-provider'),
                 map: this.map,
                 mapControls: this.mapControls,
-                collection: this.collection
+                collection: this.collection,
+                dispatcher: this.dispatcher
             });
             this.mapTypeControlsView = new MapTypeControlsView({
                 el: mapControlsDiv.find('.map-type'),
                 map: this.map,
-                collection: this.collection
+                collection: this.collection,
+                dispatcher: this.dispatcher
             });
             this.mapOverlayControlsView = new MapOverlayControlsView({
                 el: mapControlsDiv.find('.map-layers'),
@@ -72,10 +76,10 @@ define([
                 collection: this.collection,
                 mapContainer: $('#' + this.mapContainer)
             });
-            this.mapProviderControlsView.on(MapProviderControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
-            this.mapProviderControlsView.on(MapProviderControlsView.Events.ON_PROVIDE_CLICKED, this.onProviderClicked, this);
-            this.mapTypeControlsView.on(MapTypeControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
-            this.mapTypeControlsView.on(MapTypeControlsView.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_RESET_PROVIDER_MENU, this.onResetMenu, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CLICKED, this.onProviderClicked, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_RESET_TYPE_MENU, this.onResetMenu, this);
+            this.dispatcher.on(this.dispatcher.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
             this.mapOverlayControlsView.on(MapOverlayControlsView.Events.ON_RESET_MENU, this.onResetMenu, this);
         },
 
@@ -153,7 +157,6 @@ define([
             }
         }
     });
-
 
     return MapView;
 });

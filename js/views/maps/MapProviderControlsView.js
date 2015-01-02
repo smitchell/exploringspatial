@@ -6,11 +6,6 @@ define([
     'text!templates/maps/MapProviderControlsView.html'
 ], function(_, Backbone, MapProvider, MapLayer, templateHtml) {
 
-    var Events = {
-        ON_PROVIDE_CLICKED: 'ON_PROVIDE_CLICKED',
-        ON_RESET_MENU: 'ON_RESET_MENU'
-    };
-
     var MapProviderControlsView = Backbone.View.extend({
 
         events: {
@@ -23,6 +18,7 @@ define([
         initialize: function(args) {
             this.mapControls = args.mapControls;
             this.collection = args.collection;
+            this.dispatcher = args.dispatcher;
             this.map = args.map;
             this.template = _.template(templateHtml);
             this._lastZIndex = 0;
@@ -37,7 +33,7 @@ define([
 
         onToggleSelector: function(e) {
             e.preventDefault();
-            this.trigger(Events.ON_RESET_MENU);
+            this.dispatcher.trigger(this.dispatcher.Events.ON_RESET_PROVIDER_MENU);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -50,7 +46,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.provider-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.trigger(Events.ON_RESET_MENU);
+                _self.dispatcher.trigger(_self.dispatcher.Events.ON_RESET_PROVIDER_MENU);
             });
         },
 
@@ -66,14 +62,12 @@ define([
             if (!$target.hasClass('selected')) {
                 this.$('.item').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
-                this.trigger(Events.ON_PROVIDE_CLICKED, {target: $target});
+                this.dispatcher.trigger(this.dispatcher.Events.ON_PROVIDER_CLICKED, {target: $target});
             }
 
         }
 
     });
-
-    MapProviderControlsView.Events = Events;
 
     return MapProviderControlsView;
 });
