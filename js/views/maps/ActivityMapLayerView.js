@@ -39,8 +39,8 @@ define([
             var polyline = this.model.get('geometry').get('coordinates');
             var startPoint = polyline[0];
             var endPoint = polyline[polyline.length - 1];
-            L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.map)
-            L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.map)
+            L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.map);
+            L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.map);
         }
 
     });
