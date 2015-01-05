@@ -31,22 +31,26 @@ define([
             this.dispatcher = args.dispatcher;
             this.on('change:isSelected', this.onMapProviderChanged, this);
             var osmLayers = [];
+            var roadOptions = {attribution: this.get('roadAttribution')};
+            var satelliteOptions = {
+                attribution: this.get('satelliteAttribution'),
+                subdomains: '1234'
+            };
+            if (args.mapOptions) {
+                roadOptions = L.extend({}, args.mapOptions, roadOptions);
+                satelliteOptions = L.extend({}, args.mapOptions, satelliteOptions);
+            }
             osmLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: this.get('roadAttribution')
-                })
+                leafletLayer: new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', roadOptions)
             });
             osmLayers[1]= new MapLayer({
                 type: MapLayer.SATELLITE,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.tileLayer('http://oatile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', {
-                    attribution: this.get('satelliteAttribution'),
-                    subdomains: '1234'
-                })
+                leafletLayer: new L.tileLayer('http://oatile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', satelliteOptions)
             });
             this.get('mapLayers').set(osmLayers);
         }

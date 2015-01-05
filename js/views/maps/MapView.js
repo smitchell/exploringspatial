@@ -31,7 +31,10 @@ define([
             this.args = args;
             this.mapContainer = 'map_container';
             this.mapControls = '.map-controls';
-            this.mapOptions = args.mapOptions;
+            this.mapOptions = {};
+            if (args.mapOptions) {
+                this.mapOptions = args.mapOptions;
+            }
             this.dispatcher = MapEventDispatcher;
             this.collection = new MapProviders([
                 new BingMapProvider({dispatcher: this.dispatcher}),
@@ -201,6 +204,10 @@ define([
             if (this.map.hasLayer(leafletLayer)) {
                 this.map.removeLayer(leafletLayer);
             }
+        },
+
+        getMap: function() {
+            return this.map;
         }
     });
 

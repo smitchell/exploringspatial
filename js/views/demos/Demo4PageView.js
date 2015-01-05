@@ -4,12 +4,8 @@ define([
     'backbone',
     'views/demos/DemoLeftSideView',
     'views/demos/Demo4RightSideView',
-    'views/maps/MapZoomControlsView',
-    'views/maps/MapProviderControlsView',
-    'views/maps/MapTypeControlsView',
-    'views/maps/MapOverlayControlsView',
     'text!templates/demos/DemoPageView.html'
-], function ($, _, Backbone, DemoLeftSideView, Demo4RightSideView, MapZoomControlsView, MapProviderControlsView, MapTypeControlsView, MapOverlayControlsView, templateHtml) {
+], function ($, _, Backbone, DemoLeftSideView, Demo4RightSideView, templateHtml) {
     var Demo4PageView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);

@@ -28,29 +28,33 @@ define([
             this.dispatcher = args.dispatcher;
             this.on('change:isSelected', this.onMapProviderChanged, this);
             var googleLayers = [];
+            var mapOptions = {};
+            if (args.mapOptions) {
+                mapOptions = L.extend({}, args.mapOptions, mapOptions);
+            }
             googleLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.Google('ROADMAP')
+                leafletLayer: new L.Google('ROADMAP', mapOptions)
             });
             googleLayers[1]= new MapLayer({
                 type: MapLayer.SATELLITE,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.Google('SATELLITE')
+                leafletLayer: new L.Google('SATELLITE', mapOptions)
             });
             googleLayers[2]= new MapLayer({
                 type: MapLayer.HYBRID,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.Google('HYBRID')
+                leafletLayer: new L.Google('HYBRID', mapOptions)
             });
             googleLayers[3]= new MapLayer({
                 type: MapLayer.TERRAIN,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.Google('TERRAIN')
+                leafletLayer: new L.Google('TERRAIN', mapOptions)
             });
             this.get('mapLayers').set(googleLayers);
         }

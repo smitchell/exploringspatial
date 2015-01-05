@@ -29,17 +29,23 @@ define([
             this.dispatcher = args.dispatcher;
             this.on('change:isSelected', this.onMapProviderChanged, this);
             var bingLayers = [];
+            var roadOptions = {type: 'Road'};
+            var satelliteOptions = {type: 'Aerial'};
+            if (args.mapOptions) {
+                roadOptions = L.extend({}, args.mapOptions, roadOptions);
+                satelliteOptions = L.extend({}, args.mapOptions, satelliteOptions);
+            }
             bingLayers[0] = new MapLayer({
                 type: MapLayer.ROAD,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.BingLayer(this.get('key'), {type: 'Road'})
+                leafletLayer: new L.BingLayer(this.get('key'), roadOptions)
             });
             bingLayers[1]= new MapLayer({
                 type: MapLayer.SATELLITE,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
-                leafletLayer: new L.BingLayer(this.get('key'), {type: 'Aerial'})
+                leafletLayer: new L.BingLayer(this.get('key'), satelliteOptions)
             });
             this.get('mapLayers').set(bingLayers);
         }
