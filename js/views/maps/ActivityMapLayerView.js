@@ -27,15 +27,12 @@ define([
                 [props.get('minLat'), props.get('minLon')],
                 [props.get('maxLat'), props.get('maxLon')]
             ]);
-            var geoJsonFeature = this.model.toJSON();
-            geoJsonFeature.geometry = this.model.get('geometry').toJSON();
-            geoJsonFeature.properties = this.model.get('properties').toJSON();
             var style = {
                 color: '#FF0000',
                 weight: 3,
                 opacity: 0.6
             };
-            L.geoJson(geoJsonFeature, {style: style}).addTo(this.map);
+            L.geoJson(this.model.toJSON(), {style: style}).addTo(this.map);
             var polyline = this.model.get('geometry').get('coordinates');
             var startPoint = polyline[0];
             var endPoint = polyline[polyline.length - 1];
