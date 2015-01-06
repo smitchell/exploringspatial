@@ -13,8 +13,12 @@ I closed my S-Corporation, Byteworks, in 2010 when I joined Garmin International
 
 Feel free to browse this code, reuse what you see, or offer comments or code refinements.
 
+##Links
+- *Blog* http://ExploringSpatial.WordPress.com
+- *Site* http://www.ExploringSpatial.com
+- *Code* https://github.com/smitchell/exploringspatial
 
-* Links *
-Blog: http://ExploringSpatial.WordPress.com
-Site: http://www.ExploringSpatial.com
-Code: https://github.com/smitchell/exploringspatial
+##Code credits and open-source licenses
+- Leaflet: an open-source JavaScript library for mobile-friendly interactive maps at http://leafletjs.com/ (BSD license)
+- Leaflet-plugins to display GPX, KML, Google layers at https://github.com/shramov/leaflet-plugins (BSD license)
+- Backbone to structure the web application into models and views at http://backbonejs.org (MIT Software license)

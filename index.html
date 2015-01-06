@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <meta name="robots" content="INDEX, FOLLOW"/>
     <base href=".">
     <link type="image/x-icon" href="http://www.exploringspatial.com/favicon.ico" rel="icon">
@@ -13,14 +14,15 @@
     <meta name="Keywords" content="geospatial, backbone, leaflet, OSM, google">
     <title>Exploring Spatial Homepage</title>
     <link href="./css/style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css"/>
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css"/>
-    <![endif]-->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
     <link rel="stylesheet" href="css/map-controls.css"/>
     <link rel="stylesheet" href="css/example.css"/>
-    <script type="text/javascript" src="js/vendor/requireconfig.js"></script>
-    <script type="text/javascript" src="js/vendor/require.js"></script>
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.ie.css" />
+    <link rel="stylesheet" href="css/L.Control.Locate.ie.css"/>
+    <![endif]-->
+    <script type="text/javascript" src="js/requireconfig.js"></script>
+    <script type="text/javascript" src="js/require.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyBY7xScQpGuYSIvHTMxukLXvWOubJp_1Es&sensor=false"></script>
     <script type="text/javascript"
             src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&amp;mkt=en-US"></script>
@@ -37,7 +39,6 @@
             a.src = g;
             m.parentNode.insertBefore(a, m)
         })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
         ga('create', 'UA-1918559-6', 'auto');
         ga('require', 'linkid', 'linkid.js');
         ga('send', 'pageview');
