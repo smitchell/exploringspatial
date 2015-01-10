@@ -4,17 +4,23 @@ define([
     'backbone',
     'text!templates/demos/DemoLeftSideView.html'
 ], function ($, _, Backbone, templateHtml) {
-    var Demo1LeftSideView = Backbone.View.extend({
+    var DemoLeftSideView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);
-            this.expanded = args.expanded;
+            this.demoId = args.demoId;
             this.render();
         },
         render: function () {
             this.$el.html(this.template({}));
+            this.expandDemo(this.demoId);
+        },
+
+        expandDemo: function(demoId) {
+            this.demoId = demoId;
             this.$('.demoNarrative').hide();
-            this.$(this.expanded).show();
+            this.$('#demo' + demoId + 'Narrative').show();
         }
+
     });
-    return Demo1LeftSideView;
+    return DemoLeftSideView;
 });

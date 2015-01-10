@@ -32,7 +32,7 @@ define([
             this.mapContainer = 'map_container';
             this.mapControls = '.map-controls';
             this.mapOptions = {};
-            if (args.mapOptions) {
+            if (typeof args != 'undefined' && typeof args.mapOptions != 'undefined') {
                 this.mapOptions = args.mapOptions;
             }
             this.dispatcher = MapEventDispatcher;

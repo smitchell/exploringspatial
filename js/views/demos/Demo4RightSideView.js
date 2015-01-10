@@ -33,7 +33,7 @@ define([
             var mapOptions = {
                 center: [centerLat, centerLon]
             };
-            this.mapView = new MapView({model: this.model, mapOptions: mapOptions});
+            this.mapView = new MapView({mapOptions: mapOptions});
             new ActivityMapLayerView({model: this.model, map: this.mapView.getMap()});
         }
     });

@@ -7,17 +7,11 @@ define([
     'views/home/HomePageView',
     'views/about/AboutPageView',
     'views/LicensePageView',
-    'views/demos/Demo1PageView',
-    'views/demos/Demo2PageView',
-    'views/demos/Demo3PageView',
-    'views/demos/Demo4PageView'
-], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, Demo1PageView, Demo2PageView, Demo3PageView, Demo4PageView) {
+    'views/demos/DemoPageView'
+], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
-            "demo1" : "demo1",
-            "demo2" : "demo2",
-            "demo3" : "demo3",
-            "demo4" : "demo4",
+            "demo/:demoId" : "demo",
             "about" : "about",
             "license" : "license",
             "*actions": "home"
@@ -34,10 +28,7 @@ define([
         var aboutPageView = null;
         var licensePageView  = null;
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
-        var demo1PageView = null;
-        var demo2PageView = null;
-        var demo3PageView = null;
-        var demo4PageView = null;
+        var demoPageView = null;
         router.on('route:home', function (actions) {
             if (homePageView == null) {
                 homePageView = new HomePageView({el: contentWrapper});
@@ -45,32 +36,11 @@ define([
             homePageView.render();
             menuView.changeMenu('home')
         });
-        router.on('route:demo1', function (actions) {
-            if (demo1PageView == null) {
-                demo1PageView = new Demo1PageView(demoArgs);
+        router.on('route:demo', function (demoId) {
+            if (demoPageView == null) {
+                demoPageView = new DemoPageView(demoArgs, demoId);
             }
-            demo1PageView.render();
-            menuView.changeMenu('demos')
-        });
-        router.on('route:demo2', function (actions) {
-            if (demo2PageView == null) {
-                demo2PageView = new Demo2PageView(demoArgs);
-            }
-            demo2PageView.render();
-            menuView.changeMenu('demos')
-        });
-        router.on('route:demo3', function (actions) {
-            if (demo3PageView == null) {
-                demo3PageView = new Demo3PageView(demoArgs);
-            }
-            demo3PageView.render();
-            menuView.changeMenu('demos')
-        });
-        router.on('route:demo4', function (actions) {
-            if (demo4PageView == null) {
-                demo4PageView = new Demo4PageView(demoArgs);
-            }
-            demo4PageView.render();
+            demoPageView.render(demoId);
             menuView.changeMenu('demos')
         });
         router.on('route:about', function (actions) {

@@ -17,12 +17,9 @@ define([
          * @param data
          * @returns {{}}
          */
-        parse: function (data) {
-            var json = {};
-            json.type = data.type;
-            json.geometry = new Geometry(data.geometry);
-            json.properties = new Properties(data.properties);
-            json.id = data.id;
+        parse: function (json) {
+            json.geometry = new Geometry(json.geometry);
+            json.properties = new Properties(json.properties);
             return json;
         },
 
