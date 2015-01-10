@@ -1,0 +1,1 @@
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-94.7194,38.9186],[-94.7193,38.9187]]},"properties":{"activityId":270146025,"name":"","sport":"RUNNING","startTime":"2012-09-01T16:33:26Z","totalMeters":9.61,"totalSeconds":0.825,"minLat":38.91860939562321,"minLon":-94.71935992129147,"maxLat":38.918652310967445,"maxLon":-94.7193359490484},"id":"270146025"}

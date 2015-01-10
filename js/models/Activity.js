@@ -9,8 +9,8 @@ define([
     'models/Properties'
 ], function (_, Backbone, Geometry, Properties) {
     var Activity = Backbone.Model.extend({
-        // This is just a demo class, so no activity Id is used.
-        url: "feature.json",
+        urlRoot: "activity/",
+        idAttribute: "activityId",
 
         /**
          * Override Backbone parse to convert properties of properties into child Backbone models.

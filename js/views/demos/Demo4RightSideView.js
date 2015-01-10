@@ -16,7 +16,7 @@ define([
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.args = args;
-            this.model = new Activity();
+            this.model = new Activity({activityId: 155155867});
             var _this = this;
             this.model.fetch({
                 success: function () {
@@ -24,6 +24,7 @@ define([
                 }
             });
         },
+
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
             var props = this.model.get('properties');
