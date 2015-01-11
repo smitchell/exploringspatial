@@ -5,13 +5,15 @@ define([
     'views/MenuView',
     'views/FooterView',
     'views/home/HomePageView',
+    'views/ActivityPageView',
     'views/about/AboutPageView',
     'views/LicensePageView',
     'views/demos/DemoPageView'
-], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoPageView) {
+], function ($, _, Backbone, MenuView, FooterView, HomePageView, ActivityPageView, AboutPageView, LicensePageView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId" : "demo",
+            "activity/:activityId" : "activity",
             "about" : "about",
             "license" : "license",
             "*actions": "home"
@@ -25,6 +27,7 @@ define([
         new FooterView({el: $('#footer')});
         var contentWrapper = $('#content');
         var homePageView = null;
+        var activityPageView = null;
         var aboutPageView = null;
         var licensePageView  = null;
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
@@ -35,6 +38,13 @@ define([
             }
             homePageView.render();
             menuView.changeMenu('home')
+        });
+        router.on('route:activity', function (activityId) {
+            if (activityPageView == null) {
+                activityPageView = new ActivityPageView(demoArgs);
+            }
+            activityPageView.render(activityId);
+            menuView.changeMenu('demos')
         });
         router.on('route:demo', function (demoId) {
             if (demoPageView == null) {
