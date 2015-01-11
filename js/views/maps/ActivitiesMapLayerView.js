@@ -12,7 +12,8 @@ define([
 
         initialize: function(args) {
             this.map = args.map;
-            this.originalBounds = null;
+            this.originalCenter = null;
+            this.originalZoom = null;
             this.activityLayer = null;
             this.activityStart = null;
             this.activityEnd = null;
@@ -64,7 +65,8 @@ define([
         onOpenActivity: function(event, popup) {
             var location = popup._latlng;
             this.map.closePopup(popup);
-            this.originalBounds = this.map.getBounds();
+            this.originalCenter = this.map.getCenter();
+            this.originalZoom = this.map.getZoom();
             this.activity = new Activity({activityId: event.target.id});
             var _this = this;
             this.activity.fetch({
@@ -99,7 +101,7 @@ define([
 
         onReturnToSearch: function(event) {
             $('.returnToSearch').hide();
-            if (this.originalBounds != null) {
+            if (this.activitiesLayer != null) {
                 if (this.activityLayer != null && this.map.hasLayer(this.activityLayer)) {
                     this.map.removeLayer(this.activityLayer);
                     this.activityLayer = null;
@@ -112,10 +114,13 @@ define([
                     this.map.removeLayer(this.activityEnd);
                     this.activityEnd = null
                 }
-                this.map.fitBounds(this.originalBounds);
                 this.map.addLayer(this.activitiesLayer);
+                if (this.originalCenter != null && this.originalZoom != null) {
+                    this.map.setView(this.originalCenter, this.originalZoom, {animate: true});
+                    this.originalCenter = null;
+                    this.originalZoom = null;
+                }
             }
-            this.originalBounds = null;
         }
 
     });

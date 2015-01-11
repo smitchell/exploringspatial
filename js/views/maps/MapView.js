@@ -142,12 +142,7 @@ define([
                 }
 
                 var baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(layerType);
-                if (baseLayer != null) {
-                    this.addLayer(baseLayer);
-                    if (previousLayer != null) {
-                        this.removeLayer(previousLayer);
-                    }
-                }
+                this.switchMapLayers(baseLayer, previousLayer);
             }
         },
 
@@ -177,12 +172,7 @@ define([
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.SATELLITE);
                     }
                 }
-                if (baseLayer != null) {
-                    this.addLayer(baseLayer);
-                    if (previousLayer != null) {
-                        this.removeLayer(previousLayer);
-                    }
-                }
+                this.switchMapLayers(baseLayer, previousLayer);
             }
         },
 
@@ -215,29 +205,30 @@ define([
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.SATELLITE);
                     }
                 }
-                if (baseLayer != null) {
-                    this.addLayer(baseLayer);
-                    if (previousLayer != null) {
-                        this.removeLayer(previousLayer);
+                this.switchMapLayers(baseLayer, previousLayer);
+            }
+        },
+
+        switchMapLayers: function(selectedLayer, previousLayer) {
+            var leafletLayer;
+            if (typeof selectedLayer != 'undefined' && selectedLayer != null) {
+                leafletLayer = selectedLayer.get('leafletLayer');
+                if (!this.map.hasLayer(leafletLayer)) {
+                    this.map.addLayer(leafletLayer);
+                }
+                if (typeof previousLayer != 'undefined' && previousLayer != null) {
+                    leafletLayer = previousLayer.get('leafletLayer');
+                    if (this.map.hasLayer(leafletLayer)) {
+                        this.map.removeLayer(leafletLayer);
                     }
                 }
             }
         },
 
-        addLayer: function (layer) {
-            var leafletLayer = layer.get('leafletLayer');
-            if (!this.map.hasLayer(leafletLayer)) {
-                this.map.addLayer(leafletLayer);
-            }
-        },
-
-        removeLayer: function (layer) {
-            var leafletLayer = layer.get('leafletLayer');
-            if (this.map.hasLayer(leafletLayer)) {
-                this.map.removeLayer(leafletLayer);
-            }
-        },
-
+        /**
+         * Called from parent views.
+         * @returns {*|Array}
+         */
         getMap: function() {
             return this.map;
         }
