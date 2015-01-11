@@ -22,7 +22,24 @@ define([
         },
 
         render: function() {
-            var geojson = L.geoJson(this.collection.toJSON()).addTo(this.map);
+            var popupOptions = {maxWidth: 200};
+            var geojson = L.geoJson(this.collection.toJSON(),{
+                style: function(feature) {
+                    return {
+                        // Doesn't seem to work.
+                        icon: this.startIcon
+                    }
+                },
+                onEachFeature: function(feature, layer) {
+                    var date = new Date(feature.properties.startTime);
+                    var msg = [];
+                    msg.push("<b>" + feature.properties.name + "</b><br/>");
+                    msg.push("Start: " + date.toLocaleDateString() + " " + date.toLocaleTimeString() + "<br/>");
+                    msg.push("Dist: " + Math.round((feature.properties.totalMeters * 0.000621371)*100)/100 + " mi<br/>");
+
+                    layer.bindPopup(msg.join(''), popupOptions);
+                }
+            }).addTo(this.map);
             //this.map.fitBounds(geojson.getBounds());
             this.map.fitBounds([
                 [38.898314, -94.742403],
