@@ -5,7 +5,7 @@ define([
     'models/Activity',
     'views/maps/MapView',
     'views/maps/ActivityMapLayerView',
-    'text!templates/demos/Demo5RightSideView.html'
+    'text!templates/ActivityRightSideView.html'
 ], function ($, _,
              Backbone,
              Activity,
@@ -26,7 +26,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
+            this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight, model: this.model.toJSON()}));
             var props = this.model.get('properties');
             var centerLat = (props.get('minLat') + props.get('maxLat')) / 2;
             var centerLon = (props.get('minLon') + props.get('maxLon')) / 2;
