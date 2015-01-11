@@ -55,11 +55,14 @@ define([
         onPopupOpen: function(event) {
             var popup = event.popup;
             var _self = this;
-            $(popup._container).on('click','.popupTrigger', function(event) {_self.onOpenActivity(event);});
+            $(popup._container).on('click','.popupTrigger', function(event) {_self.onOpenActivity(event, popup);});
 
         },
 
-        onOpenActivity: function(event) {
+        onOpenActivity: function(event, popup) {
+            var location = popup._latlng;
+            this.map.closePopup(popup);
+            this.originalBounds = this.map.getBounds();
             this.activity = new Activity({activityId: event.target.id});
             var _this = this;
             this.activity.fetch({
@@ -70,7 +73,6 @@ define([
         },
 
         renderActivity: function() {
-            this.originalBounds = this.map.getBounds();
             $('.returnToSearch').show();
             if (this.map.hasLayer(this.collectionLayer)) {
                 this.map.removeLayer(this.collectionLayer);
