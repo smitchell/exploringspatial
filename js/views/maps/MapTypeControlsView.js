@@ -30,6 +30,26 @@ define([
             this.$el.html(html);
         },
 
+        isTypeSelected: function(overlayType) {
+            var result;
+            switch(overlayType) {
+                case MapLayer.SATELLITE: {
+                    result = this.$('.map-type-satellite').hasClass('selected');
+                    break;
+                }
+                case MapLayer.ROAD: {
+                    result = this.$('.map-type-map').hasClass('selected');
+                    break;
+                }
+                default:
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        },
+
         /**
          * The purpose of the onToggleSelected function is to first collapse any other
          * open menus by calling ON_MENU_STATE_CHANGE, and then expand the .map-menu div.

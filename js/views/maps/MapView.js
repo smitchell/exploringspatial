@@ -99,6 +99,7 @@ define([
             var $target = args.target;
             var mapControlsDiv = $(this.mapControls);
             mapControlsDiv.find('.provider .map-btn:first-child').html($target.text() + '<span class="arrow-down"></span>');
+
             var previousProvider = this.collection.getSelectedProvider();
             var previousLayer = null;
             if (previousProvider != null) {
@@ -106,21 +107,40 @@ define([
             }
             var selectedProvider =  null;
             if ($target.hasClass('map-provider-google')){
+                if (previousProvider.get('name') ==  MapProvider.GOOGLE) {
+                    return;
+                }
                 selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             } else if ($target.hasClass('map-provider-osm')){
+                if (previousProvider.get('name') ==  MapProvider.OSM) {
+                    return;
+                }
                 selectedProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
             } else if ($target.hasClass('map-provider-bing')){
+                if (previousProvider.get('name') ==  MapProvider.BING) {
+                    return;
+                }
                 selectedProvider = this.collection.changeCurrentProvider(MapProvider.BING);
             }
             if (selectedProvider != null) {
                 var layerType = MapLayer.ROAD;
-                if (previousLayer != null) {
-                    layerType = previousLayer.get('type');
-                    // Preserve type or overlay if supported by the new map provider.
-                    if (!selectedProvider.supportsLayerType(layerType)) {
-                        layerType = MapLayer.ROAD;
+
+                if (this.mapOverlayControlsView.isOverlaySelected(MapLayer.TERRAIN)) {
+                    if (selectedProvider.supportsLayerType(MapLayer.TERRAIN)) {
+                        layerType = MapLayer.TERRAIN;
+                    }
+                } else if (this.mapOverlayControlsView.isOverlaySelected(MapLayer.HYBRID)) {
+                    if (selectedProvider.supportsLayerType(MapLayer.HYBRID)) {
+                        layerType = MapLayer.HYBRID;
+                    } else {
+                        layerType = MapLayer.SATELLITE;
+                    }
+                } else if (this.mapTypeControlsView.isTypeSelected(MapLayer.SATELLITE)) {
+                    if (selectedProvider.supportsLayerType(MapLayer.SATELLITE)) {
+                        layerType = MapLayer.SATELLITE;
                     }
                 }
+
                 var baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(layerType);
                 if (baseLayer != null) {
                     this.addLayer(baseLayer);
@@ -142,9 +162,15 @@ define([
             if (selectedProvider != null) {
                 var baseLayer = null;
                 if ($target.hasClass('map-type-map')) {
+                    if (previousLayer.get('type') ==  MapProvider.ROAD) {
+                        return;
+                    }
                     baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
                 } else {
                     var labelsSelected = $(this.mapControls).find('.map-layer-labels').hasClass('selected');
+                    if (previousLayer.get('type') ==  MapProvider.HYBRID) {
+                        return;
+                    }
                     if (labelsSelected && selectedProvider.supportsLayerType(MapLayer.HYBRID)) {
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.HYBRID);
                     } else {
@@ -172,12 +198,18 @@ define([
                 var baseLayer = null;
                 if ($target.hasClass('map-layer-terrain')) {
                     if ($target.hasClass('selected')) {
+                        if (previousLayer.get('type') ==  MapProvider.TERRAIN) {
+                            return;
+                        }
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.TERRAIN);
                     } else {
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
                     }
                 } else if ($target.hasClass('map-layer-labels')) {
                     if ($target.hasClass('selected')) {
+                        if (previousLayer.get('type') ==  MapProvider.HYBRID) {
+                            return;
+                        }
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.HYBRID);
                     } else {
                         baseLayer = selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.SATELLITE);

@@ -32,6 +32,30 @@ define([
             this.toggleVisibility();
         },
 
+        isOverlaySelected: function(overlayType) {
+            var result;
+            switch(overlayType) {
+                case MapLayer.TERRAIN: {
+                    result = this.$('.map-layer-terrain').hasClass('selected');
+                    break;
+                }
+                case MapLayer.HYBRID: {
+                    result = this.$('.map-layer-labels').hasClass('selected');
+                    break;
+                }
+                case MapLayer.TRAILS: {
+                    result = this.$('.map-layer-bicycle').hasClass('selected');
+                    break;
+                }
+                default:
+                {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        },
+
         /**
          * The purpose of this function is to show or hide overlay options
          * depending on what the map provider supports.
@@ -44,22 +68,32 @@ define([
                     var $terrain = this.$('.map-layer-terrain');
                     var $labels = this.$('.map-layer-labels');
                     this.$('.overlay-item').parent().hide();
-                    if (mapProvider.supportsLayerType(MapLayer.TERRAIN)) {
-                        var isSatelliteSelected = mapLayer.get('type') == MapLayer.SATELLITE;
-                        var isHybridSelected = mapLayer.get('type') == MapLayer.HYBRID;
-                        var supportsHybrid = mapProvider.supportsLayerType(MapLayer.HYBRID);
-                        if ((isSatelliteSelected || isHybridSelected) && supportsHybrid) {
-                            $labels.parent().show()
-                        } else {
-                            $terrain.parent().show();
-                        }
-                    }
-
 
                     var $bicycle = this.$('.map-layer-bicycle');
                     if (mapProvider.supportsLayerType(MapLayer.TRAILS)) {
                         $bicycle.parent().show();
                     }
+                    switch (mapLayer.get('type')) {
+                        case MapLayer.ROAD: {
+                            if (this.isOverlaySelected(MapLayer.HYBRID)) {
+                                $labels.removeClass('selected');
+                            }
+                            if (mapProvider.supportsLayerType(MapLayer.TERRAIN)) {
+                                $terrain.parent().show()
+                            }
+                            break;
+                        }
+                        case MapLayer.SATELLITE: {
+                            if (this.isOverlaySelected(MapLayer.TERRAIN)) {
+                                $terrain.removeClass('selected');
+                            }
+                            if (mapProvider.supportsLayerType(MapLayer.HYBRID)) {
+                                $labels.parent().show()
+                            }
+                            break;
+                        }
+                    }
+
                 }
             }
         },
