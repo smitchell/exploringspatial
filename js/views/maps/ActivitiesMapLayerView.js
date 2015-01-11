@@ -5,7 +5,7 @@ define([
     'underscore',
     'backbone',
     'models/Activity',
-    'leaflet'
+    'leaflet_markercluster'
 ], function(_, Backbone, Activity) {
 
     var ActivityMapLayerView = Backbone.View.extend({
@@ -27,16 +27,18 @@ define([
         },
 
         render: function() {
-            var popupOptions = {maxWidth: 200};
             var _self = this;
-            this.collectionLayer = L.geoJson(this.collection.toJSON(),{
+            geoJsonLayer = L.geoJson(this.collection.toJSON(),{
                 onEachFeature: _self.onEachFeature
-            }).addTo(this.map);
+            });
             //this.map.fitBounds(geojson.getBounds());
             this.map.fitBounds([
-                [38.898314, -94.742403],
-                [38.941923, -94.667372]
+                [34.452218, -97.998047],
+                [42.098222, -77.036133]
             ]);
+            this.activitiesLayer = L.markerClusterGroup();
+            this.activitiesLayer.addLayer(geoJsonLayer);
+            this.map.addLayer(this.activitiesLayer);
             this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
             $('.returnToSearch').on('click', '.returnTrigger', function(event){_self.onReturnToSearch(event)});
         },
@@ -74,8 +76,8 @@ define([
 
         renderActivity: function() {
             $('.returnToSearch').show();
-            if (this.map.hasLayer(this.collectionLayer)) {
-                this.map.removeLayer(this.collectionLayer);
+            if (this.map.hasLayer(this.activitiesLayer)) {
+                this.map.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
             this.map.fitBounds([
@@ -111,7 +113,7 @@ define([
                     this.activityEnd = null
                 }
                 this.map.fitBounds(this.originalBounds);
-                this.map.addLayer(this.collectionLayer);
+                this.map.addLayer(this.activitiesLayer);
             }
             this.originalBounds = null;
         }

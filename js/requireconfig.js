@@ -9,6 +9,7 @@ var require = {
         json2: 'json2',
         leaflet_google: 'leaflet/plugins/patel_shramov/tile/Google',
         leaflet_bing: 'leaflet/plugins/patel_shramov/tile/Bing',
+        leaflet_markercluster: 'leaflet/plugins/leaflet.markercluster-src',
         apps: '../apps',
         collections: '../collections',
         models: '../models',
@@ -26,12 +27,13 @@ var require = {
         'leaflet': {
             exports: 'L'
         },
-
         'leaflet_google': {
             deps: ['leaflet']
         },
-
         'leaflet_bing': {
+            deps: ['leaflet']
+        },
+        'leaflet_markercluster': {
             deps: ['leaflet']
         }
     }
