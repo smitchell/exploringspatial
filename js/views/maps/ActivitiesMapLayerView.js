@@ -82,6 +82,7 @@ define([
                 this.map.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
+            $('#container2').find('h1:first').html(props.get('name'));
             this.map.fitBounds([
                 [props.get('minLat'), props.get('minLon')],
                 [props.get('maxLat'), props.get('maxLon')]
@@ -91,6 +92,7 @@ define([
                 weight: 3,
                 opacity: 0.6
             };
+
             this.activityLayer = L.geoJson(this.activity.toJSON(), {style: style}).addTo(this.map);
             var polyline = this.activity.get('geometry').get('coordinates');
             var startPoint = polyline[0];
@@ -120,6 +122,7 @@ define([
                     this.originalCenter = null;
                     this.originalZoom = null;
                 }
+                $('#container2').find('h1:first').html('My Activities Search Results');
             }
         }
 
