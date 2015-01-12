@@ -1,12 +1,12 @@
 /**
- * RssEntries is a Backbone Collection of RssEntry Backbone Models.
- * Each model represents a single entry from an RSS feed.
+ * Activities is a Backbone Collection of Activity Backbone Models.
+ * Each model represents a single activity from a Garmin device..
  */
 define([
         'backbone',
         'models/Activity'
 ], function(Backbone, Activity) {
-var RssEntries = Backbone.Collection.extend({
+var Activities = Backbone.Collection.extend({
 	url: "activities",
 	model: Activity,
 
@@ -37,5 +37,5 @@ var RssEntries = Backbone.Collection.extend({
 
 });
 
-    return RssEntries;
+    return Activities;
 });
