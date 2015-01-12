@@ -1,5 +1,5 @@
 /**
- * The purpose of the MapZoomControlsView is render an activity polyline on a map.
+ * The purpose of the ActivityMapLayerView is render an activity polyline on a map.
  */
 define([
     'underscore',
