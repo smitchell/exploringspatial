@@ -12,6 +12,7 @@ define([
 
         initialize: function(args) {
             this.map = args.map;
+            this.activitiesLayer = null;
             this.originalCenter = null;
             this.originalZoom = null;
             this.activityLayer = null;
@@ -24,24 +25,33 @@ define([
             }});
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
+
+            this.activitySearch = args.activitySearch;
+            this.activitySearch.on('change:name', this.render, this);
             this.render();
         },
 
         render: function() {
+            if (this.activitiesLayer != null && this.map.hasLayer(this.activitiesLayer)) {
+                this.map.removeLayer(this.activitiesLayer);
+            }
             var _self = this;
             geoJsonLayer = L.geoJson(this.collection.toJSON(),{
+                filter: function(feature, layers) {
+                    var name = _self.activitySearch.get('name').toLowerCase();
+                    if (name != null && name.length > 0 && typeof feature.properties.name != 'undefined') {
+                        return feature.properties.name.toLowerCase().indexOf(name) > -1;
+                    }
+                    return true;
+                },
                 onEachFeature: _self.onEachFeature
             });
-            //this.map.fitBounds(geojson.getBounds());
-            this.map.fitBounds([
-                [34.452218, -97.998047],
-                [42.098222, -77.036133]
-            ]);
             this.activitiesLayer = L.markerClusterGroup();
             this.activitiesLayer.addLayer(geoJsonLayer);
             this.map.addLayer(this.activitiesLayer);
             this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
             $('.returnToSearch').on('click', '.returnTrigger', function(event){_self.onReturnToSearch(event)});
+            this.map.fitBounds(this.activitiesLayer.getBounds(), {maxZoom: 10});
         },
 
         onEachFeature: function(feature, layer) {

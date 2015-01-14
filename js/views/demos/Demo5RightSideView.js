@@ -28,7 +28,7 @@ define([
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
             this.mapView = new MapView();
-            new ActivitiesMapLayerView({collection: this.collection, map: this.mapView.getMap()});
+            new ActivitiesMapLayerView({collection: this.collection, map: this.mapView.getMap(), activitySearch: this.mapView.activitySearch});
         }
     });
     return Demo5RightSideView;

@@ -3,6 +3,7 @@ define([
     'backbone',
     'leaflet',
     'apps/MapEventDispatcher',
+    'models/ActivitySearch',
     'models/MapProvider',
     'models/MapLayer',
     'models/BingMapProvider',
@@ -18,6 +19,7 @@ define([
 ], function (_, Backbone,
              L,
              MapEventDispatcher,
+             ActivitySearch,
              MapProvider,
              MapLayer,
              BingMapProvider,
@@ -67,6 +69,9 @@ define([
                 new OsmMapProvider({dispatcher: this.dispatcher})
                 ]);
 
+            // Define search criteria for the user to filter the collection
+            this.activitySearch = new ActivitySearch();
+
             // Pick a default selected map provider to start with.
             var selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
@@ -86,8 +91,9 @@ define([
             var mapControlsDiv = $(this.mapControls);
             new MapSearchView({
                 el: $('#searchBox'),
+                model: this.activitySearch,
                 location: this.location,
-                collection: this.collection,
+                mapProviders: this.collection,
                 dispatcher: this.dispatcher
             });
             new MapZoomControlsView({

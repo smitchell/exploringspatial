@@ -17,12 +17,12 @@ define([
         initialize: function(args) {
             this.template = _.template(templateHtml);
             this.location = args.location;
-            this.collection = args.collection;
+            this.mapProviders = args.mapProviders;
             this.render();
         },
 
         render: function() {
-            var html = this.template();
+            var html = this.template(this.model.toJSON());
             jQuery(this.el).html(html);
         },
 
@@ -31,37 +31,52 @@ define([
             // No searching while a search is in progress
             if ($searchButtonProgress.is(':hidden')) {
                 // No searching until you have something to search for.
-                var query = this.$('.location').val();
-                if (query.length > 0) {
-                    // Show the search in progress indicator
-                    $searchButtonProgress.show();
-
-                    // Throw out things that don't belong in a keyword search.
-                    query = query.split('<').join('');
-                    query = query.split('>').join('');
-                    query = query.split('/').join('');
-
-                    var geoCoder = this.collection.getSelectedProvider().getGeoCoder();
-
-                    // Clear the previous search results
-                    geoCoder.clear({silent: true});
-
-                    // Execute the search. If the query is successful the MapView will be notified
-                    // because it is bound to the Location model sync event.
-                    geoCoder.set('query', query);
-                    var _self = this;
-                    geoCoder.fetch({
-                        success: function () {
-                            _self.location.set(geoCoder.toJSON());
-                            _self.location.trigger('sync');
-                        },
-                        complete: function() {
-                            $('#searchButtonProgress').hide();
-                            $('.location').val('');
-                        }
-                    });
+                var location = this.$('.location').val();
+                if (location.length > 0) {
+                    this.changeLocation(location);
+                }
+                var keyword = this.$('#keyword').val();
+                if (keyword.length > 0) {
+                    this.model.set('name', keyword);
                 }
             }
+        },
+
+        changeLocation: function(location) {
+            var $searchButtonProgress = this.$('#searchButtonProgress');
+            // Show the search in progress indicator
+            $searchButtonProgress.show();
+
+            // Throw out things that don't belong in a keyword search.
+            location = this.scrubInput(location);
+
+            var geoCoder = this.mapProviders.getSelectedProvider().getGeoCoder();
+
+            // Clear the previous search results
+            geoCoder.clear({silent: true});
+
+            // Execute the search. If the query is successful the MapView will be notified
+            // because it is bound to the Location model sync event.
+            geoCoder.set('query', location);
+            var _self = this;
+            geoCoder.fetch({
+                success: function () {
+                    _self.location.set(geoCoder.toJSON());
+                    _self.location.trigger('sync');
+                },
+                complete: function() {
+                    $searchButtonProgress.hide();
+                    $('.location').val('');
+                    this.search(); // are there keywords too?
+                }
+            });
+        },
+
+        scrubInput: function(value) {
+            var scrubbed = location.split('<').join('');
+            scrubbed = scrubbed.split('>').join('');
+            scrubbed = scrubbed.split('/').join('');
+            return scrubbed;
         },
 
         searchOnEnter: function(e) {
