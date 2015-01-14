@@ -5,24 +5,13 @@
     <p>This map is the demo for my blog post
     "<a href="https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet/" target="_blank">Rendering a GeoJSON layer in Leaflet</a>."
     The route on the map is from my <a href="http://connect.garmin.com/modern/activity/155155867" target="_blank" >Garmin activity for the 2012 Little Rock Marathon</a>.</p>
-    <div id="detailsContentWrapper" class="detailsContentWrapper">
         <div id="detailsMapBox" class="detailsBox">
-            <div class="detailsBoxTitle map">Map</div>
-            <div class="detailsBoxCollapseArea">
-                <div class="map-controls">
-                    <ul class="map-control-item map-zoom"></ul>
-                    <div class="map-control-item map-select map-provider"></div>
-                    <div class="map-control-item map-select map-type"></div>
-                    <div class="map-control-item map-select map-layers"></div>
-                </div>
-                <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
-                <div class="detailsBoxControls" id="lapToggle" style="">
-                    <input id="showLapMarkers" type="checkbox" name="showLapMarkers" class="toggle_laps">
-                    <label for="showLapMarkers">
-                        Laps
-                    </label>
-                </div>
+            <div class="map-controls">
+                <ul class="map-control-item map-zoom"></ul>
+                <div class="map-control-item map-select map-provider"></div>
+                <div class="map-control-item map-select map-type"></div>
+                <div class="map-control-item map-select map-layers"></div>
             </div>
+            <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
         </div>
-    </div>
 </div>

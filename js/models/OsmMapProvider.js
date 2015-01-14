@@ -6,9 +6,10 @@
 define([
     'models/MapProvider',
     'models/MapLayer',
+    'models/OsmGeoCoder',
     'collections/MapLayers',
     'leaflet'
-], function (MapProvider, MapLayer, MapLayers) {
+], function (MapProvider, MapLayer, OsmGeoCoder, MapLayers, L) {
     var OsmMapProvider = MapProvider.extend({
 
         /**
@@ -53,6 +54,10 @@ define([
                 leafletLayer: new L.tileLayer('http://oatile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', satelliteOptions)
             });
             this.get('mapLayers').set(osmLayers);
+        },
+
+        getGeoCoder: function() {
+            return new OsmGeoCoder();
         }
     });
 

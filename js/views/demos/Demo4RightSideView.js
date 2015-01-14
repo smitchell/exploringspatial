@@ -28,12 +28,11 @@ define([
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
             var props = this.model.get('properties');
-            var centerLat = (props.get('minLat') + props.get('maxLat')) / 2;
-            var centerLon = (props.get('minLon') + props.get('maxLon')) / 2;
-            var mapOptions = {
-                center: [centerLat, centerLon]
-            };
-            this.mapView = new MapView({mapOptions: mapOptions});
+            var args = {
+                lat: (props.get('minLat') + props.get('maxLat')) / 2,
+                lon: (props.get('minLon') + props.get('maxLon')) / 2
+            }
+            this.mapView = new MapView();
             new ActivityMapLayerView({model: this.model, map: this.mapView.getMap()});
         }
     });

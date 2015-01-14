@@ -4,9 +4,8 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/maps/MapZoomControlsView.html',
     'leaflet'
-], function(_, Backbone, templateHtml) {
+], function(_, Backbone, L) {
 
     var ActivityMapLayerView = Backbone.View.extend({
 

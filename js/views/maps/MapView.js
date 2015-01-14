@@ -1,25 +1,31 @@
 define([
     'underscore',
     'backbone',
+    'leaflet',
     'apps/MapEventDispatcher',
     'models/MapProvider',
     'models/MapLayer',
     'models/BingMapProvider',
     'models/OsmMapProvider',
     'models/GoogleMapProvider',
+    'models/Location',
     'collections/MapProviders',
+    'views/maps/MapSearchView',
     'views/maps/MapZoomControlsView',
     'views/maps/MapProviderControlsView',
     'views/maps/MapTypeControlsView',
     'views/maps/MapOverlayControlsView'
 ], function (_, Backbone,
+             L,
              MapEventDispatcher,
              MapProvider,
              MapLayer,
              BingMapProvider,
              OsmMapProvider,
              GoogleMapProvider,
+             Location,
              MapProviders,
+             MapSearchView,
              MapZoomControlsView,
              MapProviderControlsView,
              MapTypeControlsView,
@@ -35,26 +41,55 @@ define([
             if (typeof args != 'undefined' && typeof args.mapOptions != 'undefined') {
                 this.mapOptions = args.mapOptions;
             }
+
+            // Allow caller to override Location default values.
+            if (typeof args == 'undefined') {
+                this.location = new Location();
+            } else {
+                if (typeof args.lat != 'undefined' && typeof args.lat != 'undefined') {
+                    this.location = new Location({lat: args.lat, lon: args.lat});
+                }
+                if (typeof args.zoom != 'undefined') {
+                    this.location.set({zoom: args.zoom});
+                }
+            }
+
+            // listen for location changes from the map search view.
+            this.location.on('sync', this.syncMapLocation, this);
+
+            // Create a global dispatcher for non model/collection events.
             this.dispatcher = MapEventDispatcher;
+
+            // Define the base tile map providers. These views are wrappers around Leaflet map layer plugins.
             this.collection = new MapProviders([
                 new BingMapProvider({dispatcher: this.dispatcher}),
                 new GoogleMapProvider({dispatcher: this.dispatcher}),
                 new OsmMapProvider({dispatcher: this.dispatcher})
                 ]);
 
+            // Pick a default selected map provider to start with.
             var selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
             this.render();
         },
 
         render: function () {
+            // Fetch the selected map provider and set-up the map.
             var selectedProvider = this.collection.getSelectedProvider();
             var baseLayer = selectedProvider.get('mapLayers').getSelectedBaseLayer();
             this.mapOptions.zoomControl = false;
             this.mapOptions.layers = [baseLayer.get('leafletLayer')];
             this.map = L.map(this.mapContainer, this.mapOptions);
-            var mapControlsDiv = $(this.mapControls);
+            this.syncMapLocation(); // Uses this.location to pan/zoom the map.
 
+            // Set-up the custom map controls
+            var mapControlsDiv = $(this.mapControls);
+            new MapSearchView({
+                el: $('#searchBox'),
+                location: this.location,
+                collection: this.collection,
+                dispatcher: this.dispatcher
+            });
             new MapZoomControlsView({
                 el: mapControlsDiv.find('.map-zoom'),
                 map: this.map
@@ -72,6 +107,8 @@ define([
                 collection: this.collection,
                 dispatcher: this.dispatcher
             });
+
+            // Wire up the view event handlers.
             this.dispatcher.on(this.dispatcher.Events.ON_MENU_STATE_CHANGE, this.closeAllMenus, this);
             this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CLICKED, this.onProviderClicked, this);
             this.dispatcher.on(this.dispatcher.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
@@ -221,6 +258,21 @@ define([
                     if (this.map.hasLayer(leafletLayer)) {
                         this.map.removeLayer(leafletLayer);
                     }
+                }
+            }
+        },
+
+        syncMapLocation: function() {
+            if (this.location != null) {
+                var lat = this.location.get('lat');
+                var lon = this.location.get('lon');
+                var zoom = 10;
+                if (this.location.get('zoom') != null) {
+                    zoom = this.location.get('zoom');
+                }
+                if (lat != null && lon != null) {
+                    var center = L.latLng(lat, lon);
+                    this.map.setView(center, zoom);
                 }
             }
         },

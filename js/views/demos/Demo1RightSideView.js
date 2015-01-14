@@ -32,7 +32,7 @@ define([
             });
             var googleLayer = new L.Google('ROADMAP');
             var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
-            var map = L.map('map', {
+            var map = L.map('map_container', {
                 center: [51.505, -0.09],
                 zoom: 13,
                 layers: [googleLayer]

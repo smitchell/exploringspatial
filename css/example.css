@@ -16,7 +16,6 @@ html, body, div, h1, h2, h3, h4, h5, h6, ul, ol, dl, li, dt, dd, p, blockquote, 
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    background: #eeeeee url(images/details-box-bg.png) repeat-x;
     margin-bottom: 10px;
 }
 
@@ -24,37 +23,7 @@ body {
     font: 13px 'lucida grande', arial, tahoma, verdana, sans-serif;
 }
 
-.detailsBoxTrigger.expanded {
-    background-position: -5px -305px;
-}
-
-.detailsBoxTrigger {
-    position: relative;
-    width: 22px;
-    height: 22px;
-    background: url(images/details-icons-common.png) no-repeat -5px -305px;
-    cursor: pointer;
-    float: left;
-    z-index: 100;
-}
-
-.detailsBoxTitle.map {
-    background-position: -8px -5px;
-}
-
-.detailsBoxTitle {
-    font: bold 13px/22px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
-    margin-left: 28px;
-    padding-left: 24px;
-    background: url(images/details-icons.png) no-repeat -8px -5px;
-}
-
-.detailsBoxCollapseArea {
-    position: relative;
-    margin-top: 7px;
-}
-
-.detailMap {
+#map_container {
     border: 1px solid #c8c8c8;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -62,7 +31,7 @@ body {
     position: relative;
 }
 
-.detailsBoxControls {
+.returnToSearch {
     text-align: right;
     position: absolute;
     top: -25px;
@@ -73,4 +42,330 @@ body {
 
 .map-menu {
     margin-top: 0;
+}
+
+.simpleSearchContainer {
+    position: relative;
+    height: 67px;
+    left: 2px;
+}
+
+.searchFieldContainer {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #262626;
+    text-shadow: #fff 0 1px 0;
+}
+
+.searchFields {
+    float: left;
+    width: 295px;
+}
+
+.searchHeader {
+    position: relative;
+    padding-bottom: 2px;
+    font-size: 11px;
+}
+
+.searchFieldDesc {
+    position: relative;
+    font-size: 10px;
+    color: #7f7f7f;
+    padding-top: 1px;
+}
+
+.searchFieldDesc a {
+    cursor: pointer;
+}
+
+input.searchField {
+    width: 282px;
+    height: 20px;
+    font-size: 13px;
+    border: 1px solid #8c8c8c;
+    padding-top: 4px;
+    padding-left: 4px;
+    background: url(images/search-field-bg.png) repeat-x;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.advancedSearchTrigger {
+    float: left;
+    width: 120px;
+    height: 30px;
+    text-align: center;
+    font-size: 11px;
+    position: relative;
+    top: 15px;
+}
+
+#showFilters {
+    background-position: 0 0;
+}
+
+#hideFilters {
+    background-position: 0 -30px;
+}
+
+.advancedSearchTrigger a{
+    color: #787878;
+    text-decoration: none;
+    display: block;
+    padding-bottom: 15px;
+}
+
+.advancedSearchTrigger a:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#searchButton {
+    float: left;
+    font-weight:bold;
+    position: relative;
+    top: 16px;
+}
+
+/* @end */
+
+.searchButton {
+    cursor: pointer;
+    width: 90px;
+    line-height: 26px;
+    background: url(images/button-bg-r.png) no-repeat right 0;
+    text-align: center;
+    font-size: 13px;
+    padding: 0 5px 0 0;
+}
+
+.searchButton a {
+    position: relative;
+    height: 28px;
+    display: block;
+    white-space: nowrap;
+    padding: 0 0 0 7px;
+    background: url(images/button-bg-l.png) no-repeat left 0;
+    text-decoration: none;
+    text-shadow: #fff 0 1px 0;
+    color: #262626;
+}
+
+.searchButton:hover {
+    background-position: right -30px;
+}
+
+.searchButton:hover a {
+    background-position: left -30px;
+}
+
+.searchButton:active {
+    background-position: right -60px;
+}
+
+.searchButton:active a {
+    background-position: left -60px;
+}
+
+/* @group Advanced Search */
+
+/*.searchBoxAdvanced {
+	position: relative;
+	width: 950px;
+	height: 200px;
+	margin-bottom: 14px;
+	background: url(images/search-box-bg-l.png) no-repeat;
+}*/
+
+.searchOptionsContainer {
+    position: relative;
+    left: 50%;
+    margin-left: -475px;
+    width: 950px;
+    height: 105px;
+    padding-top: 15px;
+}
+
+.courseAdvancedOptionsContainer {
+    position: relative;
+    left: 50%;
+    margin-left: -475px;
+    width: 950px;
+    height: 65px;
+    padding-top: 15px;
+}
+
+.searchOptionsColumn {
+    float: left;
+    width: 351px;
+    _width: 361px;
+    padding-left: 15px;
+    font-size: 12px;
+    text-shadow: #fff 0 1px 0;
+}
+
+.courseAdvancedOptionsColumn {
+    float: left;
+    width: 351px;
+    _width: 361px;
+    padding-left: 300px;
+    font-size: 12px;
+    text-shadow: #fff 0 1px 0;
+}
+
+.searchOptionsLabel {
+    float: left;
+    width: 130px;
+    height: 22px;
+    clear: left;
+    padding-top: 3px;
+}
+
+.searchOptionsField {
+    float: left;
+    width: 200px;
+    _width: 195px;
+    text-shadow: #fff 0 1px 0;
+    padding-bottom: 5px;
+}
+
+.searchOptionsField select {
+    font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
+    font-size: 12px;
+    width: 197px;
+    _width: 192px;
+}
+
+.searchOptionsField input {
+    font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
+    font-size: 12px;
+    height: 15px;
+    _height: 21px;
+    width: 35px;
+    padding-left: 1px;
+    margin-left: 2px;
+}
+
+.searchOptionsField input.largeInput {
+    font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
+    font-size: 12px;
+    height: 15px;
+    _height: 20px;
+    width: 120px;
+    padding-left: 1px;
+}
+
+.searchOptionsField input.checkbox {
+    width: 20px;
+}
+
+#myField {
+    padding-top: 5px;
+}
+
+.customDates  {
+    float: left;
+    z-index: 995;
+}
+
+.customDates input {
+    width: 70px;
+}
+
+.customDates span {
+    position: relative;
+    top: -1px;
+    _left: -3px;
+}
+
+.searchOptionsField .checkbox {
+    width: 14px;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+.searchOptionsField.disabled {
+    color: #999999;
+}
+
+.parent {
+    font-weight: bold;
+    padding-top: 3px;
+    color:red;
+}
+
+.child {
+    padding-left: 10px;
+}
+
+/* @end */
+
+#searchButtonProgress {
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    bottom: 2px;
+    _bottom: -10px;
+    left: 8px;
+    background: url(images/search-progress.gif) no-repeat;
+}
+
+.startDateCalendar {
+    position: relative;
+    left: 100px;
+    top: 100px;
+}
+
+.endDateCalendar {
+    position: relative;
+    left: 300px;
+    top: 100px;
+}
+
+.customDates table.startDateDisplay {
+    *margin-left: -130px;
+    _margin-left: -180px;
+    *margin-top: -238px;
+    _margin-top: -192px;
+}
+
+.customDates table.endDateDisplay {
+    *margin-left: 0px;
+    _margin-left: 93px;
+    *margin-top: -238px;
+    _margin-top: -192px;
+}
+
+.globalSearch {
+    position: absolute;
+    left: 691px;
+    top: 35px;
+    cursor: pointer;
+}
+
+/* Safari Custom Date fix */
+
+@media screen and (-webkit-min-device-pixel-ratio:0){
+
+    html {
+        list-style-image:none;
+    }
+
+    .customDates input  {
+        width: 65px;
+    }
+
+    .customDates table.endDateDisplay {
+        margin-left: -235px;
+        margin-top: 0px;
+    }
+
+    .customDates table.startDateDisplay {
+        margin-left: -130px;
+        margin-top: 0px;
+    }
 }

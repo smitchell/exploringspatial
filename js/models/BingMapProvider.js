@@ -6,9 +6,10 @@
 define([
     'models/MapProvider',
     'models/MapLayer',
+    'models/BingGeoCoder',
     'collections/MapLayers',
     'leaflet_bing'
-], function (MapProvider, MapLayer, MapLayers) {
+], function (MapProvider, MapLayer, BingGeoCoder, MapLayers) {
     var BingMapProvider = MapProvider.extend({
 
         /**
@@ -48,6 +49,10 @@ define([
                 leafletLayer: new L.BingLayer(this.get('key'), satelliteOptions)
             });
             this.get('mapLayers').set(bingLayers);
+        },
+
+        getGeoCoder: function() {
+            return new BingGeoCoder({key: this.get('key')});
         }
     });
 

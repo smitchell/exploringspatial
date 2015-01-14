@@ -2,21 +2,17 @@
     <h1 style="color: white;">My Activities Search Results</h1>
 </div>
 <div id="container3">
-        <div id="detailsContentWrapper" class="detailsContentWrapper">
-        <div id="detailsMapBox" class="detailsBox">
-            <div class="detailsBoxTitle map">Map</div>
-            <div class="detailsBoxCollapseArea">
-                <div class="map-controls">
-                    <ul class="map-control-item map-zoom"></ul>
-                    <div class="map-control-item map-select map-provider"></div>
-                    <div class="map-control-item map-select map-type"></div>
-                    <div class="map-control-item map-select map-layers"></div>
-                </div>
-                <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
-                <div class="detailsBoxControls returnToSearch" style="display: none">
-                    <a class="returnTrigger" href="javascript:void(0);">Return to Search</a>
-                </div>
-            </div>
+    <div id="searchBox"></div>
+    <div id="detailsMapBox" class="detailsBox">
+        <div class="map-controls">
+            <ul class="map-control-item map-zoom"></ul>
+            <div class="map-control-item map-select map-provider"></div>
+            <div class="map-control-item map-select map-type"></div>
+            <div class="map-control-item map-select map-layers"></div>
+        </div>
+        <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
+        <div class="returnToSearch" style="display: none">
+            <a class="returnTrigger" href="javascript:void(0);">Return to Search</a>
         </div>
     </div>
 </div>

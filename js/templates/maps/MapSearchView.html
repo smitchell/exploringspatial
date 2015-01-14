@@ -1,0 +1,64 @@
+<div id="searchBox" class="activitiesSearchBox" style="">
+    <div class="simpleSearchContainer">
+        <div class="searchFieldContainer">
+            <div class="searchFields">
+                <div class="searchHeader">Search:</div>
+                <input id="keyword" type="text" name="keywords" class="searchField" />
+
+                <div class="searchFieldDesc">
+                    Word(s) from the name.
+                </div>
+            </div>
+            <div class="searchFields">
+                <div class="searchHeader">
+                    <div class="searchLocation">Place:</div>
+                    <input type="text" name="location" class="searchField location"/>
+                    <div class="searchFieldDesc" style="width:450px;">
+                        City, State, etc..
+                    </div>
+                </div>
+            </div>
+            <div id="searchButton" class="searchButton">
+                <a>Search</a>
+
+                <div id="searchButtonProgress" style="display: none;"></div>
+            </div>
+            <div id="showFilters" class="advancedSearchTrigger">
+                <a>Show More Options</a>
+            </div>
+            <div id="hideFilters" class="advancedSearchTrigger" style="display: none;">
+                <a>Hide Filters</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="expandedSearchFilters" style="display: none;">
+        <div class="searchOptionsContainer" style="">
+            <div class="searchOptionsColumn">
+                <div class="searchOptionsLabel">Display name:</div>
+                <div class="searchOptionsField" id="usernameField">
+                    <input type="text" name="displayName" class="largeInput">
+                </div>
+                <div class="searchOptionsLabel"></div>
+                <div class="searchOptionsField">
+                </div>
+            </div>
+
+            <div class="searchOptionsColumn">
+
+                <div class="searchOptionsLabel">Miles:</div>
+                <div class="searchOptionsField"><input id="search_min_distance" type="text" name="searchMinDistance"
+                                                         title="Min"> -<input id="search_max_distance" type="text"
+                                                                              name="searchMaxDistance" title="Max">
+                    Miles
+                </div>
+                <div class="searchOptionsLabel">Altitude Gain:</div>
+                <div class="searchOptionsField"><input id="search_min_elevation_gain" type="text"
+                                                         name="searchMinElevationGain" title="Min"> -<input
+                        id="search_max_elevation_gain" type="text" name="searchMaxElevationGain" title="Max"> Feet
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

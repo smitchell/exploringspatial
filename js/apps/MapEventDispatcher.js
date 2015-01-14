@@ -7,6 +7,7 @@ define([
     'backbone'
 ], function(_, Backbone){
     var Events = {
+        LOCATION_CHANGED: 'LOCATION_CHANGED',
         ON_BASE_LAYER_CHANGED: 'ON_BASE_LAYER_CHANGED',
         ON_MENU_STATE_CHANGE: 'ON_MENU_STATE_CHANGE',
         ON_PROVIDER_CHANGED: 'ON_PROVIDER_CHANGED',

@@ -4,9 +4,9 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/maps/MapZoomControlsView.html',
-    'leaflet'
-], function(_, Backbone, templateHtml) {
+    'leaflet',
+    'text!templates/maps/MapZoomControlsView.html'
+], function(_, Backbone, L, templateHtml) {
 
     var MapZoomControlsView = Backbone.View.extend({
 

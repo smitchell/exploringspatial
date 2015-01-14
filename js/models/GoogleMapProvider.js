@@ -6,9 +6,10 @@
 define([
     'models/MapProvider',
     'models/MapLayer',
+    'models/GoogleGeoCoder',
     'collections/MapLayers',
     'leaflet_google'
-], function (MapProvider, MapLayer, MapLayers) {
+], function (MapProvider, MapLayer, GoogleGeoCoder, MapLayers) {
     var GoogleMapProvider = MapProvider.extend({
 
         /**
@@ -57,6 +58,10 @@ define([
                 leafletLayer: new L.Google('TERRAIN', mapOptions)
             });
             this.get('mapLayers').set(googleLayers);
+        },
+
+        getGeoCoder: function() {
+            return new GoogleGeoCoder();
         }
     });
 
