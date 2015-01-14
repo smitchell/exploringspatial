@@ -36,7 +36,7 @@ define([
                     this.changeLocation(location);
                 }
                 var keyword = this.$('#keyword').val();
-                if (keyword.length > 0) {
+                if (keyword != this.model.get('name')) {
                     this.model.set('name', keyword);
                 }
             }
