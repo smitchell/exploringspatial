@@ -73,7 +73,7 @@ define([
         },
 
         scrubInput: function(value) {
-            var scrubbed = location.split('<').join('');
+            var scrubbed = value.split('<').join('');
             scrubbed = scrubbed.split('>').join('');
             scrubbed = scrubbed.split('/').join('');
             return scrubbed;
