@@ -30,6 +30,17 @@ define([
                     }
                 }
             }
+            var minDate = this.get('minDate');
+            var maxDate = this.get('maxDate');
+            if (minDate != null && maxDate != null && minDate != '' && maxDate != '') {
+                value = this.getFeatureProperty(featureProperties, 'startDate');
+                if (value != null) {
+                    var startDate = new Date(value);
+                    if (startDate < Date.parse(minDate) || startDate > Date.parse(maxDate)) {
+                        return false;
+                    }
+                }
+            }
             return true;
         },
 

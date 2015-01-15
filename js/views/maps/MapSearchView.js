@@ -57,17 +57,9 @@ define([
                 } else {
                     properties.maxDistance = Number(input);
                 }
-                input = this.scrubInput(this.$('#minDate').val());
-                if (input != this.model.get('minDistance')) {
-                    properties.minDate = input;
-                }
-                input = this.scrubInput(this.$('#maxDate').val());
-                if (input != this.model.get('maxDistance')) {
-                    properties.maxDate = input;
-                }
-                if (Object.keys(properties).length > 0) {
-                    this.model.set(properties);
-                }
+                properties.minDate = this.scrubInput(this.$('#minDate').val());
+                properties.maxDate = this.scrubInput(this.$('#maxDate').val());
+                this.model.set(properties);
             }
         },
 
