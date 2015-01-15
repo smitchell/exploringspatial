@@ -27,7 +27,7 @@ define([
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
 
             this.activitySearch = args.activitySearch;
-            this.activitySearch.on('change:name', this.render, this);
+            this.activitySearch.on('change', this.render, this);
             this.render();
         },
 
@@ -38,11 +38,7 @@ define([
             var _self = this;
             geoJsonLayer = L.geoJson(this.collection.toJSON(),{
                 filter: function(feature, layers) {
-                    var name = _self.activitySearch.get('name').toLowerCase();
-                    if (name != null && name.length > 0 && typeof feature.properties.name != 'undefined') {
-                        return feature.properties.name.toLowerCase().indexOf(name) > -1;
-                    }
-                    return true;
+                    return _self.activitySearch.filterActivityJson(feature);
                 },
                 onEachFeature: _self.onEachFeature
             });
@@ -87,6 +83,7 @@ define([
         },
 
         renderActivity: function() {
+            $('#searchBox').slideUp();
             $('.returnToSearch').show();
             if (this.map.hasLayer(this.activitiesLayer)) {
                 this.map.removeLayer(this.activitiesLayer);
@@ -113,6 +110,7 @@ define([
 
         onReturnToSearch: function(event) {
             $('.returnToSearch').hide();
+            $('#searchBox').slideDown();
             if (this.activitiesLayer != null) {
                 if (this.activityLayer != null && this.map.hasLayer(this.activityLayer)) {
                     this.map.removeLayer(this.activityLayer);

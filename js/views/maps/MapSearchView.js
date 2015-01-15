@@ -11,7 +11,10 @@ define([
 
         events: {
             'click .searchButton a' : 'search',
-            'keypress .location' : 'searchOnEnter'
+            'keypress .location' : 'searchOnEnter',
+            'keypress #keyword' : 'searchOnEnter',
+            'click #showTrigger' : 'expandSearch',
+            'click #hideTrigger' : 'collapseSearch'
         },
 
         initialize: function(args) {
@@ -35,9 +38,35 @@ define([
                 if (location.length > 0) {
                     this.changeLocation(location);
                 }
-                var keyword = this.$('#keyword').val();
-                if (keyword != this.model.get('name')) {
-                    this.model.set('name', keyword);
+                var properties = {};
+                var input = this.scrubInput(this.$('#keyword').val());
+                if (input != this.model.get('name')) {
+                    properties.name = input;
+                }
+                input = this.scrubInput(this.$('#minDistance').val());
+                var curVal = this.model.get('minDistance');
+                if ((input.length == 0 && curVal.length != 0) || isNaN(input)) {
+                    properties.minDistance = '';
+                } else {
+                    properties.minDistance = Number(input);
+                }
+                input = this.scrubInput(this.$('#maxDistance').val());
+                curVal = this.model.get('maxDistance');
+                if ((input.length == 0 && curVal.length != 0) || isNaN(input)) {
+                    properties.maxDistance = '';
+                } else {
+                    properties.maxDistance = Number(input);
+                }
+                input = this.scrubInput(this.$('#minDate').val());
+                if (input != this.model.get('minDistance')) {
+                    properties.minDate = input;
+                }
+                input = this.scrubInput(this.$('#maxDate').val());
+                if (input != this.model.get('maxDistance')) {
+                    properties.maxDate = input;
+                }
+                if (Object.keys(properties).length > 0) {
+                    this.model.set(properties);
                 }
             }
         },
@@ -67,15 +96,20 @@ define([
                 complete: function() {
                     $searchButtonProgress.hide();
                     $('.location').val('');
-                    this.search(); // are there keywords too?
                 }
             });
         },
 
         scrubInput: function(value) {
-            var scrubbed = value.split('<').join('');
-            scrubbed = scrubbed.split('>').join('');
-            scrubbed = scrubbed.split('/').join('');
+            var scrubbed = '';
+            if (typeof value != 'undefined' && value != null) {
+                scrubbed = value.trim();
+                if (scrubbed.length > 0) {
+                    scrubbed = scrubbed.split('<').join('');
+                    scrubbed = scrubbed.split('>').join('');
+                    scrubbed = scrubbed.split('/').join('');
+                }
+            }
             return scrubbed;
         },
 
@@ -84,6 +118,18 @@ define([
                 return;
             }
             this.search();
+        },
+
+        expandSearch: function() {
+            this.$('#showTrigger').hide();
+            this.$('#hideTrigger').show();
+            this.$('.expandedSearchFilters').slideDown();
+        },
+
+        collapseSearch: function() {
+            this.$('#hideTrigger').hide();
+            this.$('#showTrigger').show();
+            this.$('.expandedSearchFilters').slideUp();
         }
 
 

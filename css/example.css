@@ -33,11 +33,10 @@ body {
 
 .returnToSearch {
     text-align: right;
-    position: absolute;
-    top: -25px;
+    position: relative;
+    bottom: 10px;
     right: 4px;
-    font-size: 11px;
-    width: 400px;
+    font-size: 14px;
 }
 
 .map-menu {
@@ -93,7 +92,7 @@ input.searchField {
     margin-right: 8px;
 }
 
-.advancedSearchTrigger {
+.expandSearchTrigger {
     float: left;
     width: 120px;
     height: 30px;
@@ -103,22 +102,22 @@ input.searchField {
     top: 15px;
 }
 
-#showFilters {
+#showTrigger {
     background-position: 0 0;
 }
 
-#hideFilters {
+#hideTrigger {
     background-position: 0 -30px;
 }
 
-.advancedSearchTrigger a{
+.expandSearchTrigger a{
     color: #787878;
     text-decoration: none;
     display: block;
     padding-bottom: 15px;
 }
 
-.advancedSearchTrigger a:hover {
+.expandSearchTrigger a:hover {
     color: #000;
     text-decoration: none;
     cursor: pointer;
@@ -173,53 +172,25 @@ input.searchField {
 
 /* @group Advanced Search */
 
-/*.searchBoxAdvanced {
-	position: relative;
-	width: 950px;
-	height: 200px;
-	margin-bottom: 14px;
-	background: url(images/search-box-bg-l.png) no-repeat;
-}*/
-
 .searchOptionsContainer {
     position: relative;
-    left: 50%;
-    margin-left: -475px;
-    width: 950px;
-    height: 105px;
-    padding-top: 15px;
-}
-
-.courseAdvancedOptionsContainer {
-    position: relative;
-    left: 50%;
-    margin-left: -475px;
-    width: 950px;
-    height: 65px;
-    padding-top: 15px;
+    left: 2px;
+    width: 100%;
+    height: 35px;
+    padding-top: 5px;
 }
 
 .searchOptionsColumn {
     float: left;
-    width: 351px;
-    _width: 361px;
-    padding-left: 15px;
-    font-size: 12px;
-    text-shadow: #fff 0 1px 0;
-}
-
-.courseAdvancedOptionsColumn {
-    float: left;
-    width: 351px;
-    _width: 361px;
-    padding-left: 300px;
+    width: 275px;
+    padding-left: 5px;
     font-size: 12px;
     text-shadow: #fff 0 1px 0;
 }
 
 .searchOptionsLabel {
     float: left;
-    width: 130px;
+    width: 120px;
     height: 22px;
     clear: left;
     padding-top: 3px;
@@ -227,8 +198,7 @@ input.searchField {
 
 .searchOptionsField {
     float: left;
-    width: 200px;
-    _width: 195px;
+    width: 140px;
     text-shadow: #fff 0 1px 0;
     padding-bottom: 5px;
 }
@@ -236,8 +206,7 @@ input.searchField {
 .searchOptionsField select {
     font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
     font-size: 12px;
-    width: 197px;
-    _width: 192px;
+    width: 147px;
 }
 
 .searchOptionsField input {
@@ -261,25 +230,6 @@ input.searchField {
 
 .searchOptionsField input.checkbox {
     width: 20px;
-}
-
-#myField {
-    padding-top: 5px;
-}
-
-.customDates  {
-    float: left;
-    z-index: 995;
-}
-
-.customDates input {
-    width: 70px;
-}
-
-.customDates span {
-    position: relative;
-    top: -1px;
-    _left: -3px;
 }
 
 .searchOptionsField .checkbox {
@@ -314,39 +264,6 @@ input.searchField {
     background: url(images/search-progress.gif) no-repeat;
 }
 
-.startDateCalendar {
-    position: relative;
-    left: 100px;
-    top: 100px;
-}
-
-.endDateCalendar {
-    position: relative;
-    left: 300px;
-    top: 100px;
-}
-
-.customDates table.startDateDisplay {
-    *margin-left: -130px;
-    _margin-left: -180px;
-    *margin-top: -238px;
-    _margin-top: -192px;
-}
-
-.customDates table.endDateDisplay {
-    *margin-left: 0px;
-    _margin-left: 93px;
-    *margin-top: -238px;
-    _margin-top: -192px;
-}
-
-.globalSearch {
-    position: absolute;
-    left: 691px;
-    top: 35px;
-    cursor: pointer;
-}
-
 /* Safari Custom Date fix */
 
 @media screen and (-webkit-min-device-pixel-ratio:0){
@@ -355,17 +272,4 @@ input.searchField {
         list-style-image:none;
     }
 
-    .customDates input  {
-        width: 65px;
-    }
-
-    .customDates table.endDateDisplay {
-        margin-left: -235px;
-        margin-top: 0px;
-    }
-
-    .customDates table.startDateDisplay {
-        margin-left: -130px;
-        margin-top: 0px;
-    }
 }

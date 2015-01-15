@@ -2,6 +2,7 @@ var require = {
     baseUrl: 'js/lib',
     paths: {
         jquery: 'jquery',
+        jquery_ui: 'jquery-ui',
         underscore: 'underscore',
         backbone: 'backbone',
         router: '../router',
@@ -23,6 +24,12 @@ var require = {
         'backbone': {
             deps: ['underscore', 'json2'],
             exports: 'Backbone'
+        },
+        'jquery': {
+            exports: '$'
+        },
+        'jquery_ui': {
+            deps: 'jquery'
         },
         'leaflet': {
             exports: 'L'
