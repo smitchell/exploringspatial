@@ -36,18 +36,21 @@ define([
                 this.map.removeLayer(this.activitiesLayer);
             }
             var _self = this;
-            geoJsonLayer = L.geoJson(this.collection.toJSON(),{
+            var geoJsonLayer = L.geoJson(this.collection.toJSON(),{
                 filter: function(feature, layers) {
                     return _self.activitySearch.filterActivityJson(feature);
                 },
                 onEachFeature: _self.onEachFeature
             });
-            this.activitiesLayer = L.markerClusterGroup();
-            this.activitiesLayer.addLayer(geoJsonLayer);
-            this.map.addLayer(this.activitiesLayer);
-            this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
-            $('.returnToSearch').on('click', '.returnTrigger', function(event){_self.onReturnToSearch(event)});
-            this.map.fitBounds(this.activitiesLayer.getBounds(), {maxZoom: 10});
+            // Do not create a markerClusterGroup if the geoJsonLayer map layer is empty.
+            if (geoJsonLayer.getLayers().length > 0) {
+               this.activitiesLayer = L.markerClusterGroup();
+               this.activitiesLayer.addLayer(geoJsonLayer);
+               this.map.addLayer(this.activitiesLayer);
+               this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
+               $('.returnToSearch').on('click', '.returnTrigger', function(event){_self.onReturnToSearch(event)});
+               this.map.fitBounds(this.activitiesLayer.getBounds());
+            }
         },
 
         onEachFeature: function(feature, layer) {
