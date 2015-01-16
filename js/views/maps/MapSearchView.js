@@ -4,7 +4,8 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/maps/MapSearchView.html'
+    'text!templates/maps/MapSearchView.html',
+    'jquery-ui'
 ], function(_, Backbone, templateHtml) {
 
     var MapSearchView = Backbone.View.extend({
@@ -25,8 +26,33 @@ define([
         },
 
         render: function() {
-            var html = this.template(this.model.toJSON());
+            var json = this.model.toJSON();
+            json.minDate = this.formatDate(this.model.get('minDate'));
+            json.maxDate = this.formatDate(this.model.get('minDate'));
+            var html = this.template(json);
             jQuery(this.el).html(html);
+            $('#minDate').datepicker({
+                dateFormat: 'mm/dd/yy',
+                changeMonth: true,
+                changeYear: true,
+                selectOtherMonths: true,
+                showOtherMonths: true,
+                showStatus: true,
+                onClose: function() {
+                    this.focus();
+                }
+            });
+            $('#maxDate').datepicker({
+                dateFormat: 'mm/dd/yy',
+                changeMonth: true,
+                changeYear: true,
+                selectOtherMonths: true,
+                showOtherMonths: true,
+                showStatus: true,
+                onClose: function() {
+                    this.focus();
+                }
+            });
         },
 
         search: function() {
@@ -57,8 +83,8 @@ define([
                 } else {
                     properties.maxDistance = Number(input);
                 }
-                properties.minDate = this.scrubInput(this.$('#minDate').val());
-                properties.maxDate = this.scrubInput(this.$('#maxDate').val());
+                properties.minDate = this.parseDate(this.scrubInput(this.$('#minDate').val()));
+                properties.maxDate = this.parseDate(this.scrubInput(this.$('#maxDate').val()));
                 this.model.set(properties);
             }
         },
@@ -99,7 +125,6 @@ define([
                 if (scrubbed.length > 0) {
                     scrubbed = scrubbed.split('<').join('');
                     scrubbed = scrubbed.split('>').join('');
-                    scrubbed = scrubbed.split('/').join('');
                 }
             }
             return scrubbed;
@@ -122,6 +147,23 @@ define([
             this.$('#hideTrigger').hide();
             this.$('#showTrigger').show();
             this.$('.expandedSearchFilters').slideUp();
+        },
+
+        parseDate: function(value) {
+            if (value != null && value.length > 0) {
+                var parts = value.split('/');
+                if (parts.length = 3) {
+                    return new Date(parts[2], parts[0] - 1, parts[1]);
+                }
+            }
+            return null;
+        },
+
+        formatDate: function(date) {
+            if (date != null && date != '') {
+                return (date.getMonth() + 1) + '/' + date.getDate() + "/" + date.getFullYear();
+            }
+            return '';
         }
 
 

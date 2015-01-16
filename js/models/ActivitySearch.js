@@ -33,10 +33,10 @@ define([
             var minDate = this.get('minDate');
             var maxDate = this.get('maxDate');
             if (minDate != null && maxDate != null && minDate != '' && maxDate != '') {
-                value = this.getFeatureProperty(featureProperties, 'startDate');
+                value = this.getFeatureProperty(featureProperties, 'startTime');
                 if (value != null) {
                     var startDate = new Date(value);
-                    if (startDate < Date.parse(minDate) || startDate > Date.parse(maxDate)) {
+                    if (startDate <  minDate || startDate > maxDate) {
                         return false;
                     }
                 }
@@ -61,7 +61,7 @@ define([
             var value = null;
             if (typeof featureProperties != 'undefined') {
                 value = featureProperties[propertyName];
-                if (value == 'undefined' || value.length == 0) {
+                if (typeof value == 'undefined' || value.length == 0) {
                     return null;
                 }
             }
