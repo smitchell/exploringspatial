@@ -1,0 +1,62 @@
+
+    <div class="simpleSearchContainer">
+        <div class="searchFieldContainer">
+            <div class="searchFields">
+                <div class="searchHeader">Country:</div>
+                <input id="country" type="text" class="searchField" style="z-index: 1002"/>
+                <div class="searchFieldDesc">
+                    Country name.
+                </div>
+            </div>
+            <div class="searchFields">
+                <div class="searchHeader">
+                    <div class="searchLocation">Location:</div>
+                    <input id="location" type="text" class="searchField location" />
+                    <div class="searchFieldDesc" style="width:450px;">
+                        City, province, etc...
+                    </div>
+                </div>
+            </div>
+            <div id="searchButton" class="searchButton">
+                <a>Search</a>
+                <div id="searchButtonProgress" style="display: none;"></div>
+            </div>
+            <div id="showTrigger" class="expandSearchTrigger">
+                <a>Show More Options</a>
+            </div>
+            <div id="hideTrigger" class="expandSearchTrigger" style="display: none;">
+                <a>Show Fewer Options</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="expandedSearchFilters" style="display: none;">
+        <div class="searchOptionsContainer">
+            <div class="searchOptionsColumn" >
+                <div class="searchOptionsLabel" >Event Type:</div>
+                <div class="searchOptionsField">
+                    <input id="eventType" type="text" title="Event Type" style="z-index: 1001" />
+                </div>
+                <div class="searchOptionsLabel" >Date Range:</div>
+                <div class="searchOptionsFields">
+                    <input id="minDate" type="text" title="Minimum Date" style="position: relative; z-index: 1002"  /> -
+                    <input id="maxDate" type="text" title="Maximum Date" style="position: relative; z-index: 1002"  />
+                </div>
+            </div>
+
+            <div class="searchOptionsColumn">
+                <div class="searchOptionsLabel" >Actor Type:</div>
+                <div class="searchOptionsField">
+                    <input id="actorType" type="text" title="Actor Type" style="z-index: 1001" />
+                </div>
+                <div class="searchOptionsLabel">Fatalities:</div>
+                <div class="searchOptionsFields">
+                    <input id="minFatalities" type="text" title="Min Fatalities" /> -
+                    <input id="maxFatalities" type="text" title="Max Fatalities" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input type="text" id="country_pk" style="display:none;" value="-1"/> <input type="text" id="location_pk" style="display:none;"  value="-1"/>
+    <input type="text" id="event_type_pk" style="display:none;"  value="-1"/> <input type="text" id="actor_type_pk" style="display:none;"  value="-1"/>
