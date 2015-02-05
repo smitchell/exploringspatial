@@ -113,6 +113,7 @@ define([
                 var markers = this.conflictsLayer.GetMarkers();
                 this.conflictsLayer.RemoveMarkers();
                 var $progessBar = $('#progressbar');
+                $progessBar.slideDown();
                 var progressLabel = $('.progress-label');
                 this.completion = markers.length;
                 $progessBar.progressbar({

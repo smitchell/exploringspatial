@@ -19,35 +19,38 @@ define([
 
         filterMarker: function (featureProperties) {
             if (!this.matchValue(featureProperties, 'countryPk')
-            || !this.matchValue(featureProperties, 'locationPk')
-            || !this.matchValue(featureProperties, 'eventTypePk')
-            || !this.matchValue(featureProperties, 'actorTypePk')) {
+                || !this.matchValue(featureProperties, 'locationPk')
+                || !this.matchValue(featureProperties, 'eventTypePk')) {
+                return true;
+            }
+            var actorTypePk = this.get('actorTypePk');
+            var actor1 = this.getFeatureProperty(featureProperties, 'actor1Pk');
+            var actor2 = this.getFeatureProperty(featureProperties, 'actor2Pk');
+            if (actorTypePk != null && actorTypePk != -1
+                && actor1 != actorTypePk
+                && actor2 != actorTypePk) {
                 return true;
             }
             var minFatalities = this.get('minFatalities');
-            if (minFatalities != null && minFatalities != '') {
-                if (this.getFeatureProperty(featureProperties, 'fatalities') < minFatalities) {
-                    return true;
-                }
+            if (minFatalities != null && minFatalities != ''
+                && this.getFeatureProperty(featureProperties, 'fatalities') < minFatalities) {
+                return true;
             }
             var maxFatalities = this.get('maxFatalities');
-            if (maxFatalities != null && maxFatalities != '') {
-                if (this.getFeatureProperty(featureProperties, 'fatalities') > maxFatalities) {
-                    return true;
-                }
+            if (maxFatalities != null && maxFatalities != ''
+                && this.getFeatureProperty(featureProperties, 'fatalities') > maxFatalities) {
+                return true;
             }
             var minDate = this.get('minDate');
             var eventDate = new Date(this.getFeatureProperty(featureProperties, 'eventDate'));
-            if (minDate != null && minDate != '') {
-                if (eventDate <  minDate) {
-                    return true;
-                }
+            if (minDate != null && minDate != ''
+                && eventDate < minDate) {
+                return true;
             }
             var maxDate = this.get('maxDate');
-            if (maxDate != null && maxDate != '') {
-                if (eventDate >  maxDate) {
-                    return true;
-                }
+            if (maxDate != null && maxDate != ''
+                && eventDate > maxDate) {
+                return true;
             }
             return false;
         },
