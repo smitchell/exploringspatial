@@ -34,7 +34,7 @@ define([
             this.conflictsLayer.FitBounds();
         },
 
-        loadAll: function() {
+        loadAll: function () {
             this.paths = new CodeDefinitions('PATH');
             this.paths.fetch();
             var $progessBar = $('#progressbar');
@@ -42,18 +42,18 @@ define([
             this.completion = this.countryNames.length;
             $progessBar.progressbar({
                 value: false,
-                change: function() {
+                change: function () {
                     progressLabel.text($progessBar.progressbar("value") + "%");
                 },
-                complete: function() {
+                complete: function () {
                     progressLabel.text("Complete!");
                 }
             });
             $progessBar.slideDown();
             this.loadCountries();
         },
-        
-        loadCountries: function() {
+
+        loadCountries: function () {
             var countryName = this.fetchQueue.pop();
             if (typeof countryName == 'undefined') {
                 this.render();
@@ -62,34 +62,40 @@ define([
                 armedConflictLocations.countryName = countryName.split(' ').join('');
                 this.countryConflicts[countryName] = armedConflictLocations;
                 var _self = this;
-                armedConflictLocations.fetch({success: function(){ _self.loadCountry(countryName);}});
+                armedConflictLocations.fetch({
+                    success: function () {
+                        _self.loadCountry(countryName);
+                    }
+                });
             }
         },
 
-        percentComplete: function(value) {
-            var percent = value/this.completion;
+        percentComplete: function (value) {
+            var percent = value / this.completion;
             return Math.round(percent * 100);
         },
-        
-        loadCountry: function(countryName) {
+
+        loadCountry: function (countryName) {
             var _self = this;
             if (typeof this.conflictsLayer == 'undefined') {
                 this.conflictsLayer = new PruneClusterForLeaflet();
-               
+
                 this.conflictsLayer.PrepareLeafletMarker = function (marker, data, category) {
                     if (data.popup) {
                         var expandedPathDefinition = _self.paths.findByCodeDefinitionPk(data.path);
                         var armedConflictLocation = new ArmedConflictLocation({id: data.eventPk});
                         armedConflictLocation.urlRoot = expandedPathDefinition.get('definition');
                         var armedConflictPopupView = new ArmedConflictPopupView({model: armedConflictLocation});
-                        armedConflictLocation.fetch({ success: function() {
-                            if (marker.getPopup()) {
-                                marker.setPopupContent(armedConflictPopupView.render(), data.popupOptions);
+                        armedConflictLocation.fetch({
+                            success: function () {
+                                if (marker.getPopup()) {
+                                    marker.setPopupContent(armedConflictPopupView.render(), data.popupOptions);
+                                }
+                                else {
+                                    marker.bindPopup(armedConflictPopupView.render(), data.popupOptions);
+                                }
                             }
-                            else {
-                                marker.bindPopup(armedConflictPopupView.render(), data.popupOptions);
-                            }
-                        }});
+                        });
                     }
                 };
                 this.map.addLayer(this.conflictsLayer);
@@ -101,45 +107,65 @@ define([
                 coordinates = armedConflict.get('geometry').get('coordinates');
                 marker = new PruneCluster.Marker(coordinates[1], coordinates[0]);
                 marker.data = armedConflict.get('properties').toJSON();
-                marker.data.popup = function() {};
+                marker.data.popup = function () {
+                };
                 _self.conflictsLayer.RegisterMarker(marker);
             });
             $('#progressbar').progressbar("value", ( this.percentComplete(this.countryNames.length - this.fetchQueue.length)));
             this.loadCountries();
         },
-        
-        doFilter: function() {
+
+        doFilter: function () {
             if (!this.filteringInProgress) {
                 var markers = this.conflictsLayer.GetMarkers();
-                this.conflictsLayer.RemoveMarkers();
                 var $progessBar = $('#progressbar');
                 $progessBar.slideDown();
                 var progressLabel = $('.progress-label');
                 this.completion = markers.length;
                 $progessBar.progressbar({
                     value: false,
-                    change: function() {
+                    change: function () {
                         progressLabel.text($progessBar.progressbar("value") + "%");
                     },
-                    complete: function() {
+                    complete: function () {
                         progressLabel.text("Complete!");
                     }
                 });
                 $progessBar.slideDown();
                 this.filteringInProgress = true;
-                
+
                 var marker;
+                var minLat, minLon, maxLat, maxLon, lat, lng;
                 for (var i = 0; i < markers.length; i++) {
                     marker = markers[i];
                     marker.filtered = this.acledSearch.filterMarker(marker.data);
-                    this.conflictsLayer.RegisterMarker(marker);
-                    if (i%500 == 0) {
+                    if (!marker.filtered) {
+                        lat = marker.position.lat;
+                        lng = marker.position.lng;
+                        if (typeof minLat == 'undefined' || lat < minLat) {
+                            minLat = lat;
+                        }
+                        if (typeof minLon == 'undefined' || lng < minLon) {
+                            minLon = lng;
+                        }
+                        if (typeof maxLat == 'undefined' || lat > maxLat) {
+                            maxLat = lat;
+                        }
+                        if (typeof maxLon == 'undefined' || lng > maxLon) {
+                            maxLon = lng;
+                        }
+                    }
+                    if (i % 100 == 0) {
                         $progessBar.progressbar("value", ( this.percentComplete(i)));
-                        
                     }
                 }
+
                 this.conflictsLayer.ProcessView();
-                this.conflictsLayer.FitBounds();
+                if (!isNaN(minLat) && !isNaN(minLon) && !isNaN(maxLat) && !isNaN(maxLon)) {
+                    this.conflictsLayer._map.fitBounds(new L.LatLngBounds(
+                        new L.LatLng(minLat, minLon),
+                        new L.LatLng(maxLat, maxLon)));
+                }
                 this.filteringInProgress = false;
                 $progessBar.slideUp();
             }
