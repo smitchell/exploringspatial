@@ -176,7 +176,7 @@ input.searchField {
     position: relative;
     left: 2px;
     width: 100%;
-    height: 35px;
+    height: 57px;
     padding-top: 5px;
 }
 
@@ -203,13 +203,30 @@ input.searchField {
     padding-bottom: 5px;
 }
 
+.searchOptionsField input {
+    font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
+    font-size: 12px;
+    height: 15px;
+    _height: 21px;
+    width: 173px;
+    padding-left: 1px;
+    margin-left: 2px;
+}
+
+.searchOptionsFields {
+    float: left;
+    width: 190px;
+    text-shadow: #fff 0 1px 0;
+    padding-bottom: 5px;
+}
+
 .searchOptionsField select {
     font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
     font-size: 12px;
     width: 147px;
 }
 
-.searchOptionsField input {
+.searchOptionsFields input {
     font-family: 'lucida grande', arial, tahoma, verdana, sans-serif;
     font-size: 12px;
     height: 15px;

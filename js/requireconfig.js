@@ -2,7 +2,6 @@ var require = {
     baseUrl: 'js/lib',
     paths: {
         jquery: 'jquery',
-        jquery_ui: 'jquery-ui',
         underscore: 'underscore',
         backbone: 'backbone',
         router: '../router',
@@ -10,7 +9,8 @@ var require = {
         json2: 'json2',
         leaflet_google: 'leaflet/plugins/patel_shramov/tile/Google',
         leaflet_bing: 'leaflet/plugins/patel_shramov/tile/Bing',
-        leaflet_markercluster: 'leaflet/plugins/leaflet.markercluster-src',
+        leaflet_markercluster: 'leaflet/plugins/MarkerCluster/leaflet.markercluster-src',
+        leaflet_prunecluster: 'leaflet/plugins/PruneCluster/PruneCluster',
         apps: '../apps',
         collections: '../collections',
         models: '../models',
@@ -28,9 +28,6 @@ var require = {
         'jquery': {
             exports: '$'
         },
-        'jquery_ui': {
-            deps: 'jquery'
-        },
         'leaflet': {
             exports: 'L'
         },
@@ -41,6 +38,9 @@ var require = {
             deps: ['leaflet']
         },
         'leaflet_markercluster': {
+            deps: ['leaflet']
+        },
+        'leaflet_prunecluster': {
             deps: ['leaflet']
         }
     }
