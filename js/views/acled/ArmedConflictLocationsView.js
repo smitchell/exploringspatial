@@ -32,6 +32,7 @@ define([
             $('#progressbar').slideUp();
             this.conflictsLayer.ProcessView();
             this.conflictsLayer.FitBounds();
+            $('.simpleSearchContainer').slideDown();
         },
 
         loadAll: function () {
@@ -118,20 +119,6 @@ define([
         doFilter: function () {
             if (!this.filteringInProgress) {
                 var markers = this.conflictsLayer.GetMarkers();
-                var $progessBar = $('#progressbar');
-                $progessBar.slideDown();
-                var progressLabel = $('.progress-label');
-                this.completion = markers.length;
-                $progessBar.progressbar({
-                    value: false,
-                    change: function () {
-                        progressLabel.text($progessBar.progressbar("value") + "%");
-                    },
-                    complete: function () {
-                        progressLabel.text("Complete!");
-                    }
-                });
-                $progessBar.slideDown();
                 this.filteringInProgress = true;
 
                 var marker;
@@ -155,9 +142,6 @@ define([
                             maxLon = lng;
                         }
                     }
-                    if (i % 100 == 0) {
-                        $progessBar.progressbar("value", ( this.percentComplete(i)));
-                    }
                 }
 
                 this.conflictsLayer.ProcessView();
@@ -167,7 +151,6 @@ define([
                         new L.LatLng(maxLat, maxLon)));
                 }
                 this.filteringInProgress = false;
-                $progessBar.slideUp();
             }
         }
     });

@@ -7,7 +7,7 @@ define([
         'models/Activity'
 ], function(Backbone, Activity) {
 var Activities = Backbone.Collection.extend({
-	url: "activities",
+	url: "data/user/activities",
 	model: Activity,
 
 	/**

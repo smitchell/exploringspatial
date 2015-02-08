@@ -1,17 +1,24 @@
 
-    <div class="simpleSearchContainer">
+    <div class="simpleSearchContainer" style="display: none;">
         <div class="searchFieldContainer">
             <div class="searchFields">
                 <div class="searchHeader">Country:</div>
-                <input id="country" type="text" class="searchField" style="z-index: 1002"/>
+                <select id="country_pk" value="-1">
+                    <option value="-1" selected></option>
+                    <% countries.each(function(codeDefinition){%>
+                    <option value="<%= codeDefinition.get('codeDefinitionPk') %>"><%= codeDefinition.get('definition') %></option>
+                    <% }) %>
+                </select>
                 <div class="searchFieldDesc">
                     Country name.
                 </div>
             </div>
-            <div class="searchFields">
+            <div id="selectLocation" class="searchFields" style="display: none;">
                 <div class="searchHeader">
                     <div class="searchLocation">Location:</div>
-                    <input id="location" type="text" class="searchField location" />
+                    <select id="location_pk" disabled>
+                        <option value="-1" selected></option>
+                    </select>
                     <div class="searchFieldDesc" style="width:450px;">
                         City, province, etc...
                     </div>
@@ -35,7 +42,12 @@
             <div class="searchOptionsColumn" >
                 <div class="searchOptionsLabel" >Event Type:</div>
                 <div class="searchOptionsField">
-                    <input id="eventType" type="text" title="Event Type" style="z-index: 1001" />
+                    <select id="event_type_pk" value="-1">
+                        <option value="-1" selected></option>
+                        <% eventTypes.each(function(codeDefinition){%>
+                            <option value="<%= codeDefinition.get('codeDefinitionPk') %>"><%= codeDefinition.get('definition') %></option>
+                        <% }) %>
+                    </select>
                 </div>
                 <div class="searchOptionsLabel" >Date Range:</div>
                 <div class="searchOptionsFields">
@@ -58,5 +70,4 @@
 
         </div>
     </div>
-    <input type="text" id="country_pk" style="display:none;" value="-1"/> <input type="text" id="location_pk" style="display:none;"  value="-1"/>
-    <input type="text" id="event_type_pk" style="display:none;"  value="-1"/> <input type="text" id="actor_type_pk" style="display:none;"  value="-1"/>
+    <input type="text" id="actor_type_pk" style="display:none;"  value="-1"/>

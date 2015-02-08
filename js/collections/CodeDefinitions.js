@@ -7,7 +7,7 @@ define([
 ], function(Backbone, CodeDefinition) {
 var CodeDefinitions = Backbone.Collection.extend({
 	url: function() {
-        return "acled/" + this.category + ".json";
+        return "data/acled/" + this.category + ".json";
     },
 	model: CodeDefinition,
     

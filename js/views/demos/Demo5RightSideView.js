@@ -17,7 +17,7 @@ define([
             this.template = _.template(templateHtml);
             this.args = args;
             this.collection = new Activities();
-            this.collection.url = 'user/activities';
+            this.collection.url = 'data/user/activities';
             var _this = this;
             this.collection.fetch({
                 success: function () {

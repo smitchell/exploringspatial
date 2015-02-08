@@ -26,9 +26,8 @@ define([
             var actorTypePk = this.get('actorTypePk');
             var actor1 = this.getFeatureProperty(featureProperties, 'actor1Pk');
             var actor2 = this.getFeatureProperty(featureProperties, 'actor2Pk');
-            if (actorTypePk != null && actorTypePk != -1
-                && actor1 != actorTypePk
-                && actor2 != actorTypePk) {
+            if (actorTypePk != null && actorTypePk > 0
+                && (actor1 != actorTypePk && actor2 != actorTypePk)) {
                 return true;
             }
             var minFatalities = this.get('minFatalities');
@@ -42,7 +41,7 @@ define([
                 return true;
             }
             var minDate = this.get('minDate');
-            var eventDate = new Date(this.getFeatureProperty(featureProperties, 'eventDate'));
+            var eventDate = this.getFeatureProperty(featureProperties, 'eventDate');
             if (minDate != null && minDate != ''
                 && eventDate < minDate) {
                 return true;
