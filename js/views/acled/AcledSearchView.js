@@ -190,8 +190,8 @@ define([
         onChangeCountry: function(event) {
             var $target = $(event.target);
             var $locationSelect = this.$('#location_pk');
-            $locationSelect.prop('disabled', true)
-            $locationSelect.html('');
+            $locationSelect.prop('disabled', true);
+            $locationSelect.html('<option value="-1" selected></option>');
             var $selectedOption = this.$('#country_pk option:selected');
             var _self = this;
             if ($target.val() != -1 && $selectedOption.length > 0) {
@@ -200,7 +200,6 @@ define([
                 locations.url = "data/acled/" + label.split(' ').join('') + "/LOCATIONS.json";
                 locations.fetch({
                     success: function () {
-                        $locationSelect.append('<option value="-1"></option>');
                         locations.each(function(codeDefinition){
                             $locationSelect.append('<option value="' + codeDefinition.get('codeDefinitionPk') + '">'+ codeDefinition.get('definition') + '</option>');
                         });
