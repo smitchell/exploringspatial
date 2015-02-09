@@ -93,13 +93,12 @@ input.searchField {
 }
 
 .expandSearchTrigger {
-    float: left;
-    width: 120px;
+    float: right;
     height: 30px;
-    text-align: center;
     font-size: 11px;
     position: relative;
-    top: 15px;
+    top: 36px;
+    right: -88px;
 }
 
 #showTrigger {
@@ -124,10 +123,9 @@ input.searchField {
 }
 
 #searchButton {
-    float: left;
-    font-weight:bold;
+    float: right;
+    font-weight: bold;
     position: relative;
-    top: 16px;
 }
 
 /* @end */
@@ -140,8 +138,8 @@ input.searchField {
     text-align: center;
     font-size: 13px;
     padding: 0 5px 0 0;
+    right: 10px;
 }
-
 .searchButton a {
     position: relative;
     height: 28px;
