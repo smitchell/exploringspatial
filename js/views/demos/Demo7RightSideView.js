@@ -2,6 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'apps/MapEventDispatcher',
     'collections/Counties',
     'views/CountiesListView',
     'views/maps/CountiesMapLayerView',
@@ -9,7 +10,7 @@ define([
     'text!templates/demos/Demo7RightSideView.html',
     'leaflet_google',
     'leaflet_bing'
-], function ($, _, Backbone, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
     var Demo7RightSideView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);
@@ -23,6 +24,7 @@ define([
             });
         },
         render: function () {
+            this.collection.sort();
             var countyWidth = 200;
             var mapWidth =  this.args.mapWidth - countyWidth;
             this.$el.html(this.template({countyWidth: countyWidth, mapWidth: mapWidth, mapHeight: this.args.mapHeight}));
@@ -63,8 +65,10 @@ define([
             };
             L.control.layers(baseLayers).addTo(map);
             this.map = map;
-            new CountiesMapLayerView({collection: this.collection, map: this.map});
-            new CountiesListView({collection: this.collection, el: $('#county_list')});
+            // Create a global dispatcher for non model/collection events.
+            this.dispatcher = MapEventDispatcher;
+            new CountiesMapLayerView({collection: this.collection, map: this.map, dispatcher: this.dispatcher});
+            new CountiesListView({collection: this.collection, el: $('#county_list'), dispatcher: this.dispatcher});
         }
     });
     return Demo7RightSideView;

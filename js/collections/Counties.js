@@ -36,6 +36,10 @@ var Activities = Backbone.Collection.extend({
 		return json;
 	},
 
+    comparator: function( collection ){
+        return( collection.get( 'properties').get('name') );
+    },
+
 	getState: function() {
 		return this.state;
 	},
