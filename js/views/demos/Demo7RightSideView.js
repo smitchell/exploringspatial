@@ -3,12 +3,13 @@ define([
     'underscore',
     'backbone',
     'collections/Counties',
+    'views/CountiesListView',
     'views/maps/CountiesMapLayerView',
     'views/maps/MapView',
     'text!templates/demos/Demo7RightSideView.html',
     'leaflet_google',
     'leaflet_bing'
-], function ($, _, Backbone, Counties, CountiesMapLayerView, MapView, templateHtml) {
+], function ($, _, Backbone, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
     var Demo7RightSideView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);
@@ -63,6 +64,7 @@ define([
             L.control.layers(baseLayers).addTo(map);
             this.map = map;
             new CountiesMapLayerView({collection: this.collection, map: this.map});
+            new CountiesListView({collection: this.collection, el: $('#county_list')});
         }
     });
     return Demo7RightSideView;

@@ -2,10 +2,10 @@
  * The purpose of the CountyMapLayerView is render feature collection GeoJson on the map.
  */
 define([
-    'underscore',
+    'jquery',
     'backbone',
     'leaflet'
-], function (_, Backbone) {
+], function ($, Backbone) {
 
     var CountyMapLayerView = Backbone.View.extend({
         labelLayer: null,
@@ -24,12 +24,12 @@ define([
             };
 
             this.highlightStyle = {
-                            color: '#2262CC',
-                            weight: 3,
-                            opacity: 0.6,
-                            fillOpacity: 0.65,
-                            fillColor: '#2262CC'
-                        }
+                color: '#2262CC',
+                weight: 3,
+                opacity: 0.6,
+                fillOpacity: 0.65,
+                fillColor: '#2262CC'
+            };
             this.render();
         },
 
@@ -82,11 +82,11 @@ define([
             //}
         },
 
-        createLabelIcon: function(labelClass,labelText){
-          return L.divIcon({
-            className: labelClass,
-            html: labelText
-          })
+        createLabelIcon: function (labelClass, labelText) {
+            return L.divIcon({
+                className: labelClass,
+                html: labelText
+            })
         }
     });
     return CountyMapLayerView;
