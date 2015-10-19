@@ -48,7 +48,7 @@ define([
             var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map_container', {
                             center: [38.43638, -98.195801],
-                            zoom: 7,
+                            zoom: 6,
                             layers: [googleLayer],
                             scrollWheelZoom: false,
                             touchZoom: false,
