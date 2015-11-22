@@ -1,5 +1,5 @@
 /**
- * The purpose of the CountyListView is render feature collection GeoJson as a list.
+ * The purpose of the CountiesListView is render feature collection GeoJson as a list.
  */
 define([
     'jquery',
@@ -8,7 +8,7 @@ define([
     'text!templates/CountiesListView.html'
 ], function ($, _, Backbone, templateHtml) {
 
-    var CountyListView = Backbone.View.extend({
+    var CountiesListView = Backbone.View.extend({
 
         events: {
           "mouseenter .county-name"   : "onMouseover",
@@ -32,11 +32,12 @@ define([
         },
 
         onLayerMouseover: function(args) {
-
             var geoid = args.geoid;
             this.$('.county-name').removeClass(this.highlightClass);
             if (geoid) {
-                this.$('#' + geoid).addClass(this.highlightClass);
+                var el = this.$('#' + geoid);
+                el.addClass(this.highlightClass);
+                this.scrollToElement(el[0]);
             }
         },
 
@@ -52,8 +53,17 @@ define([
         onMouseout: function (event) {
             $(event.currentTarget).removeClass(this.highlightClass);
             this.dispatcher.trigger(this.dispatcher.Events.ON_LIST_MOUSEOUT, {geoid: $(event.currentTarget).attr('id')});
+        },
+
+        scrollToElement: function(elem) {
+            var top = this.$el.scrollTop();
+            var bottom = top + this.$el.height();
+            var offsetTop = elem.offsetTop - this.$el[0].offsetTop;
+            if (offsetTop > bottom || offsetTop < top) {
+                this.$el.scrollTop(offsetTop);
+            }
         }
 
     });
-    return CountyListView;
+    return CountiesListView;
 });
