@@ -70,52 +70,7 @@ define([
             new CountiesMapLayerView({collection: this.collection, map: this.map, dispatcher: this.dispatcher});
             new CountiesListView({collection: this.collection, el: $('#county_list'), dispatcher: this.dispatcher});
 
-            var kuCountry = L.circle([38.95734, -95.24507], 50000, {
-                color: '#0000FF',
-                fillColor: '#6666FF',
-                weight: 1,
-                fillOpacity: 0.5
-            });
-            kuCountry.addTo(map).bindPopup("KU Country");
-            var _this = this;
-            kuCountry.on({
-                mouseover: _this.onMouseover,
-                mouseout: _this.onMouseout
-            }, kuCountry);
 
-            var kStateCountry = L.circle([39.191479, -96.580918], 50000, {
-                color: '#6600CC',
-                fillColor: '#944DDB',
-                weight: 1,
-                fillOpacity: 0.5
-            });
-            kStateCountry.addTo(map).bindPopup("K-State Country");
-            kStateCountry.on({
-                mouseover: _this.onMouseover,
-                mouseout: _this.onMouseout
-            }, kStateCountry);
-
-            var wsuCountry = L.circle([37.718879, -97.293484], 50000, {
-                color: '#FF9900',
-                fillColor: '#FFC266',
-                weight: 1,
-                fillOpacity: 0.5
-            });
-            wsuCountry.addTo(map).bindPopup("WSU Country");
-            wsuCountry.on({
-                mouseover: _this.onMouseover,
-                mouseout: _this.onMouseout
-            }, wsuCountry);
-        },
-
-        onMouseover: function(event) {
-            event.target.openPopup();
-            event.target.setStyle({fillOpacity: 0.85});
-        },
-
-        onMouseout: function(event) {
-            event.target.closePopup();
-            event.target.setStyle({fillOpacity: 0.5});
         }
     });
     return Demo7RightSideView;

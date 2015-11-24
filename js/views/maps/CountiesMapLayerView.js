@@ -4,11 +4,11 @@
 define([
     'jquery',
     'backbone',
-    'leaflet'
-], function ($, Backbone) {
+    'leaflet',
+    'leaflet_pip'
+], function ($, Backbone, L, leafletPip) {
 
-    var CountyMapLayerView = Backbone.View.extend({
-        labelLayer: null,
+    var CountiesMapLayerView = Backbone.View.extend({
 
         initialize: function (args) {
             this.map = args.map;
@@ -47,8 +47,92 @@ define([
                     }
                 });
             this.map.addLayer(this.countiesLayer);
+
             this.dispatcher.on(this.dispatcher.Events.ON_LIST_MOUSEOVER, this.onListMouseover, this);
             this.dispatcher.on(this.dispatcher.Events.ON_LIST_MOUSEOUT, this.onListMouseout, this);
+
+
+            var overlays = L.layerGroup().addTo(this.map);
+            var kuCountry = L.circle([38.95734, -95.24507], 60000, {
+                color: '#0000FF',
+                fillColor: '#6666FF',
+                weight: 1,
+                fillOpacity: 0.5
+            }).addTo(overlays);
+            kuCountry.on({
+                mouseover: function (event) {
+                    kuCountry.setStyle({
+                        fillOpacity: 0.85
+                    })
+                },
+                mouseout: function (event) {
+                    kuCountry.setStyle({
+                        fillOpacity: 0.5
+                    })
+                }
+            }, kuCountry);
+
+            var kStateCountry = L.circle([39.191479, -96.580918], 60000, {
+                color: '#6600CC',
+                fillColor: '#944DDB',
+                weight: 1,
+                fillOpacity: 0.5
+            }).addTo(overlays);
+            kStateCountry.on({
+                mouseover: function (event) {
+                    kStateCountry.setStyle({
+                        fillOpacity: 0.85
+                    })
+                },
+                mouseout: function (event) {
+                    kStateCountry.setStyle({
+                        fillOpacity: 0.5
+                    })
+                }
+            }, kStateCountry);
+
+            var wsuCountry = L.circle([37.718879, -97.293484], 60000, {
+                color: '#FF9900',
+                fillColor: '#FFC266',
+                weight: 1,
+                fillOpacity: 0.5
+            }).addTo(overlays);
+            wsuCountry.on({
+                mouseover: function (event) {
+                    wsuCountry.setStyle({
+                        fillOpacity: 0.85
+                    })
+                },
+                mouseout: function (event) {
+                    wsuCountry.setStyle({
+                        fillOpacity: 0.5
+                    })
+                }
+            }, wsuCountry);
+
+            this.map.on("mousemove", function (event) {
+                var latlng = event.latlng;
+                // Broadcast mouseout to all layers
+                _this.countiesLayer.fireEvent("mouseout", {
+                    latlng: latlng,
+                    layerPoint: event.layerPoint,
+                    containerPoint: event.containerPoint,
+                    originalEvent: event.originalEvent,
+                    layer: _this.countiesLayer
+                });
+
+                // Use Mapbox Leaflet PIP (point in polygon) library.
+                var layers = leafletPip.pointInLayer(latlng, _this.countiesLayer);
+                layers.forEach(function (layer) {
+                    _this.countiesLayer.fireEvent("mouseover", {
+                        latlng: latlng,
+                        layerPoint: event.layerPoint,
+                        containerPoint: event.containerPoint,
+                        originalEvent: event.originalEvent,
+                        layer: layer
+                    });
+                });
+            });
         },
 
         onListMouseover: function (args) {
@@ -80,38 +164,14 @@ define([
         },
 
         onMouseover: function (event) {
-            var _this = this;
             event.layer.setStyle(this.highlightStyle);
             this.dispatcher.trigger(this.dispatcher.Events.ON_LAYER_MOUSEOVER, {geoid: event.target.feature.properties.geoid});
-            //var center = event.layer.getBounds().getCenter();
-            //var text = event.target.feature.properties['name'];
-            //this.label = L.marker(center, {icon: this.createLabelIcon('county-name-label', text)})
-            //this.label.on({
-            //                mouseover: _this.onMouseover,
-            //                mouseout: _this.onMouseout
-            //            }, _this);
-            //this.map.addLayer(this.label);
         },
 
         onMouseout: function (event) {
             event.layer.setStyle(this.defaultStyle);
             this.dispatcher.trigger(this.dispatcher.Events.ON_LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
-            //if (this.label && this.label != null) {
-            //    try {
-            //        this.map.removeLayer(this.label);
-            //    } catch (e) {
-            //        // ignore
-            //    }
-            //    this.delete = null;
-            //}
-        },
-
-        createLabelIcon: function (labelClass, labelText) {
-            return L.divIcon({
-                className: labelClass,
-                html: labelText
-            })
         }
     });
-    return CountyMapLayerView;
+    return CountiesMapLayerView;
 });

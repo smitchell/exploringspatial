@@ -12,6 +12,7 @@ var require = {
         leaflet_bing: 'leaflet/plugins/patel_shramov/tile/Bing',
         leaflet_markercluster: 'leaflet/plugins/MarkerCluster/leaflet.markercluster-src',
         leaflet_prunecluster: 'leaflet/plugins/PruneCluster/PruneCluster',
+        leaflet_pip: 'leaflet/plugins/leaflet-pip',
         apps: '../apps',
         collections: '../collections',
         models: '../models',
