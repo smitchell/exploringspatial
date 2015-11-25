@@ -58,10 +58,12 @@ define([
                 event.layer.setStyle({
                     fillOpacity: 0.50
                 });
+                _this.showLogo(event.layer.options.className);
             }).on('mouseout', function (event) {
                 event.layer.setStyle({
                     fillOpacity: 0.5
                 });
+                _this.clearLogo();
             }).on('mousemove', function(event) {
                 var latlng = event.latlng;
                 // Broadcast mouseout to all layers
@@ -93,20 +95,23 @@ define([
                 color: '#0000FF',
                 fillColor: '#6666FF',
                 weight: 1,
-                fillOpacity: 0.5
+                fillOpacity: 0.5,
+                className: "ku"
             }).addTo(overlays);
             L.circle([39.191479, -96.580918], 60000, {
                 color: '#6600CC',
                 fillColor: '#944DDB',
                 weight: 1,
-                fillOpacity: 0.5
+                fillOpacity: 0.5,
+                className: "ksu"
             }).addTo(overlays);
 
             L.circle([37.718879, -97.293484], 60000, {
                 color: '#FF9900',
                 fillColor: '#FFC266',
                 weight: 1,
-                fillOpacity: 0.5
+                fillOpacity: 0.5,
+                className: "wsu"
             }).addTo(overlays);
         },
 
@@ -146,6 +151,19 @@ define([
         onMouseout: function (event) {
             event.layer.setStyle(this.defaultStyle);
             this.dispatcher.trigger(this.dispatcher.Events.ON_LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
+        },
+        clearLogo: function () {
+            var logo = $('.logo');
+            logo.removeClass("ku");
+            logo.removeClass("ksu");
+            logo.removeClass("wsu");
+        },
+
+        showLogo: function(className) {
+            this.clearLogo();
+            if (className) {
+                $('.logo').addClass(className);
+            }
         }
     });
     return CountiesMapLayerView;
