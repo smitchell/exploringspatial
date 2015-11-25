@@ -64,25 +64,20 @@ define([
                     fillOpacity: 0.5
                 });
                 _this.clearLogo();
+                _this.unhighlightCounties();
             }).on('mousemove', function(event) {
-                var latlng = event.latlng;
-                // Broadcast mouseout to all layers
-                _this.countiesLayer.getLayers().forEach(function (layer) {
-                    layer.fireEvent("mouseout", {
-                        latlng: latlng,
-                        layerPoint: event.layerPoint,
-                        containerPoint: event.containerPoint,
-                        originalEvent: event.originalEvent,
-                        target: layer,
-                        layer: layer
-                    });
-                });
 
-                // Use Mapbox Leaflet PIP (point in polygon) library.
-                var layers = leafletPip.pointInLayer(latlng, _this.countiesLayer);
+                // Broadcast mouseout to all layers
+                _this.unhighlightCounties();
+
+                // Use the Leaflet-PIP (point in polygon) library to find any county
+                // layers containing the point of the circle's mousemove event.
+                var layers = leafletPip.pointInLayer(event.latlng, _this.countiesLayer);
+
+                // Highlight any matches (there should be just one), by firing its mouseover event.
                 layers.forEach(function (layer) {
                     layer.fireEvent("mouseover", {
-                        latlng: latlng,
+                        latlng: event.latlng,
                         layerPoint: event.layerPoint,
                         containerPoint: event.containerPoint,
                         originalEvent: event.originalEvent,
@@ -113,6 +108,19 @@ define([
                 fillOpacity: 0.5,
                 className: "wsu"
             }).addTo(overlays);
+        },
+
+        unhighlightCounties: function() {
+            this.countiesLayer.getLayers().forEach(function (layer) {
+                layer.fireEvent("mouseout", {
+                    latlng: event.latlng,
+                    layerPoint: event.layerPoint,
+                    containerPoint: event.containerPoint,
+                    originalEvent: event.originalEvent,
+                    target: layer,
+                    layer: layer
+                });
+            });
         },
 
         onListMouseover: function (args) {
