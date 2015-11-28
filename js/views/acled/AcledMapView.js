@@ -72,6 +72,11 @@ define([
             var selectedProvider = this.collection.changeCurrentProvider(MapProvider.GOOGLE);
             selectedProvider.get('mapLayers').changeBaseLayer(MapLayer.ROAD);
             this.render();
+            // Wire up the view event handlers.
+            this.dispatcher.on(this.dispatcher.Events.MENU_STATE_CHANGE, this.closeAllMenus, this);
+            this.dispatcher.on(this.dispatcher.Events.PROVIDER_CLICKED, this.onProviderClicked, this);
+            this.dispatcher.on(this.dispatcher.Events.TYPE_CLICKED, this.onTypeClicked, this);
+            this.dispatcher.on(this.dispatcher.Events.OVERLAY_CLICKED, this.onOverlayClicked, this);
         },
 
         render: function () {
@@ -110,12 +115,6 @@ define([
                 collection: this.collection,
                 dispatcher: this.dispatcher
             });
-
-            // Wire up the view event handlers.
-            this.dispatcher.on(this.dispatcher.Events.ON_MENU_STATE_CHANGE, this.closeAllMenus, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CLICKED, this.onProviderClicked, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_TYPE_CLICKED, this.onTypeClicked, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_OVERLAY_CLICKED, this.onOverlayClicked, this);
         },
 
         /**

@@ -11,9 +11,7 @@ define([
     var RacesMapLayerView = Backbone.View.extend({
 
         initialize: function (args) {
-            this.mainlandMap = args.mainlandMap;
-            this.alaskaMap = args.alaskaMap;
-            this.hawaiiMap = args.hawaiiMap;
+            this.maps = args.maps;
             this.activitiesLayer = null;
             this.originalCenter = null;
             this.originalZoom = null;
@@ -31,17 +29,19 @@ define([
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.meters = args.meters;
             this.dispatcher = args.dispatcher;
-            this.dispatcher.on(this.dispatcher.Events.ON_RACE_SELECTED, this.onRaceSelected, this);
+
             this.render();
+            this.dispatcher.on(this.dispatcher.Events.RACE_SELECTED, this.onRaceSelected, this);
         },
 
         render: function () {
+            var mainland = this.maps['mainland'];
             var _self = this;
-            if (this.activitiesLayer != null && this.mainlandMap.hasLayer(this.activitiesLayer)) {
+            if (this.activitiesLayer != null && mainland.hasLayer(this.activitiesLayer)) {
                 this.activitiesLayer.getLayers().forEach(function (layer) {
                     _self.activitiesLayer.removeLayer(layer);
                 });
-                this.mainlandMap.removeLayer(this.activitiesLayer);
+                mainland.removeLayer(this.activitiesLayer);
             }
             var startRange = this.meters * 0.96;
             var endRange = this.meters * 1.05;
@@ -70,13 +70,13 @@ define([
                     layer.bindPopup(msg.join(''), {maxWidth: 200});
                     var point = feature.geometry.coordinates;
                     var latLng = L.latLng(point[1], point[0]);
-                    _self.dispatcher.trigger(_self.dispatcher.Events.ON_RACE_ADDED, {latLng: latLng});
+                    _self.dispatcher.trigger(_self.dispatcher.Events.RACE_ADDED, {latLng: latLng});
                 }
             });
 
             if (this.activitiesLayer.getLayers().length > 0) {
-                this.mainlandMap.addLayer(this.activitiesLayer);
-                this.mainlandMap.on('popupopen', function (event) {
+                mainland.addLayer(this.activitiesLayer);
+                mainland.on('popupopen', function (event) {
                     _self.onPopupOpen(event);
                 });
                 $('.returnToSearch').on('click', '.returnTrigger', function (event) {
@@ -95,10 +95,10 @@ define([
         },
 
         onOpenActivity: function (event, popup) {
-            var location = popup._latlng;
-            this.mainlandMap.closePopup(popup);
-            this.originalCenter = this.mainlandMap.getCenter();
-            this.originalZoom = this.mainlandMap.getZoom();
+            var mainland = this.maps['mainland'];
+            mainland.closePopup(popup);
+            this.originalCenter = mainland.getCenter();
+            this.originalZoom = mainland.getZoom();
             this.activity = new Activity({activityId: event.target.id});
             var _this = this;
             this.activity.fetch({
@@ -109,14 +109,15 @@ define([
         },
 
         renderActivity: function () {
+            var mainland = this.maps['mainland'];
             $('#searchBox').slideUp();
             $('.returnToSearch').show();
-            if (this.mainlandMap.hasLayer(this.activitiesLayer)) {
-                this.mainlandMap.removeLayer(this.activitiesLayer);
+            if (mainland.hasLayer(this.activitiesLayer)) {
+                mainland.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
             $('#container2').find('h1:first').html(props.get('name'));
-            this.mainlandMap.fitBounds([
+            mainland.fitBounds([
                 [props.get('minLat'), props.get('minLon')],
                 [props.get('maxLat'), props.get('maxLon')]
             ]);
@@ -126,34 +127,35 @@ define([
                 opacity: 0.6
             };
 
-            this.activityLayer = L.geoJson(this.activity.toJSON(), {style: style}).addTo(this.mainlandMap);
+            this.activityLayer = L.geoJson(this.activity.toJSON(), {style: style}).addTo(mainland);
             var polyline = this.activity.get('geometry').get('coordinates');
             var startPoint = polyline[0];
             var endPoint = polyline[polyline.length - 1];
-            this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.mainlandMap);
-            this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.mainlandMap);
-            this.dispatcher.trigger(this.dispatcher.Events.ON_RACE_ZOOMED);
+            this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(mainland);
+            this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(mainland);
+            this.dispatcher.trigger(this.dispatcher.Events.RACE_ZOOMED);
         },
 
         onReturnToSearch: function (event) {
+            var mainland = this.maps['mainland'];
             $('.returnToSearch').hide();
             $('#searchBox').slideDown();
             if (this.activitiesLayer != null) {
-                if (this.activityLayer != null && this.mainlandMap.hasLayer(this.activityLayer)) {
-                    this.mainlandMap.removeLayer(this.activityLayer);
+                if (this.activityLayer != null && mainland.hasLayer(this.activityLayer)) {
+                    mainland.removeLayer(this.activityLayer);
                     this.activityLayer = null;
                 }
-                if (this.activityStart != null && this.mainlandMap.hasLayer(this.activityStart)) {
-                    this.mainlandMap.removeLayer(this.activityStart);
+                if (this.activityStart != null && mainland.hasLayer(this.activityStart)) {
+                    mainland.removeLayer(this.activityStart);
                     this.activityStart = null;
                 }
-                if (this.activityEnd != null && this.mainlandMap.hasLayer(this.activityEnd)) {
-                    this.mainlandMap.removeLayer(this.activityEnd);
+                if (this.activityEnd != null && mainland.hasLayer(this.activityEnd)) {
+                    mainland.removeLayer(this.activityEnd);
                     this.activityEnd = null
                 }
-                this.mainlandMap.addLayer(this.activitiesLayer);
+                mainland.addLayer(this.activitiesLayer);
                 if (this.originalCenter != null && this.originalZoom != null) {
-                    this.mainlandMap.setView(this.originalCenter, this.originalZoom, {animate: true});
+                    mainland.setView(this.originalCenter, this.originalZoom, {animate: true});
                     this.originalCenter = null;
                     this.originalZoom = null;
                 }

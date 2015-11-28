@@ -32,6 +32,8 @@ define([
                 fillColor: '#2262CC'
             };
             this.render();
+            this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOVER, this.onListMouseover, this);
+            this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOUT, this.onListMouseout, this);
         },
 
         render: function () {
@@ -46,9 +48,6 @@ define([
                         _this.onEachFeature(feature, layer);
                     }
                 }).addTo(this.map);
-
-            this.dispatcher.on(this.dispatcher.Events.ON_LIST_MOUSEOVER, this.onListMouseover, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_LIST_MOUSEOUT, this.onListMouseout, this);
             this.addCollegeOverlays();
         },
 
@@ -153,12 +152,12 @@ define([
 
         onMouseover: function (event) {
             event.layer.setStyle(this.highlightStyle);
-            this.dispatcher.trigger(this.dispatcher.Events.ON_LAYER_MOUSEOVER, {geoid: event.target.feature.properties.geoid});
+            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOVER, {geoid: event.target.feature.properties.geoid});
         },
 
         onMouseout: function (event) {
             event.layer.setStyle(this.defaultStyle);
-            this.dispatcher.trigger(this.dispatcher.Events.ON_LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
+            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
         },
         clearLogo: function () {
             var logo = $('.logo');

@@ -23,6 +23,7 @@ define([
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.args = args;
+            this.maps = {};
             this.states = new States();
             var _this = this;
             this.states.fetch({
@@ -55,7 +56,7 @@ define([
             var osmLayer = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             });
-            this.mainlandMap = L.map('map_mainland', {
+            this.maps['mainland'] = L.map('map_mainland', {
                 center: [38.5, -96],
                 zoom: 4,
                 scrollWheelZoom: false,
@@ -63,11 +64,10 @@ define([
                 doubleClickZoom: false,
                 zoomControl: false,
                 dragging: false
-            });
-            this.mainlandMap.addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
-            this.alaskaMap = L.map('map_alaska', {
+            this.maps['alaska'] = L.map('map_alaska', {
                 center: [65, -153.5],
                 zoom: 3,
                 scrollWheelZoom: false,
@@ -75,9 +75,8 @@ define([
                 doubleClickZoom: false,
                 zoomControl: false,
                 dragging: false
-            });
-            this.alaskaMap.addLayer(osmLayer);
-            this.hawaiiMap = L.map('map_hawaii', {
+            }).addLayer(osmLayer);
+            this.maps['hawaii'] = L.map('map_hawaii', {
                 center: [20.344627, -157.939453],
                 zoom: 5,
                 scrollWheelZoom: false,
@@ -85,24 +84,19 @@ define([
                 doubleClickZoom: false,
                 zoomControl: false,
                 dragging: false
-            });
-            this.hawaiiMap.addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
             // Create a global dispatcher for non model/collection events.
             this.dispatcher = MapEventDispatcher;
             new StatesMapLayerView({
                 collection: this.states,
-                mainlandMap: this.mainlandMap,
-                alaskaMap: this.alaskaMap,
-                hawaiiMap: this.hawaiiMap,
+                maps: this.maps,
                 dispatcher: this.dispatcher
             });
             new RacesMapLayerView({
                 collection: this.activities,
-                mainlandMap: this.mainlandMap,
-                alaskaMap: this.alaskaMap,
-                hawaiiMap: this.hawaiiMap,
+                maps: this.maps,
                 dispatcher: this.dispatcher,
                 meters: this.getRaceDistance(this.raceType)
             });
@@ -118,7 +112,7 @@ define([
 
         onRaceSelected: function () {
             this.raceType = $('input:radio[name=race]:checked').val();
-            this.dispatcher.trigger(this.dispatcher.Events.ON_RACE_SELECTED, {meters: this.getRaceDistance(this.raceType)});
+            this.dispatcher.trigger(this.dispatcher.Events.RACE_SELECTED, {meters: this.getRaceDistance(this.raceType)});
         },
 
         getRaceDistance: function (race) {

@@ -23,12 +23,12 @@ define([
             this.collection = args.collection;
             this.dispatcher = args.dispatcher;
             this.render();
+            this.dispatcher.on(this.dispatcher.Events.LAYER_MOUSEOVER, this.onLayerMouseover, this);
+            this.dispatcher.on(this.dispatcher.Events.LAYER_MOUSEOUT, this.onLayerMouseout, this);
         },
 
         render: function () {
             this.$el.html(this.template({collection: this.collection.toJSON()}));
-            this.dispatcher.on(this.dispatcher.Events.ON_LAYER_MOUSEOVER, this.onLayerMouseover, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_LAYER_MOUSEOUT, this.onLayerMouseout, this);
         },
 
         onLayerMouseover: function(args) {
@@ -47,12 +47,12 @@ define([
 
         onMouseover: function (event) {
             $(event.currentTarget).addClass(this.highlightClass);
-            this.dispatcher.trigger(this.dispatcher.Events.ON_LIST_MOUSEOVER, {geoid: $(event.currentTarget).attr('id')});
+            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOVER, {geoid: $(event.currentTarget).attr('id')});
         },
 
         onMouseout: function (event) {
             $(event.currentTarget).removeClass(this.highlightClass);
-            this.dispatcher.trigger(this.dispatcher.Events.ON_LIST_MOUSEOUT, {geoid: $(event.currentTarget).attr('id')});
+            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOUT, {geoid: $(event.currentTarget).attr('id')});
         },
 
         scrollToElement: function(elem) {

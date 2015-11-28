@@ -18,12 +18,12 @@ define([
         },
 
         /**
-         * The purpose of this function is to fire the ON_BASE_LAYER_CHANGED if this is
+         * The purpose of this function is to fire the BASE_LAYER_CHANGED if this is
          * a base layer and isSelected is set to true
          */
         onBaseLayerChanged: function() {
             if (this.get('isBaseLayer') && this.get('isSelected')) {
-                this.dispatcher.trigger(this.dispatcher.Events.ON_BASE_LAYER_CHANGED, {mapLayer: this});
+                this.dispatcher.trigger(this.dispatcher.Events.BASE_LAYER_CHANGED, {mapLayer: this});
             }
         }
     });

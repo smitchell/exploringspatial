@@ -11,25 +11,25 @@ define([
     var StatesMapLayerView = Backbone.View.extend({
 
         initialize: function (args) {
-            this.mainlandMap = args.mainlandMap;
-            this.alaskaMap = args.alaskaMap;
-            this.hawaiiMap = args.hawaiiMap;
+            this.maps = args.maps;
             this.mainlandLayer = null;
             this.collection = args.collection;
             this.dispatcher = args.dispatcher;
-            this.dispatcher.on(this.dispatcher.Events.ON_RACE_ADDED, this.onRaceAdded, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_RACE_SELECTED, this.onRaceSelected, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_RACE_ZOOMED, this.onRaceSelected, this);
+
             this.render();
+            this.dispatcher.on(this.dispatcher.Events.RACE_ADDED, this.onRaceAdded, this);
+            this.dispatcher.on(this.dispatcher.Events.RACE_SELECTED, this.onRaceSelected, this);
+            this.dispatcher.on(this.dispatcher.Events.RACE_ZOOMED, this.onRaceSelected, this);
         },
 
         render: function () {
+            var mainland = this.maps['mainland'];
             var _this = this;
             if (this.mainlandLayer != null && this.mainlandMap.hasLayer(this.mainlandLayer)) {
                 this.mainlandLayer.getLayers().forEach(function (layer) {
                     _this.mainlandLayer.removeLayer(layer);
                 });
-                this.mainlandMap.removeLayer(this.mainlandLayer);
+                mainland.removeLayer(this.mainlandLayer);
             }
             //adm1_code": "USA-3514"
             this.mainlandLayer = L.geoJson(this.collection.toJSON(), {
@@ -37,19 +37,19 @@ define([
                     return feature.properties.adm1_code != "USA-3563" && feature.properties.adm1_code != "USA-3517";
                 },
                 style: {weight: 1}
-            }).addTo(this.mainlandMap);
-            this.alaskaLayer = L.geoJson(this.collection.toJSON(), {
+            }).addTo(mainland);
+            L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3563";
                 },
                 style: {weight: 1}
-            }).addTo(this.alaskaMap);
-            this.hawaiiLayer = L.geoJson(this.collection.toJSON(), {
+            }).addTo(this.maps['alaska']);
+            L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3517";
                 },
                 style: {weight: 1}
-            }).addTo(this.hawaiiMap);
+            }).addTo(this.maps['hawaii']);
         },
 
         // Unhighlight the previously selected states.
@@ -62,9 +62,9 @@ define([
             }
         },
 
-        // Highlight matching states
+        // Highlight matching state
         onRaceAdded: function(event) {
-            var latLng = event.latLng;
+            var latLng = event.latLng; // Race starting location
             if (latLng && this.mainlandLayer != null) {
                 // Use the Leaflet-PIP (point in polygon) library to find any state
                 // layers containing the race start point.

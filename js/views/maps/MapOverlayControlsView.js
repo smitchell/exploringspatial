@@ -21,8 +21,8 @@ define([
             this.collection = args.collection;
             this.template = _.template(templateHtml);
             this.dispatcher = args.dispatcher;
-            this.dispatcher.on(this.dispatcher.Events.ON_PROVIDER_CHANGED, this.toggleVisibility, this);
-            this.dispatcher.on(this.dispatcher.Events.ON_BASE_LAYER_CHANGED, this.toggleVisibility, this);
+            this.dispatcher.on(this.dispatcher.Events.PROVIDER_CHANGED, this.toggleVisibility, this);
+            this.dispatcher.on(this.dispatcher.Events.BASE_LAYER_CHANGED, this.toggleVisibility, this);
             this.render();
         },
 
@@ -100,12 +100,12 @@ define([
 
         /**
          * The purpose of the onToggleSelected function is to first collapse any other
-         * open menus by calling ON_MENU_STATE_CHANGE, and then expand the .map-menu div.
+         * open menus by calling MENU_STATE_CHANGE, and then expand the .map-menu div.
          * @param e - The click event.
          */
         onToggleSelected: function (e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.ON_MENU_STATE_CHANGE);
+            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -118,7 +118,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.overlay-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.dispatcher.trigger(_self.dispatcher.Events.ON_MENU_STATE_CHANGE);
+                _self.dispatcher.trigger(_self.dispatcher.Events.MENU_STATE_CHANGE);
             });
         },
 
@@ -130,14 +130,14 @@ define([
 
         /**
          * The purpose of this function is to toggle the selected class on the menu item clicked,
-         * and then trigger ON_OVERLAY_CLICKED to change the map layer.
+         * and then trigger OVERLAY_CLICKED to change the map layer.
          * @param e - The click event.
          */
         onOverlayClicked: function (e) {
             e.preventDefault();
             var $overlay = $(e.target);
             $overlay.toggleClass('selected');
-            this.dispatcher.trigger(this.dispatcher.Events.ON_OVERLAY_CLICKED, {target: $overlay});
+            this.dispatcher.trigger(this.dispatcher.Events.OVERLAY_CLICKED, {target: $overlay});
         }
     });
 

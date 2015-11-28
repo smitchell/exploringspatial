@@ -31,12 +31,12 @@ define([
 
         /**
          * The purpose of the onToggleSelected function is to first collapse any other
-         * open menus by calling ON_MENU_STATE_CHANGE, and then expand the .map-menu div.
+         * open menus by calling MENU_STATE_CHANGE, and then expand the .map-menu div.
          * @param e - The click event.
          */
         onToggleSelected: function(e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.ON_MENU_STATE_CHANGE);
+            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE);
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -49,7 +49,7 @@ define([
             e.preventDefault();
             var _self = this;
             this.$('.provider-menu').stop(true, true).delay(300).slideUp(20, function () {
-                _self.dispatcher.trigger(_self.dispatcher.Events.ON_MENU_STATE_CHANGE);
+                _self.dispatcher.trigger(_self.dispatcher.Events.MENU_STATE_CHANGE);
             });
         },
 
@@ -61,7 +61,7 @@ define([
 
         /**
          * The purpose of this function is to toggle the selected class on the menu item clicked,
-         * and then trigger ON_PROVIDER_CLICKED to change the map provider.
+         * and then trigger PROVIDER_CLICKED to change the map provider.
          * @param e - The click event.
          */
         onProviderClicked: function(e) {
@@ -70,7 +70,7 @@ define([
             if (!$target.hasClass('selected')) {
                 this.$('.item').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
-                this.dispatcher.trigger(this.dispatcher.Events.ON_PROVIDER_CLICKED, {target: $target});
+                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CLICKED, {target: $target});
             }
 
         }

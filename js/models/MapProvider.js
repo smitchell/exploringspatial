@@ -26,12 +26,12 @@ define([
         },
 
         /**
-         * The purpose of this function is to fire the ON_PROVIDER_CHANGED event when the
+         * The purpose of this function is to fire the PROVIDER_CHANGED event when the
          * isSelected property is changed to true.
          */
         onMapProviderChanged: function() {
             if (this.get('isSelected')) {
-                this.dispatcher.trigger(this.dispatcher.Events.ON_PROVIDER_CHANGED, {mapProvider: this});
+                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CHANGED, {mapProvider: this});
             }
         }
     });
