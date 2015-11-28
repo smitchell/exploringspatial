@@ -21,7 +21,7 @@ define([
     });
 
     var initialize = function (args) {
-        var router = new Router;
+        var router = new Router(this);
 
         var menuView = new MenuView({el: $('#navContainer')});
         new FooterView({el: $('#footer')});

@@ -6,9 +6,8 @@ define([
         'backbone',
         'models/GeoJsonFeature'
 ], function(Backbone, GeoJsonFeature) {
-var Counties = Backbone.Collection.extend({
-	state: 'ks',
-	url: "http://data.exploringspatial.com/states/ks/counties",
+var States = Backbone.Collection.extend({
+	url: "http://data.exploringspatial.com/states/states.json",
 	model: GeoJsonFeature,
 
 	/**
@@ -38,17 +37,8 @@ var Counties = Backbone.Collection.extend({
 
     comparator: function( collection ){
         return( collection.get( 'properties').get('name') );
-    },
-
-	getState: function() {
-		return this.state;
-	},
-
-	setState: function(state) {
-		this.state = state;
-	}
-
+    }
 });
 
-    return Counties;
+    return States;
 });

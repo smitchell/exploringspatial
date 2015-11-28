@@ -8,8 +8,9 @@ html, body, div, h1, h2, h3, h4, h5, h6, ul, ol, dl, li, dt, dd, p, blockquote, 
     margin: 0;
     padding: 0;
 }
-
 .detailsBox {
+	min-height: 365px;
+	width: 775px;
     position: relative;
     padding: 7px;
     border: 1px solid #c8c8c8;
@@ -249,8 +250,8 @@ input.searchField {
 
 .searchOptionsField .checkbox {
     width: 14px;
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .searchOptionsField.disabled {

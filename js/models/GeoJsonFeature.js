@@ -1,5 +1,5 @@
 /**
- * Activity is a Backbone model representing a County.
+ * Activity is a Backbone model representing a GeoJsonFeature.
  *
  */
 define([
@@ -8,7 +8,7 @@ define([
     'models/Geometry',
     'models/Properties'
 ], function (_, Backbone, Geometry, Properties) {
-    var County = Backbone.Model.extend({
+    var GeoJsonFeature = Backbone.Model.extend({
 
         /**
          * Override Backbone parse to convert properties of properties into child Backbone models.
@@ -34,5 +34,5 @@ define([
             return json;
         }
     });
-    return County;
+    return GeoJsonFeature;
 });

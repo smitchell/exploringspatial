@@ -1,5 +1,5 @@
 /**
- * The purpose of the CountyMapLayerView is render feature collection GeoJson on the map.
+ * The purpose of the CountiesMapLayerView is render feature collection GeoJson on the map.
  */
 define([
     'jquery',

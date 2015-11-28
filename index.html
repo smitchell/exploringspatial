@@ -2,6 +2,15 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+    <script type="application/javascript">
+      <!--
+          var isMobile = /(iphone|ipod|ipad|android|blackberry|windows ce|palm|symbian)/i.test(navigator.userAgent);
+          var isSmall =  window.screen.width < 800 || window.screen.height < 600;
+          if (isMobile || isSmall) {
+              window.location.replace("http://www.exploringspatial.com/mobileindex.html");
+          }
+      //-->
+    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
@@ -24,7 +33,6 @@
     <link rel="stylesheet" href="css/PruneCluster/LeafletStyleSheet.css"/>
     <!--[if lt IE 9]>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.ie.css" />
-    <link rel="stylesheet" href="css/L.Control.Locate.ie.css"/>
     <![endif]-->
     <script type="application/javascript" src="js/requireconfig.js"></script>
     <script type="application/javascript" src="js/require.js"></script>
@@ -53,10 +61,6 @@
         requirejs(['jquery', 'apps/HomePageApp'],
                 function ($, HomePageApp) {
                     $(document).ready(function () {
-                        var screenWidth = $(window).width();
-                        if (screenWidth < 800) {
-                            document.location = "mobileindex.html";
-                        }
                         HomePageApp.initialize();
                     });
                 });

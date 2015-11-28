@@ -1,5 +1,5 @@
 /**
- * ArmedConflictLocations is a Backbone Collection of ArmedConflictLocation Backbone Models.
+ * ArmedConflictLocations is a Backbone Collection of GeoJsonFeature Backbone Models.
  * Each model represents a single location of armed conflict.
  */
 define([

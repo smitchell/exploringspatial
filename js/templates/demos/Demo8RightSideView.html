@@ -1,10 +1,16 @@
 <div id="container2">
-    <h1 style="color: white;">My Activities Search Results</h1>
+    <h1 style="color: white;">On-the-fly "50-state Marathon Club" Style Map</h1>
 </div>
 <div id="container3">
-    <p>This demo is for my blog post <a href="https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters/" target="_blank">
-        How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>.</p>
-    <div id="searchBox" class="activitiesSearchBox" style=""></div>
+    <div id="searchBox" class="raceSelector">
+        <form name="RaceType">
+            <fieldset class="raceRadioGroup">
+                <input type="radio" name="race" value="marathon" id="full" <%= isMarathon %> /><label for="full"> Full Marathon</label>
+                <input type="radio" name="race" value="halfMarathon" id="half" <%= isHalf %> /><label for="half"> Half Marathon</label>
+                <input type="radio" name="race" value="fiveK" id="5K" <%= isFiveK %>  /><label for="5K"> 5K</label>
+            </fieldset>
+        </form>
+    </div>
     <div class="returnToSearch" style="display: none">
         <a class="returnTrigger" href="javascript:void(0);">Return to Search</a>
     </div>
