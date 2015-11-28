@@ -63,7 +63,8 @@ define([
                 touchZoom: false,
                 doubleClickZoom: false,
                 zoomControl: false,
-                dragging: false
+                dragging: false,
+                keyboard: false
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
@@ -74,7 +75,8 @@ define([
                 touchZoom: false,
                 doubleClickZoom: false,
                 zoomControl: false,
-                dragging: false
+                dragging: false,
+                keyboard: false
             }).addLayer(osmLayer);
             this.maps['hawaii'] = L.map('map_hawaii', {
                 center: [20.344627, -157.939453],
@@ -83,7 +85,8 @@ define([
                 touchZoom: false,
                 doubleClickZoom: false,
                 zoomControl: false,
-                dragging: false
+                dragging: false,
+                keyboard: false
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));

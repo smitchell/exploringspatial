@@ -54,7 +54,8 @@ define([
                             touchZoom: false,
                             doubleClickZoom: false,
                             zoomControl: false,
-                            dragging: false
+                            dragging: false,
+                            keyboard: false
                         });
             var baseLayers = {
                 'Google': googleLayer,
