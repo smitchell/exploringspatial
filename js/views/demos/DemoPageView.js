@@ -53,7 +53,7 @@ define([
                     new Demo7RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 default:
-                    new Demo8RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo8RightSideView({el: $('#rightContainer'), mapWidth: 650, mapHeight: 350});
                     break;
             }
             new DemoLeftSideView({el: $('#leftContainer'), demoId: demoId});

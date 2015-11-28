@@ -5,22 +5,28 @@
     <div id="searchBox" class="raceSelector">
         <form name="RaceType">
             <fieldset class="raceRadioGroup">
-                <input type="radio" name="race" value="marathon" id="full" <%= isMarathon %> /><label for="full"> Full Marathon</label>
-                <input type="radio" name="race" value="halfMarathon" id="half" <%= isHalf %> /><label for="half"> Half Marathon</label>
-                <input type="radio" name="race" value="fiveK" id="5K" <%= isFiveK %>  /><label for="5K"> 5K</label>
+                <input type="radio" name="race" value="marathon" id="full" <%= isMarathon %> /><label for="full"> Full
+                Marathon</label>
+                <input type="radio" name="race" value="halfMarathon" id="half" <%= isHalf %> /><label for="half"> Half
+                Marathon</label>
+                <input type="radio" name="race" value="fiveK" id="5K" <%= isFiveK %> /><label for="5K"> 5K</label>
             </fieldset>
         </form>
     </div>
     <div class="returnToSearch" style="display: none">
         <a class="returnTrigger" href="javascript:void(0);">Return to Search</a>
     </div>
-    <div id="detailsMapBox" class="detailsBox">
-        <div class="map-controls">
-            <ul class="map-control-item map-zoom"></ul>
-            <div class="map-control-item map-select map-provider"></div>
-            <div class="map-control-item map-select map-type"></div>
-            <div class="map-control-item map-select map-layers"></div>
+    <div id="detailsMapBox" class="demo8Box">
+        <div style="float: left">
+            <div id="map_alaska"  style="height: 160px; width: 175px;">
+            </div>
+            <p>Alaska</p>
+            <div id="map_hawaii" style="height: 160px; width: 175px">
+
+            </div>
+            <p>Hawaii</p>
         </div>
-        <div id="map_container" width="<%= mapWidth %>" height="<%= mapHeight %>" class="detailMap"></div>
+        <div id="map_mainland" class="mainlandMap" style="float: right"></div>
+
     </div>
 </div>

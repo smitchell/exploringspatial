@@ -48,54 +48,67 @@ define([
             this.$el.html(this.template({
                 isMarathon: this.isSelected(this.MARATHON),
                 isHalf: this.isSelected(this.HALF_MARATHON),
-                isFiveK:this.isSelected(this.FIVE_K),
+                isFiveK: this.isSelected(this.FIVE_K),
                 mapWidth: this.args.mapWidth,
                 mapHeight: this.args.mapHeight
             }));
             var osmLayer = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             });
-            var mapQuest = new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg', {
-                attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ' +
-                'Map data {attribution.OpenStreetMap}',
-                subdomains: '1234'
-            });
-            var googleLayer = new L.Google('ROADMAP');
-            var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
-            var map = L.map('map_container', {
-                center: [38.43638, -98.195801],
-                zoom: 3,
-                layers: [bingLayer],
+            this.mainlandMap = L.map('map_mainland', {
+                center: [38.5, -96],
+                zoom: 4,
                 scrollWheelZoom: false,
                 touchZoom: false,
                 doubleClickZoom: false,
                 zoomControl: false,
                 dragging: false
             });
-            var baseLayers = {
-                'Google': googleLayer,
-                'Bing': bingLayer,
-                'OSM': osmLayer,
-                'MapQuest': mapQuest
-            };
-            L.control.layers(baseLayers).addTo(map);
-            this.map = map;
+            this.mainlandMap.addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }));
+            this.alaskaMap = L.map('map_alaska', {
+                center: [65, -153.5],
+                zoom: 3,
+                scrollWheelZoom: false,
+                touchZoom: false,
+                doubleClickZoom: false,
+                zoomControl: false,
+                dragging: false
+            });
+            this.alaskaMap.addLayer(osmLayer);
+            this.hawaiiMap = L.map('map_hawaii', {
+                center: [20.344627, -157.939453],
+                zoom: 5,
+                scrollWheelZoom: false,
+                touchZoom: false,
+                doubleClickZoom: false,
+                zoomControl: false,
+                dragging: false
+            });
+            this.hawaiiMap.addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }));
             // Create a global dispatcher for non model/collection events.
             this.dispatcher = MapEventDispatcher;
             new StatesMapLayerView({
                 collection: this.states,
-                map: this.map,
+                mainlandMap: this.mainlandMap,
+                alaskaMap: this.alaskaMap,
+                hawaiiMap: this.hawaiiMap,
                 dispatcher: this.dispatcher
             });
             new RacesMapLayerView({
                 collection: this.activities,
-                map: this.map,
+                mainlandMap: this.mainlandMap,
+                alaskaMap: this.alaskaMap,
+                hawaiiMap: this.hawaiiMap,
                 dispatcher: this.dispatcher,
                 meters: this.getRaceDistance(this.raceType)
             });
         },
 
-        isSelected: function(race) {
+        isSelected: function (race) {
             var selected = "";
             if (this.raceType == race) {
                 selected = "checked"

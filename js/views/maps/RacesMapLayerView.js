@@ -11,7 +11,9 @@ define([
     var RacesMapLayerView = Backbone.View.extend({
 
         initialize: function (args) {
-            this.map = args.map;
+            this.mainlandMap = args.mainlandMap;
+            this.alaskaMap = args.alaskaMap;
+            this.hawaiiMap = args.hawaiiMap;
             this.activitiesLayer = null;
             this.originalCenter = null;
             this.originalZoom = null;
@@ -35,11 +37,11 @@ define([
 
         render: function () {
             var _self = this;
-            if (this.activitiesLayer != null && this.map.hasLayer(this.activitiesLayer)) {
+            if (this.activitiesLayer != null && this.mainlandMap.hasLayer(this.activitiesLayer)) {
                 this.activitiesLayer.getLayers().forEach(function (layer) {
                     _self.activitiesLayer.removeLayer(layer);
                 });
-                this.map.removeLayer(this.activitiesLayer);
+                this.mainlandMap.removeLayer(this.activitiesLayer);
             }
             var startRange = this.meters * 0.96;
             var endRange = this.meters * 1.05;
@@ -73,8 +75,8 @@ define([
             });
 
             if (this.activitiesLayer.getLayers().length > 0) {
-                this.map.addLayer(this.activitiesLayer);
-                this.map.on('popupopen', function (event) {
+                this.mainlandMap.addLayer(this.activitiesLayer);
+                this.mainlandMap.on('popupopen', function (event) {
                     _self.onPopupOpen(event);
                 });
                 $('.returnToSearch').on('click', '.returnTrigger', function (event) {
@@ -94,9 +96,9 @@ define([
 
         onOpenActivity: function (event, popup) {
             var location = popup._latlng;
-            this.map.closePopup(popup);
-            this.originalCenter = this.map.getCenter();
-            this.originalZoom = this.map.getZoom();
+            this.mainlandMap.closePopup(popup);
+            this.originalCenter = this.mainlandMap.getCenter();
+            this.originalZoom = this.mainlandMap.getZoom();
             this.activity = new Activity({activityId: event.target.id});
             var _this = this;
             this.activity.fetch({
@@ -109,12 +111,12 @@ define([
         renderActivity: function () {
             $('#searchBox').slideUp();
             $('.returnToSearch').show();
-            if (this.map.hasLayer(this.activitiesLayer)) {
-                this.map.removeLayer(this.activitiesLayer);
+            if (this.mainlandMap.hasLayer(this.activitiesLayer)) {
+                this.mainlandMap.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
             $('#container2').find('h1:first').html(props.get('name'));
-            this.map.fitBounds([
+            this.mainlandMap.fitBounds([
                 [props.get('minLat'), props.get('minLon')],
                 [props.get('maxLat'), props.get('maxLon')]
             ]);
@@ -124,12 +126,12 @@ define([
                 opacity: 0.6
             };
 
-            this.activityLayer = L.geoJson(this.activity.toJSON(), {style: style}).addTo(this.map);
+            this.activityLayer = L.geoJson(this.activity.toJSON(), {style: style}).addTo(this.mainlandMap);
             var polyline = this.activity.get('geometry').get('coordinates');
             var startPoint = polyline[0];
             var endPoint = polyline[polyline.length - 1];
-            this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.map);
-            this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.map);
+            this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.mainlandMap);
+            this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.mainlandMap);
             this.dispatcher.trigger(this.dispatcher.Events.ON_RACE_ZOOMED);
         },
 
@@ -137,21 +139,21 @@ define([
             $('.returnToSearch').hide();
             $('#searchBox').slideDown();
             if (this.activitiesLayer != null) {
-                if (this.activityLayer != null && this.map.hasLayer(this.activityLayer)) {
-                    this.map.removeLayer(this.activityLayer);
+                if (this.activityLayer != null && this.mainlandMap.hasLayer(this.activityLayer)) {
+                    this.mainlandMap.removeLayer(this.activityLayer);
                     this.activityLayer = null;
                 }
-                if (this.activityStart != null && this.map.hasLayer(this.activityStart)) {
-                    this.map.removeLayer(this.activityStart);
+                if (this.activityStart != null && this.mainlandMap.hasLayer(this.activityStart)) {
+                    this.mainlandMap.removeLayer(this.activityStart);
                     this.activityStart = null;
                 }
-                if (this.activityEnd != null && this.map.hasLayer(this.activityEnd)) {
-                    this.map.removeLayer(this.activityEnd);
+                if (this.activityEnd != null && this.mainlandMap.hasLayer(this.activityEnd)) {
+                    this.mainlandMap.removeLayer(this.activityEnd);
                     this.activityEnd = null
                 }
-                this.map.addLayer(this.activitiesLayer);
+                this.mainlandMap.addLayer(this.activitiesLayer);
                 if (this.originalCenter != null && this.originalZoom != null) {
-                    this.map.setView(this.originalCenter, this.originalZoom, {animate: true});
+                    this.mainlandMap.setView(this.originalCenter, this.originalZoom, {animate: true});
                     this.originalCenter = null;
                     this.originalZoom = null;
                 }
