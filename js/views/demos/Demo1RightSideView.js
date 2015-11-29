@@ -24,12 +24,6 @@ define([
             'Map data {attribution.OpenStreetMap}',
                 subdomains: '1234'
             });
-            var aerial = new L.tileLayer('http://oatile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg',{
-                attribution:
-                'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ' +
-                'Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
-                subdomains: '1234'
-            });
             var googleLayer = new L.Google('ROADMAP');
             var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map_container', {
@@ -41,8 +35,7 @@ define([
                 'Google': googleLayer,
                 'Bing' : bingLayer,
                 'OSM': osmLayer,
-                'MapQuest': mapQuest,
-                'Satellite': aerial
+                'MapQuest': mapQuest
             };
             L.control.layers(baseLayers).addTo(map);
             L.marker([51.5, -0.09]).addTo(map)

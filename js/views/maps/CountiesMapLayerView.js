@@ -71,7 +71,7 @@ define([
 
                 // Use the Leaflet-PIP (point in polygon) library to find any county
                 // layers containing the point of the circle's mousemove event.
-                var layers = leafletPip.pointInLayer(event.latlng, _this.countiesLayer);
+                var layers = leafletPip.pointInLayer(event.latlng, _this.countiesLayer, true);
 
                 // Highlight any matches (there should be just one), by firing its mouseover event.
                 layers.forEach(function (layer) {

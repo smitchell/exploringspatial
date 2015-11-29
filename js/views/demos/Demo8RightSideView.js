@@ -53,9 +53,6 @@ define([
                 mapWidth: this.args.mapWidth,
                 mapHeight: this.args.mapHeight
             }));
-            var osmLayer = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            });
             this.maps['mainland'] = L.map('map_mainland', {
                 center: [38.5, -96],
                 zoom: 4,
@@ -77,7 +74,9 @@ define([
                 zoomControl: false,
                 dragging: false,
                 keyboard: false
-            }).addLayer(osmLayer);
+            }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }));
             this.maps['hawaii'] = L.map('map_hawaii', {
                 center: [20.344627, -157.939453],
                 zoom: 5,

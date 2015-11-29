@@ -11,6 +11,7 @@ define([
     'views/demos/Demo6RightSideView',
     'views/demos/Demo7RightSideView',
     'views/demos/Demo8RightSideView',
+    'views/demos/Demo9RightSideView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone, 
              DemoLeftSideView, 
@@ -22,6 +23,7 @@ define([
              Demo6RightSideView, 
              Demo7RightSideView,
              Demo8RightSideView,
+             Demo9RightSideView,
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
         initialize: function (args, demoId) {
@@ -52,8 +54,11 @@ define([
                 case 7:
                     new Demo7RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
-                default:
+                case 8:
                     new Demo8RightSideView({el: $('#rightContainer'), mapWidth: 650, mapHeight: 350});
+                    break;
+                default:
+                    new Demo9RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
             }
             new DemoLeftSideView({el: $('#leftContainer'), demoId: demoId});

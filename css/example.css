@@ -9,9 +9,10 @@ html, body, div, h1, h2, h3, h4, h5, h6, ul, ol, dl, li, dt, dd, p, blockquote, 
     padding: 0;
 }
 .detailsBox {
+    clear: both;
 	min-height: 365px;
 	width: 775px;
-    position: relative;
+    position: absolute;
     padding: 7px;
     border: 1px solid #c8c8c8;
     -webkit-border-radius: 5px;

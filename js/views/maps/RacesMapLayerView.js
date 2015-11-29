@@ -4,8 +4,7 @@
 define([
     'underscore',
     'backbone',
-    'models/Activity',
-    'leaflet_markercluster'
+    'models/Activity'
 ], function (_, Backbone, Activity) {
 
     var RacesMapLayerView = Backbone.View.extend({

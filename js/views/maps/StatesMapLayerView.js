@@ -68,7 +68,7 @@ define([
             if (latLng && this.mainlandLayer != null) {
                 // Use the Leaflet-PIP (point in polygon) library to find any state
                 // layers containing the race start point.
-                var layers = leafletPip.pointInLayer(latLng, this.mainlandLayer);
+                var layers = leafletPip.pointInLayer(latLng, this.mainlandLayer, true);
 
                 // Highlight any matches (there should be just one);
                 layers.forEach(function (layer) {
