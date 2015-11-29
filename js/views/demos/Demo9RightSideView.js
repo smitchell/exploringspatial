@@ -38,7 +38,7 @@ define([
             // Center map on Sport+Spine for this demo
             this.startLat = 38.9379;
             this.startLon = -94.6695;
-            this.map = L.map('map_container', {
+            this.map = L.map('demo9_container', {
                 center: [this.startLat, this.startLon],
                 zoom: 17
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
