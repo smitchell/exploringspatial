@@ -102,7 +102,6 @@ define([
 
         onActivityFetched: function () {
             var _this = this;
-            this.map.setView(L.latLng(this.startLat, this.startLon), 17);
             this.activityGroup.getLayers().forEach(function (layer) {
                 _this.activityGroup.removeLayer(layer);
             });
@@ -173,6 +172,10 @@ define([
                     weight: 3
                 }).addTo(this.activityGroup);
             }
+            this.map.fitBounds(this.activityGroup.getBounds());
+            setTimeout(function() {
+                _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true, duration: 1});
+            }, 1000);
         }
 
     });
