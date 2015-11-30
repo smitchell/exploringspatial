@@ -174,8 +174,8 @@ define([
             }
             this.map.fitBounds(this.activityGroup.getBounds());
             setTimeout(function() {
-                _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true, duration: 1});
-            }, 1000);
+                _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true});
+            }, 1400);
         }
 
     });
