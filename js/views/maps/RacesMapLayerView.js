@@ -115,11 +115,14 @@ define([
                 mainland.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
-            $('#container2').find('h1:first').html(props.get('name'));
-            mainland.fitBounds([
-                [props.get('minLat'), props.get('minLon')],
-                [props.get('maxLat'), props.get('maxLon')]
-            ]);
+            // TODO - Find out how this can be undefined.
+            if (props) {
+                $('#container2').find('h1:first').html(props.get('name'));
+                mainland.fitBounds([
+                    [props.get('minLat'), props.get('minLon')],
+                    [props.get('maxLat'), props.get('maxLon')]
+                ]);
+            }
             var style = {
                 color: '#FF0000',
                 weight: 3,
