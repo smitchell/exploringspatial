@@ -70,7 +70,8 @@ define([
                 coordinates = geometry.get('coordinates');
                 latLng = L.latLng(coordinates[1], coordinates[0]);
                 layers = leafletPip.pointInLayer(latLng, _this.geoFence, true);
-                if (layers.length > 0) {
+                // Did this activity match, and do we have less than 10 sample activities so far.
+                if (layers.length > 0  && i <= 10) {
                     triggerId = activity.get('properties').get('activityId');
                     pageDiv.append($("<div class='" + className + "' id='" + triggerId + "' >" + i++ + "</div>"));
                     if (firstMatch) {
