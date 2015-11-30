@@ -18,7 +18,7 @@ define([
             var i = 0;
             var list = this.$('#posts-feed');
             this.collection.each(function(rssEntry) {
-                if (i++ < 6) {
+                if (i++ < 3) {
                     new RssEntryView({model: rssEntry, el: list});
                 }
             });

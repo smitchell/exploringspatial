@@ -9,7 +9,7 @@ define([
 var RssEntries = Backbone.Collection.extend({
 	model: RssEntry,
 
-	initialize: function() {
+	initialize: function(args) {
 		this.feed = new google.feeds.Feed("https://exploringspatial.wordpress.com/feed/");
 	},
 
@@ -18,20 +18,18 @@ var RssEntries = Backbone.Collection.extend({
 		this.feed.load(function(result) {
 			var models = [];
 			if (!result.error) {
-				var entry;
-				for (var i = 0; i < result.feed.entries.length; i++) {
-					entry = result.feed.entries[i];
-					models.push(new RssEntry({
-						author: entry.author,
-						categories: entry.categories,
-						content: entry.content,
-						contentSnippet: entry.contentSnippet,
-						link: entry.link,
-						mediaGroups: entry.mediaGroups,
-						publishedDate: new Date(entry.publishedDate).toLocaleDateString(),
-						title: entry.title
-					}));
-				}
+                $.each(result.feed.entries, function(index, entry) {
+                    models.push(new RssEntry({
+                        author: entry.author,
+                        categories: entry.categories,
+                        content: entry.content,
+                        contentSnippet: entry.contentSnippet,
+                        link: entry.link,
+                        mediaGroups: entry.mediaGroups,
+                        publishedDate: new Date(entry.publishedDate).toLocaleDateString(),
+                        title: entry.title
+                    }));
+                });
 			}
 			_this.reset(models);
 		});
