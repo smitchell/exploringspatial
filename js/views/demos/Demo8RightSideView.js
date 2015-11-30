@@ -53,6 +53,7 @@ define([
                 mapWidth: this.args.mapWidth,
                 mapHeight: this.args.mapHeight
             }));
+
             this.maps['mainland'] = L.map('map_mainland', {
                 center: [38.5, -96],
                 zoom: 4,
@@ -65,6 +66,7 @@ define([
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
+
             this.maps['alaska'] = L.map('map_alaska', {
                 center: [65, -153.5],
                 zoom: 3,
@@ -77,6 +79,7 @@ define([
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
+
             this.maps['hawaii'] = L.map('map_hawaii', {
                 center: [20.344627, -157.939453],
                 zoom: 5,
@@ -89,13 +92,16 @@ define([
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
+
             // Create a global dispatcher for non model/collection events.
             this.dispatcher = MapEventDispatcher;
+
             new StatesMapLayerView({
                 collection: this.states,
                 maps: this.maps,
                 dispatcher: this.dispatcher
             });
+
             new RacesMapLayerView({
                 collection: this.activities,
                 maps: this.maps,

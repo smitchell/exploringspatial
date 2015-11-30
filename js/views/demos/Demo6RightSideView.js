@@ -30,8 +30,19 @@ define([
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
             var acledSearch = new AcledSearch();
-            this.mapView = new AcledMapView({acledSearch: acledSearch, countries: this.collection, lat: 1.5818302639606454, lon: 16.787109375, zoom: 3});
-            new ArmedConflictLocationsView({acledSearch: acledSearch, collection: this.collection, map: this.mapView.getMap()});
+            this.mapView = new AcledMapView({
+                acledSearch: acledSearch,
+                countries: this.collection,
+                lat: 1.5818302639606454,
+                lon: 16.787109375,
+                zoom: 3
+            });
+            new ArmedConflictLocationsView({
+                acledSearch: acledSearch,
+                collection:
+                this.collection,
+                map: this.mapView.getMap()
+            });
         }
     });
     return Demo6RightSideView;

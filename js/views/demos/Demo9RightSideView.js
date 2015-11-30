@@ -112,6 +112,7 @@ define([
             var middle = [];
             var coordinates = this.activity.get('geometry').get('coordinates');
             var insideFence = true;
+
             // Find the contiguous points from the start that are inside the geofence
             $.each(coordinates, function (index, coordinate) {
                 latLng = L.latLng(coordinate[1], coordinate[0]);
@@ -152,6 +153,7 @@ define([
                 }
             }
 
+            // Find the points between the hidden points at the start and end of the polyline.
             if (middle.length > 0) {
                 var polyline = [];
                  $.each(middle, function (index, latLng) {
@@ -172,7 +174,11 @@ define([
                     weight: 3
                 }).addTo(this.activityGroup);
             }
+
+            // Let them see the whole polyline
             this.map.fitBounds(this.activityGroup.getBounds());
+
+            // but then zoom into the privacy geofence
             setTimeout(function() {
                 _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true});
             }, 1400);

@@ -27,11 +27,6 @@ define([
 
         render: function () {
             this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
-            var props = this.model.get('properties');
-            var args = {
-                lat: (props.get('minLat') + props.get('maxLat')) / 2,
-                lon: (props.get('minLon') + props.get('maxLon')) / 2
-            }
             this.mapView = new MapView();
             new ActivityMapLayerView({model: this.model, map: this.mapView.getMap()});
         }
