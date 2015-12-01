@@ -2,67 +2,64 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'views/demos/DemoLeftSideView',
-    'demos/demo1/views/RightSideView',
-    'demos/demo2/views/RightSideView',
-    'demos/demo3/views/RightSideView',
-    'demos/demo4/views/RightSideView',
-    'demos/demo5/views/RightSideView',
-    'demos/demo6/views/RightSideView',
-    'demos/demo7/views/RightSideView',
-    'demos/demo8/views/RightSideView',
-    'demos/demo9/views/RightSideView',
+    'demos/demo1/views/DemoPageView',
+    'demos/demo2/views/DemoPageView',
+    'demos/demo3/views/DemoPageView',
+    'demos/demo4/views/DemoPageView',
+    'demos/demo5/views/DemoPageView',
+    'demos/demo6/views/DemoPageView',
+    'demos/demo7/views/DemoPageView',
+    'demos/demo8/views/DemoPageView',
+    'demos/demo9/views/DemoPageView',
     'text!templates/demos/DemoPageView.html'
-], function ($, _, Backbone, 
-             DemoLeftSideView, 
-             Demo1RightSideView, 
-             Demo2RightSideView, 
-             Demo3RightSideView, 
-             Demo4RightSideView, 
-             Demo5RightSideView, 
-             Demo6RightSideView, 
-             Demo7RightSideView,
-             Demo8RightSideView,
-             Demo9RightSideView,
+], function ($, _, Backbone,
+             Demo1PageView, 
+             Demo2PageView, 
+             Demo3PageView, 
+             Demo4PageView, 
+             Demo5PageView, 
+             Demo6PageView, 
+             Demo7PageView,
+             Demo8PageView,
+             Demo9PageView,
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
         initialize: function (args, demoId) {
-            this.template = _.template(templateHtml);
-            this.$el.html(this.template({}));
+            //this.template = _.template(templateHtml);
+            //this.$el.html(this.template({}));
             this.args = args;
         },
         render: function (demoId) {
             switch(Number(demoId)) {
                 case 1:
-                    new Demo1RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo1PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 2:
-                    new Demo2RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo2PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 3:
-                    new Demo3RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo3PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 4:
-                    new Demo4RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo4PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 5:
-                    new Demo5RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo5PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 6:
-                    new Demo6RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo6PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 7:
-                    new Demo7RightSideView({el: $('#rightContainer'), mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
+                    new Demo7PageView({el: this.$el, mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight});
                     break;
                 case 8:
-                    new Demo8RightSideView({el: $('#rightContainer'), mapWidth: 650, mapHeight: 350});
+                    new Demo8PageView({el: this.$el, mapWidth: 650, mapHeight: 350});
                     break;
                 default:
                     demoId = 9;
-                    new Demo9RightSideView({el: $('#rightContainer'), mapWidth: 800, mapHeight: 250});
+                    new Demo9PageView({el: this.$el, mapWidth: 800, mapHeight: 250});
                     break;
             }
-            new DemoLeftSideView({el: $('#leftContainer'), demoId: demoId});
         }
     });
     return DemoPageView;

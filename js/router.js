@@ -7,12 +7,14 @@ define([
     'views/home/HomePageView',
     'views/about/AboutPageView',
     'views/LicensePageView',
+    'views/demos/DemoIndexView',
     'views/demos/DemoPageView',
     'utils/StyleManager'
-], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoPageView, StyleManager) {
+], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoIndexView, DemoPageView, StyleManager) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId" : "demo",
+            "demos" : "demos",
             "about" : "about",
             "license" : "license",
             "*actions": "home"
@@ -31,6 +33,7 @@ define([
         var licensePageView  = null;
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
         var demoPageView = null;
+        var demoIndexView = null;
         router.on('route:home', function (actions) {
             if (homePageView == null) {
                 homePageView = new HomePageView({el: contentWrapper});
@@ -38,18 +41,20 @@ define([
             homePageView.render();
             menuView.changeMenu('home')
         });
-        router.on('route:demo', function (demoId) {
-            if (demoId == 'current') {
-                styleManager.addDemoStyleSheet(styleManager.maxDemo);
-            } else {
-                styleManager.addDemoStyleSheet(demoId);
+        router.on('route:demos', function (actions) {
+            if (demoIndexView == null) {
+                demoIndexView = new DemoIndexView({el: contentWrapper});
             }
-
+            demoIndexView.render();
+            menuView.changeMenu('demos')
+        });
+        router.on('route:demo', function (demoId) {
+            styleManager.addDemoStyleSheet(demoId);
             if (demoPageView == null) {
                 demoPageView = new DemoPageView(demoArgs, demoId);
             }
             demoPageView.render(demoId);
-            menuView.changeMenu('demos')
+            menuView.changeMenu('')
         });
         router.on('route:about', function (actions) {
             if (aboutPageView == null) {
