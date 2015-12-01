@@ -1,25 +1,2 @@
 @charset "UTF-8";
 
-.detailsBox {
-    clear: both;
-	min-height: 365px;
-	width: 775px;
-    position: absolute;
-    padding: 7px;
-    border: 1px solid #c8c8c8;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.detailMap {
-	min-height: 350px;
-	width: 758px;
-    padding: 7px;
-    border: 1px solid #c8c8c8;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}

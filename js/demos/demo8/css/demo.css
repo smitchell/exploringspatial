@@ -1,16 +1,5 @@
 @charset "UTF-8";
 
-.mainlandMap {
-	min-height: 350px;
-	width: 650px;
-    padding: 7px;
-    border: 1px solid #c8c8c8;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
 .raceRadioGroup {
     width: 300px;
     padding-left: 25px;

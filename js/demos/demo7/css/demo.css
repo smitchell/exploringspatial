@@ -1,17 +1,5 @@
 @charset "UTF-8";
 
-.demo7Map {
-	min-height: 250px;
-	width: 425px;
-	position: absolute;
-}
-
-#demo7_container {
-	min-height: 345px;
-	width: 725px;
-}
-
-
 .county-list {
     font-size: small;
 	height: 250px;

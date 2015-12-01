@@ -31,7 +31,6 @@ define([
         var licensePageView  = null;
         var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
         var demoPageView = null;
-        styleManager.removeDemoStyleSheet();
         router.on('route:home', function (actions) {
             if (homePageView == null) {
                 homePageView = new HomePageView({el: contentWrapper});
@@ -41,9 +40,9 @@ define([
         });
         router.on('route:demo', function (demoId) {
             if (demoId == 'current') {
-                styleManager.addDemoStyleSheet("demo9");
+                styleManager.addDemoStyleSheet(styleManager.maxDemo);
             } else {
-                styleManager.addDemoStyleSheet("demo" + demoId);
+                styleManager.addDemoStyleSheet(demoId);
             }
 
             if (demoPageView == null) {
