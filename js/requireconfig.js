@@ -17,7 +17,9 @@ var require = {
         collections: '../collections',
         models: '../models',
         templates: '../templates',
-        views: '../views'
+        views: '../views',
+        demos: '../demos',
+        utils: '../utils'
     },
     shim: {
         'underscore': {

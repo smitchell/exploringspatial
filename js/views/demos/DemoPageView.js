@@ -3,15 +3,15 @@ define([
     'underscore',
     'backbone',
     'views/demos/DemoLeftSideView',
-    'views/demos/Demo1RightSideView',
-    'views/demos/Demo2RightSideView',
-    'views/demos/Demo3RightSideView',
-    'views/demos/Demo4RightSideView',
-    'views/demos/Demo5RightSideView',
-    'views/demos/Demo6RightSideView',
-    'views/demos/Demo7RightSideView',
-    'views/demos/Demo8RightSideView',
-    'views/demos/Demo9RightSideView',
+    'demos/demo1/views/RightSideView',
+    'demos/demo2/views/RightSideView',
+    'demos/demo3/views/RightSideView',
+    'demos/demo4/views/RightSideView',
+    'demos/demo5/views/RightSideView',
+    'demos/demo6/views/RightSideView',
+    'demos/demo7/views/RightSideView',
+    'demos/demo8/views/RightSideView',
+    'demos/demo9/views/RightSideView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone, 
              DemoLeftSideView, 
@@ -58,6 +58,7 @@ define([
                     new Demo8RightSideView({el: $('#rightContainer'), mapWidth: 650, mapHeight: 350});
                     break;
                 default:
+                    demoId = 9;
                     new Demo9RightSideView({el: $('#rightContainer'), mapWidth: 800, mapHeight: 250});
                     break;
             }
