@@ -2,9 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'leaflet',
     'text!demos/demo3/templates/RightSideView.html'
-], function ($, _, Backbone, L, templateHtml) {
+], function ($, _, Backbone, templateHtml) {
     var RightSideView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);

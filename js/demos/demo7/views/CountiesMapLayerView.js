@@ -4,9 +4,8 @@
 define([
     'jquery',
     'backbone',
-    'leaflet',
     'leaflet_pip'
-], function ($, Backbone, L, leafletPip) {
+], function ($, Backbone, leafletPip) {
 
     var CountiesMapLayerView = Backbone.View.extend({
 

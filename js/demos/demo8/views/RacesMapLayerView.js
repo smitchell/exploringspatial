@@ -4,8 +4,9 @@
 define([
     'underscore',
     'backbone',
+    'leaflet',
     'models/Activity'
-], function (_, Backbone, Activity) {
+], function (_, Backbone, L, Activity) {
 
     var RacesMapLayerView = Backbone.View.extend({
 

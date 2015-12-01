@@ -5,11 +5,10 @@ define([
     'apps/MapEventDispatcher',
     'models/Activity',
     'collections/Activities',
-    'leaflet',
     'leaflet_pip',
     'text!demos/demo9/templates/RightSideView.html'
 
-], function ($, _, Backbone, MapEventDispatcher, Activity, Activities, L, leafletPip, templateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Activity, Activities, leafletPip, templateHtml) {
     var RightSideView = Backbone.View.extend({
 
         events: {

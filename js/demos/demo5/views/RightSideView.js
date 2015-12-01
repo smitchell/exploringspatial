@@ -5,7 +5,7 @@ define([
     'collections/Activities',
     'views/maps/MapView',
     'views/maps/ActivitiesMapLayerView',
-    'text!demos/demo5/templates/RightSideView.html',
+    'text!demos/demo5/templates/RightSideView.html'
 ], function ($, _,
              Backbone,
              Activities,

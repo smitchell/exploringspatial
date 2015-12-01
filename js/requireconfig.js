@@ -46,6 +46,10 @@ var require = {
         },
         'leaflet_prunecluster': {
             deps: ['leaflet']
+        },
+        'leaflet_pip': {
+            deps: ['leaflet'],
+            exports: 'leafletPip'
         }
     }
 };

@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!demos/demo2/templates/RightSideView.html',
+    'text!demos/demo2/templates/RightSideView.html'
 ], function ($, _, Backbone, templateHtml) {
     var RightSideView = Backbone.View.extend({
         initialize: function (args) {
