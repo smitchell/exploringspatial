@@ -6,7 +6,7 @@ define([
     'demos/demo6/collections/CodeDefinitions',
     'demos/demo6/views/AcledMapView',
     'demos/demo6/views/ArmedConflictLocationsView',
-    'text!demos/demo6/templates/RightSideView.html'
+    'text!demos/demo6/templates/DemoPageView.html'
 ], function ($, _,
              Backbone,
              AcledSearch,
@@ -14,10 +14,10 @@ define([
              AcledMapView,
              ArmedConflictLocationsView,
              templateHtml) {
-    var RightSideView = Backbone.View.extend({
-        initialize: function (args) {
+    var DemoPageView = Backbone.View.extend({
+
+        initialize: function () {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.collection = new CodeDefinitions("COUNTRY");
             var _this = this;
             this.collection.fetch({
@@ -28,7 +28,8 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
+            this.$el.html(this.template());
+            this.sizeMaps();
             var acledSearch = new AcledSearch();
             this.mapView = new AcledMapView({
                 acledSearch: acledSearch,
@@ -43,7 +44,14 @@ define([
                 this.collection,
                 map: this.mapView.getMap()
             });
+        },
+
+        sizeMaps: function() {
+            var $container3 = $('#container3');
+            var width = $container3.width() - 28;
+            var height = $container3.height() - 140;
+            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
         }
     });
-    return RightSideView;
+    return DemoPageView;
 });

@@ -6,10 +6,10 @@ define([
     'models/Activity',
     'collections/Activities',
     'leaflet_pip',
-    'text!demos/demo9/templates/RightSideView.html'
+    'text!demos/demo9/templates/DemoPageView.html'
 
 ], function ($, _, Backbone, MapEventDispatcher, Activity, Activities, leafletPip, templateHtml) {
-    var RightSideView = Backbone.View.extend({
+    var DemoPageView = Backbone.View.extend({
 
         events: {
             'click .page': 'onPageClick'
@@ -17,7 +17,6 @@ define([
 
         initialize: function (args) {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
@@ -29,15 +28,12 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template({
-                mapWidth: this.args.mapWidth,
-                mapHeight: this.args.mapHeight
-            }));
-
+            this.$el.html(this.template());
+            this.sizeMaps();
             // Center map on Sport+Spine for this demo
             this.startLat = 38.9379;
             this.startLon = -94.6695;
-            this.map = L.map('demo9_container', {
+            this.map = L.map('map_container', {
                 center: [this.startLat, this.startLon],
                 zoom: 17
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -182,8 +178,15 @@ define([
             setTimeout(function() {
                 _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true});
             }, 1400);
+        },
+
+        sizeMaps: function() {
+            var $container3 = $('#container3');
+            var width = $container3.width() - 28;
+            var height = $container3.height() - 90;
+            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
         }
 
     });
-    return RightSideView;
+    return DemoPageView;
 });

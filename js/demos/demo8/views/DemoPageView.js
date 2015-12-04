@@ -7,11 +7,11 @@ define([
     'demos/demo8/collections/States',
     'demos/demo8/views/StatesMapLayerView',
     'demos/demo8/views/RacesMapLayerView',
-    'text!demos/demo8/templates/RightSideView.html',
+    'text!demos/demo8/templates/DemoPageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, MapEventDispatcher, Activities, States, StatesMapLayerView, RacesMapLayerView, templateHtml) {
-    var RightSideView = Backbone.View.extend({
+    var DemoPageView = Backbone.View.extend({
         MARATHON: 'marathon',
         HALF_MARATHON: 'halfMarathon',
         FIVE_K: 'fiveK',
@@ -20,9 +20,8 @@ define([
             'change input:radio[name=race]': 'onRaceSelected'
         },
 
-        initialize: function (args) {
+        initialize: function () {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.maps = {};
             this.states = new States();
             var _this = this;
@@ -49,11 +48,9 @@ define([
             this.$el.html(this.template({
                 isMarathon: this.isSelected(this.MARATHON),
                 isHalf: this.isSelected(this.HALF_MARATHON),
-                isFiveK: this.isSelected(this.FIVE_K),
-                mapWidth: this.args.mapWidth,
-                mapHeight: this.args.mapHeight
+                isFiveK: this.isSelected(this.FIVE_K)
             }));
-
+            this.sizeMaps();
             this.maps['mainland'] = L.map('map_mainland', {
                 center: [38.5, -96],
                 zoom: 4,
@@ -109,7 +106,6 @@ define([
                 meters: this.getRaceDistance(this.raceType)
             });
         },
-
         isSelected: function (race) {
             var selected = "";
             if (this.raceType == race) {
@@ -140,8 +136,33 @@ define([
                     break;
             }
             return distance;
+        },
+
+        sizeMaps: function() {
+            var $mapBox = $('#detailsMapBox');
+            var width = $mapBox.width();
+            var height = $mapBox.height();
+            var stateWidth = (width * 0.25);
+            if (stateWidth < 25) {
+                stateWidth = 25;
+            }
+            var stateHeight = (height * 0.5 - 25);
+            if (stateHeight < 25) {
+                stateHeight = 25;
+            }
+            var mainlandWidth = (width * 0.75) - 45;
+            if (mainlandWidth < 25 ) {
+                mainlandWidth = 25;
+            }
+            var mainlandHeight = stateHeight * 2 + 22;
+            if (mainlandHeight < 50) {
+                mainlandHeight = 50;
+            }
+            $('#map_alaska').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', top: '5px'});
+            $('#map_hawaii').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', bottom: 0});
+            $('#map_mainland').css({left: 10 + 'px', width: mainlandWidth + 'px', height: mainlandHeight + 'px', top: '5px'});
         }
 
     });
-    return RightSideView;
+    return DemoPageView;
 });

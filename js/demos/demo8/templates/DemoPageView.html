@@ -1,0 +1,22 @@
+<div id="searchBox" class="raceSelector">
+    <form name="RaceType">
+        <fieldset class="raceRadioGroup">
+            <input type="radio" name="race" value="marathon" id="full" <%= isMarathon %> /><label for="full"> Full
+            Marathon</label>
+            <input type="radio" name="race" value="halfMarathon" id="half" <%= isHalf %> /><label for="half"> Half
+            Marathon</label>
+            <input type="radio" name="race" value="fiveK" id="5K" <%= isFiveK %> /><label for="5K"> 5K</label>
+        </fieldset>
+    </form>
+</div>
+<div class="returnToSearch" style="display: none">
+    <a class="returnTrigger" href="javascript:void(0);">Return to Search</a>
+</div>
+<div id="detailsMapBox" class="detailsMapBox">
+    <div style="float: left">
+        <div id="map_alaska" class="detailMap"></div>
+        <div id="map_hawaii" class="detailMap"></div>
+    </div>
+    <div id="map_mainland" class="detailMap"></div>
+
+</div>

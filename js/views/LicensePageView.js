@@ -10,7 +10,7 @@ define([
             this.render();
         },
         render: function () {
-            this.$('#rightContainer').html(this.template({}));
+            this.$el.html(this.template({}));
         }
     });
     return LicensePageView;

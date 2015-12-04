@@ -4,7 +4,7 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/maps/MapSearchView.html',
+    'text!demos/demo5/templates/MapSearchView.html',
     'jquery-ui'
 ], function(_, Backbone, templateHtml) {
 

@@ -2,18 +2,25 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!demos/demo1/templates/RightSideView.html',
+    'text!demos/demo1/templates/DemoPageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, templateHtml) {
-    var RightSideView = Backbone.View.extend({
-        initialize: function (args) {
+    var DemoPageView = Backbone.View.extend({
+        initialize: function () {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.render();
+            var _this = this;
+            $(window).resize (function() {
+                if (_this.map && _this.overlays) {
+                    _this.map.fitBounds(_this.overlays);
+                }
+            })
         },
+
         render: function () {
-            this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
+            this.$el.html(this.template());
+            this.sizeMaps();
             var osmLayer = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -38,28 +45,38 @@ define([
                 'MapQuest': mapQuest
             };
             L.control.layers(baseLayers).addTo(map);
-            L.marker([51.5, -0.09]).addTo(map)
+            this.overlays = L.featureGroup().addTo(map);
+            L.marker([51.5, -0.09]).addTo(this.overlays)
                 .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
             L.circle([51.508, -0.11], 500, {
                 color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.5
-            }).addTo(map).bindPopup("I am a circle.");
+            }).addTo(this.overlays).bindPopup("I am a circle.");
             L.polygon([
                 [51.509, -0.08],
                 [51.503, -0.06],
                 [51.51, -0.047]
-            ]).addTo(map).bindPopup("I am a polygon.");
+            ]).addTo(this.overlays).bindPopup("I am a polygon.");
             this.popup = L.popup();
             map.on('click', this.onMapClick);
+            map.fitBounds(this.overlays.getBounds());
             this.map = map;
         },
+
         onMapClick: function(e) {
             this.popup
                 .setLatLng(e.latlng)
                 .setContent("You clicked the map at " + e.latlng.toString())
                 .openOn(this.map);
+        },
+
+        sizeMaps: function() {
+            var $container3 = $('#container3');
+            var width = $container3.width() - 28;
+            var height = $container3.height() - 40;
+            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
         }
     });
-    return RightSideView;
+    return DemoPageView;
 });

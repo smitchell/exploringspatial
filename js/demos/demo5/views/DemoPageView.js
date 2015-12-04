@@ -4,18 +4,18 @@ define([
     'backbone',
     'collections/Activities',
     'views/maps/MapView',
-    'views/maps/ActivitiesMapLayerView',
-    'text!demos/demo5/templates/RightSideView.html'
+    'demos/demo5/views/ActivitiesMapLayerView',
+    'text!demos/demo5/templates/DemoPageView.html'
 ], function ($, _,
              Backbone,
              Activities,
              MapView,
              ActivitiesMapLayerView,
              templateHtml) {
-    var RightSideView = Backbone.View.extend({
-        initialize: function (args) {
+    var DemoPageView = Backbone.View.extend({
+
+        initialize: function () {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.collection = new Activities();
             this.collection.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
@@ -27,10 +27,19 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template({mapWidth: this.args.mapWidth, mapHeight: this.args.mapHeight}));
+            this.$el.html(this.template());
+            this.sizeMaps();
             this.mapView = new MapView();
             new ActivitiesMapLayerView({collection: this.collection, map: this.mapView.getMap(), activitySearch: this.mapView.activitySearch});
+        },
+
+        sizeMaps: function() {
+            var $container3 = $('#container3');
+            var width = $container3.width() - 28;
+            var height = $container3.height() - 140;
+            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
         }
     });
-    return RightSideView;
+
+    return DemoPageView;
 });

@@ -39,7 +39,9 @@ define([
             var _self = this;
             if (this.activitiesLayer != null && mainland.hasLayer(this.activitiesLayer)) {
                 this.activitiesLayer.getLayers().forEach(function (layer) {
-                    _self.activitiesLayer.removeLayer(layer);
+                    _self.activitiesLayer.removeLayer(_self.activitiesLayer.getBounds());
+                    _self.activitiesLayer.removeLayer(_self.activitiesLayer.getBounds());
+                    _self.activitiesLayer.removeLayer(_self.activitiesLayer.getBounds());
                 });
                 mainland.removeLayer(this.activitiesLayer);
             }

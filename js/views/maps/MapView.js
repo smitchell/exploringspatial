@@ -11,7 +11,7 @@ define([
     'models/GoogleMapProvider',
     'models/Location',
     'collections/MapProviders',
-    'views/maps/MapSearchView',
+    'demos/demo5/views/MapSearchView',
     'views/maps/MapZoomControlsView',
     'views/maps/MapProviderControlsView',
     'views/maps/MapTypeControlsView',

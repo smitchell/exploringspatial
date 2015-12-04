@@ -19,6 +19,12 @@ define([
             this.dispatcher.on(this.dispatcher.Events.RACE_ADDED, this.onRaceAdded, this);
             this.dispatcher.on(this.dispatcher.Events.RACE_SELECTED, this.onRaceSelected, this);
             this.dispatcher.on(this.dispatcher.Events.RACE_ZOOMED, this.onRaceSelected, this);
+            var _this = this;
+            $(window).resize (function() {
+                _this.maps['mainland'].fitBounds(_this.mainlandLayer.getBounds());
+                _this.maps['alaska'].fitBounds(_this.alaskaLayer.getBounds());
+                _this.maps['hawaii'].fitBounds(_this.hawaiiLayer.getBounds());
+            });
         },
 
         render: function () {
@@ -37,18 +43,21 @@ define([
                 },
                 style: {weight: 1}
             }).addTo(mainland);
-            L.geoJson(this.collection.toJSON(), {
+            this.maps['mainland'].fitBounds(_this.mainlandLayer.getBounds());
+            this.alaskaLayer = L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3563";
                 },
                 style: {weight: 1}
             }).addTo(this.maps['alaska']);
-            L.geoJson(this.collection.toJSON(), {
+            this.maps['alaska'].fitBounds(_this.alaskaLayer.getBounds());
+            this.hawaiiLayer = L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3517";
                 },
                 style: {weight: 1}
             }).addTo(this.maps['hawaii']);
+            this.maps['hawaii'].fitBounds(_this.hawaiiLayer.getBounds());
         },
 
         // Unhighlight the previously selected states.

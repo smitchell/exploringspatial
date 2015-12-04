@@ -33,6 +33,12 @@ define([
             this.render();
             this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOVER, this.onListMouseover, this);
             this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOUT, this.onListMouseout, this);
+            var _this = this;
+            $(window).resize (function() {
+                if (_this.map && _this.countiesLayer) {
+                    _this.map.fitBounds(_this.countiesLayer);
+                }
+            })
         },
 
         render: function () {
@@ -48,6 +54,7 @@ define([
                     }
                 }).addTo(this.map);
             this.addCollegeOverlays();
+            this.map.fitBounds(this.countiesLayer);
         },
 
         addCollegeOverlays: function() {

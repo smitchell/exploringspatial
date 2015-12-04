@@ -8,8 +8,7 @@ define([
     'views/about/AboutPageView',
     'views/LicensePageView',
     'views/demos/DemoIndexView',
-    'views/demos/DemoPageView',
-    'utils/StyleManager'
+    'views/demos/DemoPageView'
 ], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoIndexView, DemoPageView, StyleManager) {
     var Router = Backbone.Router.extend({
         routes: {
@@ -23,7 +22,6 @@ define([
 
     var initialize = function (args) {
         var router = new Router(this);
-        var styleManager = new StyleManager();
 
         var menuView = new MenuView({el: $('#navContainer')});
         new FooterView({el: $('#footer')});
@@ -31,7 +29,6 @@ define([
         var homePageView = null;
         var aboutPageView = null;
         var licensePageView  = null;
-        var demoArgs = {el: contentWrapper, mapWidth: args.mapWidth, mapHeight: args.mapHeight};
         var demoPageView = null;
         var demoIndexView = null;
         router.on('route:home', function (actions) {
@@ -49,9 +46,8 @@ define([
             menuView.changeMenu('demos')
         });
         router.on('route:demo', function (demoId) {
-            styleManager.addDemoStyleSheet(demoId);
             if (demoPageView == null) {
-                demoPageView = new DemoPageView(demoArgs, demoId);
+                demoPageView = new DemoPageView({el: contentWrapper, demoId: demoId});
             }
             demoPageView.render(demoId);
             menuView.changeMenu('')

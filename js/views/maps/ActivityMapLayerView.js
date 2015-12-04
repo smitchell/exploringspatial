@@ -18,6 +18,12 @@ define([
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.render();
+            var _this = this;
+            $(window).resize (function() {
+                if (_this.map && _this.activityLayer) {
+                    _this.map.fitBounds(_this.activityLayer);
+                }
+            })
         },
 
         render: function() {
@@ -31,8 +37,8 @@ define([
                 weight: 3,
                 opacity: 0.6
             };
-            L.geoJson(this.model.toJSON(), {style: style}).addTo(this.map);
-            var polyline = this.model.get('geometry').get('coordinates');
+            this.activityLayer = L.geoJson(this.model.toJSON(), {style: style}).addTo(this.map);
+            polyline = this.model.get('geometry').get('coordinates');
             var startPoint = polyline[0];
             var endPoint = polyline[polyline.length - 1];
             L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.map);

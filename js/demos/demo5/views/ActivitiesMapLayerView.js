@@ -29,6 +29,12 @@ define([
             this.activitySearch = args.activitySearch;
             this.activitySearch.on('change', this.render, this);
             this.render();
+            var _this = this;
+            $(window).resize (function() {
+                if (_this.map && _this.activityLayer) {
+                    _this.map.fitBounds(_this.activityLayer);
+                }
+            })
         },
 
         render: function() {

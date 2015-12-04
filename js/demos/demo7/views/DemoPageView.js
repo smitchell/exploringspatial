@@ -7,15 +7,14 @@ define([
     'demos/demo7/views/CountiesListView',
     'demos/demo7/views/CountiesMapLayerView',
     'views/maps/MapView',
-    'text!demos/demo7/templates/RightSideView.html',
+    'text!demos/demo7/templates/DemoPageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
-    var RightSideView = Backbone.View.extend({
+    var DemoPageView = Backbone.View.extend({
 
-        initialize: function (args) {
+        initialize: function () {
             this.template = _.template(templateHtml);
-            this.args = args;
             this.collection = new Counties();
             var _this = this;
             this.collection.fetch({
@@ -27,14 +26,8 @@ define([
 
         render: function () {
             this.collection.sort();
-            var countyWidth = 200;
-            var mapWidth = this.args.mapWidth - countyWidth;
-
-            this.$el.html(this.template({
-                countyWidth: countyWidth,
-                mapWidth: mapWidth,
-                mapHeight: this.args.mapHeight
-            }));
+            this.$el.html(this.template());
+            this.sizeMaps();
 
             var baseLayers = {
                 'Google': new L.Google('ROADMAP'),
@@ -81,7 +74,23 @@ define([
                 el: $('#county_list'),
                 dispatcher: this.dispatcher
             });
+        },
+
+        sizeMaps: function() {
+            var $countyList = $('#county_list');
+            var countyListWidth = $countyList.width();
+            var $mapBox = $('#demo_container');
+            var width = $mapBox.width() - countyListWidth - 40;
+            var height = $mapBox.height() - 20;
+
+            $countyList.css({height: (height - 40) + 'px'});
+            var $logo = $('#logo');
+            var logoHeight = $logo.height();
+            var logoLeft = ($( window ).width() / 2) - (logoHeight/2);
+            $logo.css({left: logoLeft + 'px'});
+            $('#map_container').css({top: '10px',left: + (countyListWidth +10) + 'px', width: width + 'px', height: (height - logoHeight - 10) + 'px'});
         }
+
     });
-    return RightSideView;
+    return DemoPageView;
 });
