@@ -10,6 +10,7 @@ define([
         },
         render: function () {
             this.$el.html(this.template({}));
+            gapi.follow.go("googlefollow");
         }
     });
     return AboutPageView;

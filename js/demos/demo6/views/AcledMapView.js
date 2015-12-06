@@ -90,7 +90,7 @@ define([
 
             // Set-up the custom map controls
             var mapControlsDiv = $(this.mapControls);
-            new AcledSearchView({
+            this.acledSearchView = new AcledSearchView({
                 el: $('#searchBox'),
                 model: this.acledSearch,
                 countries: this.countries,
@@ -285,6 +285,14 @@ define([
          */
         getMap: function() {
             return this.map;
+        },
+
+        destroy: function() {
+            if (this.acledSearchView) {
+                this.acledSearchView.destroy();
+            }
+            // Remove view from DOM
+            this.remove();
         }
     });
 

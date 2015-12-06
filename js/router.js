@@ -47,7 +47,7 @@ define([
         });
         router.on('route:demo', function (demoId) {
             if (demoPageView == null) {
-                demoPageView = new DemoPageView({el: contentWrapper, demoId: demoId});
+                demoPageView = new DemoPageView({el: contentWrapper, demoId: demoId, router: router});
             }
             demoPageView.render(demoId);
             menuView.changeMenu('')
@@ -67,6 +67,7 @@ define([
         });
         Backbone.history.start();
       };
+
       return {
         initialize: initialize
       };

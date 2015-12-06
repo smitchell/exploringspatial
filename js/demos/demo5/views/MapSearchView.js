@@ -11,7 +11,7 @@ define([
     var MapSearchView = Backbone.View.extend({
 
         events: {
-            'click .searchButton a' : 'search',
+            'click #searchButton' : 'search',
             'keypress .location' : 'searchOnEnter',
             'keypress #keyword' : 'searchOnEnter',
             'click #showTrigger' : 'expandSearch',
@@ -56,9 +56,9 @@ define([
         },
 
         search: function() {
-            var $searchButtonProgress = this.$('#searchButtonProgress');
+            var $searchButton = this.$('#searchButton');
             // No searching while a search is in progress
-            if ($searchButtonProgress.is(':hidden')) {
+            if (!$searchButton.hasClass('searching')) {
                 // No searching until you have something to search for.
                 var location = this.$('.location').val();
                 if (location.length > 0) {
@@ -90,9 +90,9 @@ define([
         },
 
         changeLocation: function(location) {
-            var $searchButtonProgress = this.$('#searchButtonProgress');
+            var $searchButton = this.$('#searchButton');
             // Show the search in progress indicator
-            $searchButtonProgress.show();
+            $searchButton.addClass('searching');
 
             // Throw out things that don't belong in a keyword search.
             location = this.scrubInput(location);
@@ -112,7 +112,7 @@ define([
                     _self.location.trigger('sync');
                 },
                 complete: function() {
-                    $searchButtonProgress.hide();
+                    $searchButton.removeClass('searching');
                     $('.location').val('');
                 }
             });
@@ -164,8 +164,12 @@ define([
                 return (date.getMonth() + 1) + '/' + date.getDate() + "/" + date.getFullYear();
             }
             return '';
-        }
+        },
 
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
+        }
 
     });
 

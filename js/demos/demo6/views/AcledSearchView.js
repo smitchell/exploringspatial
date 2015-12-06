@@ -12,7 +12,7 @@ define([
     var AcledSearchView = Backbone.View.extend({
 
         events: {
-            'click .searchButton a' : 'search',
+            'click #searchButton' : 'search',
             'change #country_pk' : 'onChangeCountry',
             'blur #actorType' : 'onActorTypeBlur',
             'click #showTrigger' : 'expandSearch',
@@ -100,30 +100,26 @@ define([
         },
 
         search: function() {
-            var $searchButtonProgress = this.$('#searchButtonProgress');
-            // No searching while a search is in progress
-            if ($searchButtonProgress.is(':hidden')) {
-                var properties = {};
-                properties.countryPk =  Number(this.$('#country_pk').val());
-                properties.locationPk = Number(this.$('#location_pk').val());
-                properties.actorTypePk = Number(this.$('#actor_type_pk').val());
-                properties.eventTypePk = Number(this.$('#event_type_pk').val());
-                var input = this.scrubInput(this.$('#minFatalities').val());
-                if (input.length == 0 || isNaN(input)) {
-                    properties.minFatalities = '';
-                } else {
-                    properties.minFatalities = Number(input);
-                }
-                input = this.scrubInput(this.$('#maxFatalities').val());
-                if (input.length == 0 || isNaN(input)) {
-                    properties.maxFatalities = '';
-                } else {
-                    properties.maxFatalities = Number(input);
-                }
-                properties.minDate = this.parseDate(this.scrubInput(this.$('#minDate').val()));
-                properties.maxDate = this.parseDate(this.scrubInput(this.$('#maxDate').val()));
-                this.model.set(properties);
+            var properties = {};
+            properties.countryPk =  Number(this.$('#country_pk').val());
+            properties.locationPk = Number(this.$('#location_pk').val());
+            properties.actorTypePk = Number(this.$('#actor_type_pk').val());
+            properties.eventTypePk = Number(this.$('#event_type_pk').val());
+            var input = this.scrubInput(this.$('#minFatalities').val());
+            if (input.length == 0 || isNaN(input)) {
+                properties.minFatalities = '';
+            } else {
+                properties.minFatalities = Number(input);
             }
+            input = this.scrubInput(this.$('#maxFatalities').val());
+            if (input.length == 0 || isNaN(input)) {
+                properties.maxFatalities = '';
+            } else {
+                properties.maxFatalities = Number(input);
+            }
+            properties.minDate = this.parseDate(this.scrubInput(this.$('#minDate').val()));
+            properties.maxDate = this.parseDate(this.scrubInput(this.$('#maxDate').val()));
+            this.model.set(properties);
         },
 
         scrubInput: function(value) {
@@ -208,6 +204,11 @@ define([
                     }
                 });
             }
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
         
     });

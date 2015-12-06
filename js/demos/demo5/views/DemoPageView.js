@@ -14,6 +14,10 @@ define([
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
 
+        getDemoId: function() {
+            return 5;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.collection = new Activities();
@@ -30,14 +34,25 @@ define([
             this.$el.html(this.template());
             this.sizeMaps();
             this.mapView = new MapView();
-            new ActivitiesMapLayerView({collection: this.collection, map: this.mapView.getMap(), activitySearch: this.mapView.activitySearch});
+            this.activitiesMapLayerView = new ActivitiesMapLayerView({collection: this.collection, map: this.mapView.getMap(), activitySearch: this.mapView.activitySearch});
         },
 
         sizeMaps: function() {
-            var $container3 = $('#container3');
-            var width = $container3.width() - 28;
-            var height = $container3.height() - 140;
-            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+            var $demoBody = $('#demoBody');
+            var width = $demoBody.width() - 28;
+            var height = $demoBody.height() - 140;
+            $('.detailMap').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+        },
+
+        destroy: function() {
+            if (this.activitiesMapLayerView) {
+                this.activitiesMapLayerView.destroy();
+            }
+            if (this.mapView) {
+                this.mapView.destroy();
+            }
+            // Remove view from DOM
+            this.remove();
         }
     });
 

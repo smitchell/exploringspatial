@@ -7,6 +7,11 @@ define([
     'leaflet_bing'
 ], function ($, _, Backbone, templateHtml) {
     var DemoPageView = Backbone.View.extend({
+
+        getDemoId: function() {
+            return 1;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();
@@ -72,10 +77,15 @@ define([
         },
 
         sizeMaps: function() {
-            var $container3 = $('#container3');
-            var width = $container3.width() - 28;
-            var height = $container3.height() - 40;
-            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+            var $demoBody = $('#demoBody');
+            var width = $demoBody.width() - 28;
+            var height = $demoBody.height() - 40;
+            $('.detailMap').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
     });
     return DemoPageView;

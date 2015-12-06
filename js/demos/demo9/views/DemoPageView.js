@@ -15,6 +15,10 @@ define([
             'click .page': 'onPageClick'
         },
 
+        getDemoId: function() {
+            return 9;
+        },
+
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.activities = new Activities();
@@ -181,10 +185,15 @@ define([
         },
 
         sizeMaps: function() {
-            var $container3 = $('#container3');
-            var width = $container3.width() - 28;
-            var height = $container3.height() - 90;
-            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+            var $demoBody = $('#demoBody');
+            var width = $demoBody.width() - 28;
+            var height = $demoBody.height() - 90;
+            $('.detailMap').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
 
     });

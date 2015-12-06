@@ -16,6 +16,10 @@ define([
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
 
+        getDemoId: function() {
+            return 6;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.collection = new CodeDefinitions("COUNTRY");
@@ -38,7 +42,7 @@ define([
                 lon: 16.787109375,
                 zoom: 3
             });
-            new ArmedConflictLocationsView({
+            this.armedConflictLocationsView = new ArmedConflictLocationsView({
                 acledSearch: acledSearch,
                 collection:
                 this.collection,
@@ -47,10 +51,21 @@ define([
         },
 
         sizeMaps: function() {
-            var $container3 = $('#container3');
-            var width = $container3.width() - 28;
-            var height = $container3.height() - 140;
-            $('#map_container').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+            var $demoBody = $('#demoBody');
+            var width = $demoBody.width() - 28;
+            var height = $demoBody.height() - 140;
+            $('.detailMap').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+        },
+
+        destroy: function() {
+            if (this.armedConflictLocationsView) {
+                this.armedConflictLocationsView.destroy();
+            }
+            if (this.mapView) {
+                this.mapView.destroy();
+            }
+            // Remove view from DOM
+            this.remove();
         }
     });
     return DemoPageView;

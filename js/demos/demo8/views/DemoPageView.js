@@ -20,6 +20,10 @@ define([
             'change input:radio[name=race]': 'onRaceSelected'
         },
 
+        getDemoId: function() {
+            return 8;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.maps = {};
@@ -161,6 +165,11 @@ define([
             $('#map_alaska').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', top: '5px'});
             $('#map_hawaii').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', bottom: 0});
             $('#map_mainland').css({left: 10 + 'px', width: mainlandWidth + 'px', height: mainlandHeight + 'px', top: '5px'});
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
 
     });

@@ -3,7 +3,7 @@
         <div class="searchFieldContainer">
             <div class="searchFields">
                 <div class="searchHeader">Country:</div>
-                <select id="country_pk" value="-1">
+                <select id="country_pk">
                     <option value="-1" selected></option>
                     <% countries.each(function(codeDefinition){%>
                     <option value="<%= codeDefinition.get('codeDefinitionPk') %>"><%= codeDefinition.get('definition') %></option>
@@ -24,10 +24,9 @@
                     </div>
                 </div>
             </div>
-            <div id="searchButton" class="searchButton">
-                <a>Search</a>
-                <div id="searchButtonProgress" style="display: none;"></div>
-            </div>
+            <ul class="buttons" style="position: absolute; right: 2px; top: 5px;">
+                <li><a id="searchButton" class="search" style="{width: 75px;}" href="javascript:void(0)">Search</a></li>
+            </ul>
             <div id="showTrigger" class="expandSearchTrigger">
                 <a>Show More Options</a>
             </div>

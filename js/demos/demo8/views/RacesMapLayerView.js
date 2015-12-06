@@ -81,7 +81,7 @@ define([
                 mainland.on('popupopen', function (event) {
                     _self.onPopupOpen(event);
                 });
-                $('.returnToSearch').on('click', '.returnTrigger', function (event) {
+                $('.returnToSearch').on('click', '#returnTrigger', function (event) {
                     _self.onReturnToSearch(event)
                 });
             }
@@ -120,7 +120,7 @@ define([
             var props = this.activity.get('properties');
             // TODO - Find out how this can be undefined.
             if (props) {
-                $('#container2').find('h1:first').html(props.get('name'));
+                $('#demoBanner').find('h1:first').html(props.get('name'));
                 mainland.fitBounds([
                     [props.get('minLat'), props.get('minLon')],
                     [props.get('maxLat'), props.get('maxLon')]
@@ -164,9 +164,11 @@ define([
                     this.originalCenter = null;
                     this.originalZoom = null;
                 }
-                $('#container2').find('h1:first').html('On-the-fly "50-state Marathon Club" Style Map');
+                $('#demoBanner').find('h1:first').html('On-the-fly "50-state Marathon Club" Style Map');
             }
             this.render();
+            event.stopPropagation();
+            return false;
         },
 
         onRaceSelected: function (event) {

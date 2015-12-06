@@ -14,6 +14,11 @@ define([
                 json.eventDate = new Date(json.eventDate).toLocaleDateString();
             }
             return this.template({properties: json});
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
     });
     return ArmedConflictPopupView;

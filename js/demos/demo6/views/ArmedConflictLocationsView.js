@@ -152,6 +152,11 @@ define([
                 }
                 this.filteringInProgress = false;
             }
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
     });
 

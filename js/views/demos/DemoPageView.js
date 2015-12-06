@@ -12,6 +12,7 @@ define([
     'demos/demo8/views/DemoPageView',
     'demos/demo9/views/DemoPageView',
     'utils/StyleManager',
+    'views/demos/DemoDescriptionView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone,
              Demo1PageView, 
@@ -24,25 +25,44 @@ define([
              Demo8PageView,
              Demo9PageView,
              StyleManager,
+             DemoDescriptionView,
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
+        styleManager: new StyleManager(),
+
+        events: {
+            'click .left': 'prev',
+            'click .right': 'next',
+            'click .info' : 'openOverlay'
+        },
 
         initialize: function (args, demoId) {
+            this.initialLoad = true;
             this.args = args;
             this.template = _.template(templateHtml);
             var _this = this;
             $(window).resize (function() {
                 _this.resizeDemo();
+                _this.resizeOverlay();
             });
         },
 
         render: function (demoId) {
-            var styleManager = new StyleManager();
-            styleManager.addDemoStyleSheet(demoId);
+            this.styleManager.addDemoStyleSheet(demoId);
             this.$el.html(this.template({}));
             var $demoTitle = this.$('#demoTitle');
-            $demoContainer = $('#container3');
+            $demoContainer = $('#demoBody');
             this.destroyCurrentView();
+            if (demoId <= 1) {
+                this.$('.left').hide();
+            } else {
+                this.$('.left').show();
+            }
+            if (demoId >= 9) {
+                this.$('.right').hide();
+            } else {
+                this.$('.right').show();
+            }
             switch(Number(demoId)) {
                 case 1:
                     $demoTitle.html('Bing and Google Map Plugins');
@@ -84,26 +104,83 @@ define([
                     break;
                 }
             }
+            if (this.initialLoad) {
+                this.openOverlay();
+                this.initialLoad = false;
+            }
+        },
+
+        openOverlay: function(event) {
+            if (event) {
+                event.preventDefault();
+            }
+            var overlay = $('.overlay');
+            if (overlay.length > 0) {
+                if (this.demoDescriptionView) {
+                    this.demoDescriptionView.destroy();
+                }
+            } else {
+                this.demoDescriptionView = new DemoDescriptionView({demoId: this.currentDemo.getDemoId()});
+                this.resizeOverlay();
+            }
+        },
+
+        resizeOverlay: function() {
+            var overlay = $('.overlay');
+            if (overlay) {
+                var $demoContainer = $('#demoBody');
+                var width = $demoContainer.width();
+                overlay.css({
+                    top: ($demoContainer.offset().top * 1.25) + 'px',
+                    left: (width * 0.15) + 'px',
+                    height: ($demoContainer.height() * 0.8) + 'px',
+                    width: (width * 0.80) + 'px'
+                });
+            }
         },
 
         destroyCurrentView: function() {
+            event.preventDefault();
             if (this.currentDemo) {
-
+                if (this.demoDescriptionView) {
+                    this.demoDescriptionView.destroy();
+                    this.demoDescriptionView = null;
+                }
                 // COMPLETELY UNBIND THE VIEW
                 this.currentDemo.undelegateEvents();
 
                 this.currentDemo.$el.removeData().unbind();
 
-                // Remove view from DOM
-                this.currentDemo.remove();
+                this.currentDemo.destroy();
                 Backbone.View.prototype.remove.call(this.currentDemo);
 
             }
         },
 
         resizeDemo: function() {
+            var width = $('window').width();
+            var buttons = $('.demoBanner ul');
+            $('demoHeader').css({width: (width - buttons.width()) + 'px'});
             if (this.currentDemo) {
                 this.currentDemo.sizeMaps();
+            }
+        },
+
+        prev: function(event) {
+            event.preventDefault();
+            var demoId = this.currentDemo.getDemoId() - 1;
+            if (demoId >= 1) {
+                this.args.router.navigate("demo/" + demoId);
+                this.render(demoId);
+            }
+        },
+
+        next: function(event) {
+            event.preventDefault();
+            var demoId = this.currentDemo.getDemoId() + 1;
+            if (demoId <= 9) {
+                this.args.router.navigate("demo/" + demoId);
+                this.render(demoId);
             }
         }
     });

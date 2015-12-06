@@ -13,6 +13,10 @@ define([
 ], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
     var DemoPageView = Backbone.View.extend({
 
+        getDemoId: function() {
+            return 7;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.collection = new Counties();
@@ -88,7 +92,12 @@ define([
             var logoHeight = $logo.height();
             var logoLeft = ($( window ).width() / 2) - (logoHeight/2);
             $logo.css({left: logoLeft + 'px'});
-            $('#map_container').css({top: '10px',left: + (countyListWidth +10) + 'px', width: width + 'px', height: (height - logoHeight - 10) + 'px'});
+            $('.detailMap').css({top: '10px',left: + (countyListWidth +10) + 'px', width: width + 'px', height: (height - logoHeight - 10) + 'px'});
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
 
     });

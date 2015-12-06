@@ -5,6 +5,11 @@ define([
     'text!demos/demo3/templates/DemoPageView.html'
 ], function ($, _, Backbone, templateHtml) {
     var DemoPageView = Backbone.View.extend({
+
+        getDemoId: function() {
+            return 3;
+        },
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();
@@ -27,6 +32,11 @@ define([
 
         sizeMaps: function() {
             //no op
+        },
+
+        destroy: function() {
+            // Remove view from DOM
+            this.remove();
         }
     });
     return DemoPageView;

@@ -9,6 +9,7 @@ define([
 ], function(_, Backbone, Activity) {
 
     var ActivityMapLayerView = Backbone.View.extend({
+        mapOffset: 60,
 
         initialize: function(args) {
             this.map = args.map;
@@ -41,6 +42,8 @@ define([
             if (this.activitiesLayer != null && this.map.hasLayer(this.activitiesLayer)) {
                 this.map.removeLayer(this.activitiesLayer);
             }
+            var returnToSearch = $('.returnToSearch a');
+            returnToSearch.unbind('click');
             var _self = this;
             var geoJsonLayer = L.geoJson(this.collection.toJSON(),{
                 filter: function(feature, layers) {
@@ -54,7 +57,7 @@ define([
                this.activitiesLayer.addLayer(geoJsonLayer);
                this.map.addLayer(this.activitiesLayer);
                this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
-               $('.returnToSearch').on('click', '.returnTrigger', function(event){_self.onReturnToSearch(event)});
+                returnToSearch.click(function(event){_self.onReturnToSearch(event)});
                this.map.fitBounds(this.activitiesLayer.getBounds());
             }
         },
@@ -98,14 +101,6 @@ define([
                 this.map.removeLayer(this.activitiesLayer);
             }
             var props = this.activity.get('properties');
-            // TODO - Find out how this can be undefined.
-            if (props) {
-                $('#container2').find('h1:first').html(props.get('name'));
-                this.map.fitBounds([
-                    [props.get('minLat'), props.get('minLon')],
-                    [props.get('maxLat'), props.get('maxLon')]
-                ]);
-            }
             var style = {
                 color: '#FF0000',
                 weight: 3,
@@ -118,6 +113,15 @@ define([
             var endPoint = polyline[polyline.length - 1];
             this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(this.map);
             this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(this.map);
+            var mapBoxDiv = $('.detailsMapBox');
+            var top = mapBoxDiv[0].offsetTop;
+            var height = mapBoxDiv.height();
+            mapBoxDiv.css({top: (top - this.mapOffset) + 'px',height: (height + this.mapOffset) + 'px'});
+
+            var mapDiv = $('.detailMap');
+            var mapHeight = mapDiv.height() + this.mapOffset;
+            mapDiv.css({height: mapHeight + 'px'});
+            this.map.fitBounds(this.activityLayer.getBounds());
         },
 
         onReturnToSearch: function(event) {
@@ -142,8 +146,22 @@ define([
                     this.originalCenter = null;
                     this.originalZoom = null;
                 }
-                $('#container2').find('h1:first').html('My Activities Search Results');
+                $('#demoTitle').html('Electronic Running Log in GeoJSON Format');
             }
+            var mapBoxDiv = $('.detailsMapBox');
+            var top = mapBoxDiv[0].offsetTop;
+            var height = mapBoxDiv.height();
+            mapBoxDiv.css({top: (top + this.mapOffset) + 'px',height: (height - this.mapOffset) + 'px'});
+
+            var mapDiv = $('.detailMap');
+            var mapHeight = mapDiv.height();
+            mapDiv.css({top: '5px', height: (mapHeight - this.mapOffset) + 'px'});
+        },
+
+        destroy: function() {
+            $('.returnToSearch a').unbind('click');
+            // Remove view from DOM
+            this.remove();
         }
 
     });
