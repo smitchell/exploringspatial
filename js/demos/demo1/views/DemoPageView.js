@@ -6,11 +6,8 @@ define([
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, templateHtml) {
-    var DemoPageView = Backbone.View.extend({
 
-        getDemoId: function() {
-            return 1;
-        },
+    var DemoPageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
@@ -86,7 +83,13 @@ define([
         destroy: function() {
             // Remove view from DOM
             this.remove();
+        },
+
+        getDemoId: function() {
+            return 1;
         }
     });
+
+    DemoPageView.DEMO_ID = 1;
     return DemoPageView;
 });

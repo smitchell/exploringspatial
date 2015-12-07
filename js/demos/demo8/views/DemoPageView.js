@@ -20,10 +20,6 @@ define([
             'change input:radio[name=race]': 'onRaceSelected'
         },
 
-        getDemoId: function() {
-            return 8;
-        },
-
         initialize: function () {
             this.template = _.template(templateHtml);
             this.maps = {};
@@ -142,7 +138,7 @@ define([
             return distance;
         },
 
-        sizeMaps: function() {
+        sizeMaps: function () {
             var $mapBox = $('#detailsMapBox');
             var width = $mapBox.width();
             var height = $mapBox.height();
@@ -155,7 +151,7 @@ define([
                 stateHeight = 25;
             }
             var mainlandWidth = (width * 0.75) - 45;
-            if (mainlandWidth < 25 ) {
+            if (mainlandWidth < 25) {
                 mainlandWidth = 25;
             }
             var mainlandHeight = stateHeight * 2 + 22;
@@ -164,14 +160,25 @@ define([
             }
             $('#map_alaska').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', top: '5px'});
             $('#map_hawaii').css({left: '5px', width: stateWidth + 'px', height: stateHeight + 'px', bottom: 0});
-            $('#map_mainland').css({left: 10 + 'px', width: mainlandWidth + 'px', height: mainlandHeight + 'px', top: '5px'});
+            $('#map_mainland').css({
+                left: 10 + 'px',
+                width: mainlandWidth + 'px',
+                height: mainlandHeight + 'px',
+                top: '5px'
+            });
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
-        }
+        },
 
+        getDemoId: function () {
+            return 8;
+        }
     });
+
+    DemoPageView.DEMO_ID = 8;
+
     return DemoPageView;
 });

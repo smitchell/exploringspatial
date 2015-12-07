@@ -1,0 +1,82 @@
+{"demos": [
+	{
+		"demoId": 1,
+		"created": "2013/08/22",
+		"title": "Using Bing and Google Layers with Leaflet",
+		"href": "#demo/1",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/22/learning-leaflet' target='_blank'>Learning Leaflet</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo1",
+		"description":"<p>This demo takes the be Leaflet &ldquo;Hello World&rdquo; examples and adds layers for Google and Bing.</p>"
+	},
+	{
+		"demoId": 2,
+		"created": "2013/08/31",
+		"title": "ArcGIS Earthquake Data",
+		"href": "#demo/2",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online' target='_blank'>Mapbox vs ArcGIS Online</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo2",
+		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p>"
+	},
+	{
+		"demoId": 3,
+		"created": "2013/08/31",
+		"title": "Mapbox Example",
+		"href": "#demo/3",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online' target='_blank'>Mapbox vs ArcGIS Online</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo3",
+		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the  <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p>"
+	},
+	{
+		"demoId": 4,
+		"created": "2015/01/04",
+		"title": "Rendering a GeoJSON layer in Leaflet",
+		"href": "#demo/4",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet' target='_blank'>Rendering a GeoJSON layer in Leaflet</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo4",
+		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the  <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p>"
+	},
+	{
+		"demoId": 5,
+		"created": "2015/01/11",
+		"title": "GeoJSON Feature Collection",
+		"href": "#demo/5",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters' target='_blank'>How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo5",
+		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p> <p> It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper around the GeoJSON layer.</p> <p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker cluster layer is replaced by a Leaflet GeoJSON map layer built from an activity's GeoJSON. The &ldquo;Return to Search&rdquo; links swaps the maplayers back again.</p>"
+	},
+	{
+		"demoId": 6,
+		"created": "2015/01/30",
+		"title": "Armed Conflict in Africa",
+		"href": "#demo/6",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo6",
+		"description": "<p>This demo uses the PruneCluster plugin to cluster over 99,000 incidents of armed conflict in Africa between 1971 and 2014 from the <a href='http://www.acleddata.com' target='_blank'>ACLED</a> 1971 - 2014 dataset. The accompanying blog post will follow soon.</p>"
+	},
+	{
+		"demoId": 7,
+		"created": "2015/11/25",
+		"title": "Leaflet-PIP Plugin",
+		"href": "#demo/7",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/25/breaking-dependence-on-vendor-map-apis-leaflet/' target='_blank'>Breaking Dependence on Vendor Map APIs with Leaflet</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo7",
+		"description": "<p>This demo uses a GeoJSON file containing Kansas counties and some overlapping shaps to show how shape events can be handled. It also introduces the <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a>.</p>"
+	},
+	{
+		"demoId": 8,
+		"created": "2015/11/28",
+		"title": "&ldquo;50-State Club&rdquo; map",
+		"href": "#demo/8",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/28/browser-side-geospatial-maps/' target='_blank'>Browser-side Geospatial Maps</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo8",
+		"description": "<p>This demo uses the uses <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a> to generate a <a href='http://www.50statesmarathonclub.com/' target='_blank'> 50-State Marathon Club</a> style map on the fly in the web browser.</p>"
+	},
+	{
+		"demoId": 9,
+		"created": "2015/11/29",
+		"title": "Privacy Geofencing",
+		"href": "#demo/9",
+		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/29/privacy-geofencing/' target='_blank'>Privacy Geofencing</a>",
+		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo9",
+		"description": "<p>This demo shows privacy geofencing done on the browser-side. It is <i>only</i> this way because this is a static website. In the real world, privacy Geofencing would <strong>only</strong> be done on the server-side so that no private coordinates are delivered in the JSON payload as it is in the demo.</p>"
+	}
+]}

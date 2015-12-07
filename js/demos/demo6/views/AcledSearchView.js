@@ -11,6 +11,8 @@ define([
 
     var AcledSearchView = Backbone.View.extend({
 
+        mapOffset: 55,
+
         events: {
             'click #searchButton' : 'search',
             'change #country_pk' : 'onChangeCountry',
@@ -138,12 +140,28 @@ define([
             this.$('#showTrigger').hide();
             this.$('#hideTrigger').show();
             this.$('.expandedSearchFilters').slideDown();
+            var mapBoxDiv = $('.detailsMapBox');
+            var top = mapBoxDiv[0].offsetTop;
+            var height = mapBoxDiv.height();
+            mapBoxDiv.css({top: (top + this.mapOffset) + 'px',height: (height - this.mapOffset) + 'px'});
+
+            var mapDiv = $('.detailMap');
+            var mapHeight = mapDiv.height();
+            mapDiv.css({top: '5px', height: (mapHeight - this.mapOffset) + 'px'});
         },
 
         collapseSearch: function() {
             this.$('#hideTrigger').hide();
             this.$('#showTrigger').show();
             this.$('.expandedSearchFilters').slideUp();
+            var mapBoxDiv = $('.detailsMapBox');
+            var top = mapBoxDiv[0].offsetTop;
+            var height = mapBoxDiv.height();
+            mapBoxDiv.css({top: (top - this.mapOffset) + 'px',height: (height + this.mapOffset) + 'px'});
+
+            var mapDiv = $('.detailMap');
+            var mapHeight = mapDiv.height() + this.mapOffset;
+            mapDiv.css({height: mapHeight + 'px'});
         },
 
         parseDate: function(value) {

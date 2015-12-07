@@ -13,9 +13,7 @@ define([
         events: {
             'click #searchButton' : 'search',
             'keypress .location' : 'searchOnEnter',
-            'keypress #keyword' : 'searchOnEnter',
-            'click #showTrigger' : 'expandSearch',
-            'click #hideTrigger' : 'collapseSearch'
+            'keypress #keyword' : 'searchOnEnter'
         },
 
         initialize: function(args) {
@@ -135,18 +133,6 @@ define([
                 return;
             }
             this.search();
-        },
-
-        expandSearch: function() {
-            this.$('#showTrigger').hide();
-            this.$('#hideTrigger').show();
-            this.$('.expandedSearchFilters').slideDown();
-        },
-
-        collapseSearch: function() {
-            this.$('#hideTrigger').hide();
-            this.$('#showTrigger').show();
-            this.$('.expandedSearchFilters').slideUp();
         },
 
         parseDate: function(value) {

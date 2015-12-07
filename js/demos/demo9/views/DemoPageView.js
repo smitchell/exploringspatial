@@ -15,10 +15,6 @@ define([
             'click .page': 'onPageClick'
         },
 
-        getDemoId: function() {
-            return 9;
-        },
-
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.activities = new Activities();
@@ -70,7 +66,7 @@ define([
                 latLng = L.latLng(coordinates[1], coordinates[0]);
                 layers = leafletPip.pointInLayer(latLng, _this.geoFence, true);
                 // Did this activity match, and do we have less than 10 sample activities so far.
-                if (layers.length > 0  && i <= 10) {
+                if (layers.length > 0 && i <= 10) {
                     triggerId = activity.get('properties').get('activityId');
                     pageDiv.append($("<div class='" + className + "' id='" + triggerId + "' >" + i++ + "</div>"));
                     if (firstMatch) {
@@ -90,7 +86,7 @@ define([
             this.loadActivity(elem.attr('id'));
         },
 
-        loadActivity: function(activityId) {
+        loadActivity: function (activityId) {
             this.activity = new Activity({activityId: activityId});
             var _this = this;
             this.activity.fetch({
@@ -156,7 +152,7 @@ define([
             // Find the points between the hidden points at the start and end of the polyline.
             if (middle.length > 0) {
                 var polyline = [];
-                 $.each(middle, function (index, latLng) {
+                $.each(middle, function (index, latLng) {
                     if (index <= middle.length - fencedEnd.length) {
                         polyline.push(latLng);
                     }
@@ -179,23 +175,30 @@ define([
             this.map.fitBounds(this.activityGroup.getBounds());
 
             // but then zoom into the privacy geofence
-            setTimeout(function() {
+            setTimeout(function () {
                 _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true});
             }, 1400);
         },
 
-        sizeMaps: function() {
+        sizeMaps: function () {
             var $demoBody = $('#demoBody');
             var width = $demoBody.width() - 28;
             var height = $demoBody.height() - 90;
-            $('.detailMap').css({top: '5px',left: '5px', width: width + 'px', height: height + 'px'});
+            $('.detailMap').css({top: '5px', left: '5px', width: width + 'px', height: height + 'px'});
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
+        },
+
+        getDemoId: function () {
+            return 9;
         }
 
     });
+
+    DemoPageView.DEMO_ID = 9;
+
     return DemoPageView;
 });

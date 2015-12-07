@@ -13,10 +13,6 @@ define([
 ], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
     var DemoPageView = Backbone.View.extend({
 
-        getDemoId: function() {
-            return 7;
-        },
-
         initialize: function () {
             this.template = _.template(templateHtml);
             this.collection = new Counties();
@@ -80,7 +76,7 @@ define([
             });
         },
 
-        sizeMaps: function() {
+        sizeMaps: function () {
             var $countyList = $('#county_list');
             var countyListWidth = $countyList.width();
             var $mapBox = $('#demo_container');
@@ -90,16 +86,28 @@ define([
             $countyList.css({height: (height - 40) + 'px'});
             var $logo = $('#logo');
             var logoHeight = $logo.height();
-            var logoLeft = ($( window ).width() / 2) - (logoHeight/2);
+            var logoLeft = ($(window).width() / 2) - (logoHeight / 2);
             $logo.css({left: logoLeft + 'px'});
-            $('.detailMap').css({top: '10px',left: + (countyListWidth +10) + 'px', width: width + 'px', height: (height - logoHeight - 10) + 'px'});
+            $('.detailMap').css({
+                top: '10px',
+                left: +(countyListWidth + 10) + 'px',
+                width: width + 'px',
+                height: (height - logoHeight - 10) + 'px'
+            });
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
+        },
+
+        getDemoId: function () {
+            return 7;
         }
 
     });
+
+    DemoPageView.DEMO_ID = 7;
+
     return DemoPageView;
 });

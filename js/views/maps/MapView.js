@@ -288,6 +288,11 @@ define([
          */
         getMap: function() {
             return this.map;
+        },
+
+        destroy: function () {
+            // Remove view from DOM
+            this.remove();
         }
     });
 

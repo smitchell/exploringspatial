@@ -48,8 +48,9 @@ define([
         router.on('route:demo', function (demoId) {
             if (demoPageView == null) {
                 demoPageView = new DemoPageView({el: contentWrapper, demoId: demoId, router: router});
+            } else {
+                demoPageView.render({demoId: demoId});
             }
-            demoPageView.render(demoId);
             menuView.changeMenu('')
         });
         router.on('route:about', function (actions) {
