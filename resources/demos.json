@@ -6,7 +6,7 @@
 		"href": "#demo/1",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/22/learning-leaflet' target='_blank'>Learning Leaflet</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo1",
-		"description":"<p>This demo takes the be Leaflet &ldquo;Hello World&rdquo; examples and adds layers for Google and Bing.</p>"
+		"description":"<p>This demo takes the be Leaflet &ldquo;Hello World&rdquo; examples and adds layers for Google and Bing.</p><p>The base example is lifted from Leaflet's <span style='font-style: italic;'><a href='http://leafletjs.com/examples/layers-control-example.html'>Layer Groups and Layers Control</a></span> tutorial and modified, shows the switching of base map tiles with Leaflet.</p> <p>I recently switched to a Leaflet plugin for Google written by Patel Shramov.</p>"
 	},
 	{
 		"demoId": 2,
@@ -24,8 +24,7 @@
 		"href": "#demo/3",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online' target='_blank'>Mapbox vs ArcGIS Online</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo3",
-		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the  <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p>"
-	},
+		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank' >USGS feed of earthquakes for the past 7 days</a>. I used the feed from late August, 2013, to create this earthquake map for the <a href='http://www.mapbox.com/tilemill/docs/crashcourse/introduction/' target='_blank'>TileMill Crash Course</a>. </p><p>The tutorial has you import the <a href='http://earthquake.usgs.gov/earthquakes/feed/csv/2.5/week' target='_blank' >USGS earthquake CSV file</a>, add a legend and change some styles, and then export 6 zoom levels to import into MapBox. Below is a link to the tutorial map tiles in an iFrame.</p>"	},
 	{
 		"demoId": 4,
 		"created": "2015/01/04",
@@ -33,8 +32,8 @@
 		"href": "#demo/4",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet' target='_blank'>Rendering a GeoJSON layer in Leaflet</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo4",
-		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the  <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p>"
-	},
+		"description": "This demo is almost complete. I still have to implement the Laps feature, and implement the Google bike trails overlay. Also, there is a bug in the map provider, type and overlay menus. I believe the trigger is picking a Google overlay, like HYBRID, and then switching to OSM or Bing, which don't support that. I haven't taken the time to track down the root cause."
+    },
 	{
 		"demoId": 5,
 		"created": "2015/01/11",
@@ -42,7 +41,7 @@
 		"href": "#demo/5",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters' target='_blank'>How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo5",
-		"description": "<p>This example is the &ldquo;Hello World&rdquo; of mapping, the <a href='http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php' target='_blank'> USGS feed of earthquakes for the past 7 days</a>. I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the <a href='https://www.coursera.org/course/maps' target='_blank'>Geospatial Revolution</a> course.</p> <p> It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper around the GeoJSON layer.</p> <p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker cluster layer is replaced by a Leaflet GeoJSON map layer built from an activity's GeoJSON. The &ldquo;Return to Search&rdquo; links swaps the maplayers back again.</p>"
+		"description": "This example shows the use of a Leaflet GeoJSON map layer to display a Feature Collection containing my running activities from Garmin Connect. A GeoJSON layer is created using JSON output by a GeoTools FeatureCollection. Each Feature in the collection is an activity summary (no polyline).</p><p>It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper around the GeoJSON layer.</p><p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker cluster layer is replaced by a Leaflet GeoJSON map layer built from an activity's GeoJSON. The &ldquo;Return to Search&rdquo; links swaps the map layers back again."
 	},
 	{
 		"demoId": 6,

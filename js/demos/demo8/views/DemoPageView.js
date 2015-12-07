@@ -28,6 +28,11 @@ define([
             this.states.fetch({
                 success: function () {
                     _this.fetchActivities();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
             this.raceType = this.MARATHON;
@@ -40,6 +45,11 @@ define([
             this.activities.fetch({
                 success: function () {
                     _this.render();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },

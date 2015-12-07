@@ -23,6 +23,11 @@ define([
             this.collection.fetch({
                 success: function () {
                     _this.render();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },

@@ -66,6 +66,11 @@ define([
                 armedConflictLocations.fetch({
                     success: function () {
                         _self.loadCountry(countryName);
+                    },
+                    error: function (object, xhr, options) {
+                        if (console.log && xhr && xhr.responseText) {
+                            console.log(xhr.status + " " + xhr.responseText);
+                        }
                     }
                 });
             }
@@ -94,6 +99,11 @@ define([
                                 }
                                 else {
                                     marker.bindPopup(armedConflictPopupView.render(), data.popupOptions);
+                                }
+                            },
+                            error: function (object, xhr, options) {
+                                if (console.log && xhr && xhr.responseText) {
+                                    console.log(xhr.status + " " + xhr.responseText);
                                 }
                             }
                         });
@@ -154,7 +164,7 @@ define([
             }
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
         }

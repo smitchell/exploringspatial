@@ -7,57 +7,71 @@ define([
     'demos/demo6/collections/CodeDefinitions',
     'text!demos/demo6/templates/AcledSearchView.html',
     'jquery-ui'
-], function(_, Backbone, CodeDefinitions, templateHtml) {
+], function (_, Backbone, CodeDefinitions, templateHtml) {
 
     var AcledSearchView = Backbone.View.extend({
 
         mapOffset: 55,
 
         events: {
-            'click #searchButton' : 'search',
-            'change #country_pk' : 'onChangeCountry',
-            'blur #actorType' : 'onActorTypeBlur',
-            'click #showTrigger' : 'expandSearch',
-            'click #hideTrigger' : 'collapseSearch'
+            'click #searchButton': 'search',
+            'change #country_pk': 'onChangeCountry',
+            'blur #actorType': 'onActorTypeBlur',
+            'click #showTrigger': 'expandSearch',
+            'click #hideTrigger': 'collapseSearch'
         },
 
-        initialize: function(args) {
+        initialize: function (args) {
             this.template = _.template(templateHtml);
             this.countries = args.countries;
             this.mapProviders = args.mapProviders;
             this.loadData();
         },
-        
-        loadData: function() {
+
+        loadData: function () {
             var _self = this;
             var loadCount = 2;
             this.actorTypes = new CodeDefinitions('ACTOR_TYPE');
-            this.actorTypes.fetch({success: function() {
-                if(--loadCount == 0) {
-                    _self.render();
+            this.actorTypes.fetch({
+                success: function () {
+                    if (--loadCount == 0) {
+                        _self.render();
+                    }
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
-            }});
+            });
             this.eventTypes = new CodeDefinitions('EVENT_TYPE');
-            this.eventTypes.fetch({success: function() {
-                if(--loadCount == 0) {
-                    _self.render();
+            this.eventTypes.fetch({
+                success: function () {
+                    if (--loadCount == 0) {
+                        _self.render();
+                    }
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
-            }});
+            });
         },
-        
-        extractLabelValuePairs: function(codeDefinitions) {
+
+        extractLabelValuePairs: function (codeDefinitions) {
             var labelValuePairs = [];
-            codeDefinitions.each( function(codeDefinition) {
+            codeDefinitions.each(function (codeDefinition) {
                 labelValuePairs.push({
                     label: codeDefinition.get('definition'),
                     value: codeDefinition.get('codeDefinitionPk')
                 });
-                
+
             });
             return labelValuePairs;
         },
 
-        render: function() {
+        render: function () {
             var html = this.template({countries: this.countries, eventTypes: this.eventTypes});
             $(this.el).html(html);
             var _self = this;
@@ -82,7 +96,7 @@ define([
                 selectOtherMonths: true,
                 showOtherMonths: true,
                 showStatus: true,
-                onClose: function() {
+                onClose: function () {
                     this.focus();
                 }
             });
@@ -95,15 +109,15 @@ define([
                 selectOtherMonths: true,
                 showOtherMonths: true,
                 showStatus: true,
-                onClose: function() {
+                onClose: function () {
                     this.focus();
                 }
             });
         },
 
-        search: function() {
+        search: function () {
             var properties = {};
-            properties.countryPk =  Number(this.$('#country_pk').val());
+            properties.countryPk = Number(this.$('#country_pk').val());
             properties.locationPk = Number(this.$('#location_pk').val());
             properties.actorTypePk = Number(this.$('#actor_type_pk').val());
             properties.eventTypePk = Number(this.$('#event_type_pk').val());
@@ -124,7 +138,7 @@ define([
             this.model.set(properties);
         },
 
-        scrubInput: function(value) {
+        scrubInput: function (value) {
             var scrubbed = '';
             if (typeof value != 'undefined' && value != null) {
                 scrubbed = value.trim();
@@ -136,35 +150,35 @@ define([
             return scrubbed;
         },
 
-        expandSearch: function() {
+        expandSearch: function () {
             this.$('#showTrigger').hide();
             this.$('#hideTrigger').show();
             this.$('.expandedSearchFilters').slideDown();
             var mapBoxDiv = $('.detailsMapBox');
             var top = mapBoxDiv[0].offsetTop;
             var height = mapBoxDiv.height();
-            mapBoxDiv.css({top: (top + this.mapOffset) + 'px',height: (height - this.mapOffset) + 'px'});
+            mapBoxDiv.css({top: (top + this.mapOffset) + 'px', height: (height - this.mapOffset) + 'px'});
 
             var mapDiv = $('.detailMap');
             var mapHeight = mapDiv.height();
             mapDiv.css({top: '5px', height: (mapHeight - this.mapOffset) + 'px'});
         },
 
-        collapseSearch: function() {
+        collapseSearch: function () {
             this.$('#hideTrigger').hide();
             this.$('#showTrigger').show();
             this.$('.expandedSearchFilters').slideUp();
             var mapBoxDiv = $('.detailsMapBox');
             var top = mapBoxDiv[0].offsetTop;
             var height = mapBoxDiv.height();
-            mapBoxDiv.css({top: (top - this.mapOffset) + 'px',height: (height + this.mapOffset) + 'px'});
+            mapBoxDiv.css({top: (top - this.mapOffset) + 'px', height: (height + this.mapOffset) + 'px'});
 
             var mapDiv = $('.detailMap');
             var mapHeight = mapDiv.height() + this.mapOffset;
             mapDiv.css({height: mapHeight + 'px'});
         },
 
-        parseDate: function(value) {
+        parseDate: function (value) {
             if (value != null && value.length > 0) {
                 var parts = value.split('/');
                 if (parts.length = 3) {
@@ -176,11 +190,11 @@ define([
 
         /**
          * Handle garbage typed into the field that was not selected from the autocomplete list.
-         * * 
+         * *
          * @param event - The blur event.
          * @returns {Error}
          */
-        onActorTypeBlur: function(event) {
+        onActorTypeBlur: function (event) {
             var $pk = this.$('#actor_type_pk');
             var $target = $(event.target);
             var value = this.scrubInput($target.val());
@@ -201,7 +215,7 @@ define([
             }
         },
 
-        onChangeCountry: function(event) {
+        onChangeCountry: function (event) {
             var $target = $(event.target);
             var $locationSelect = this.$('#location_pk');
             $locationSelect.prop('disabled', true);
@@ -214,21 +228,26 @@ define([
                 locations.url = "http://data.exploringspatial.com/acled/" + label.split(' ').join('') + "/LOCATIONS.json";
                 locations.fetch({
                     success: function () {
-                        locations.each(function(codeDefinition){
-                            $locationSelect.append('<option value="' + codeDefinition.get('codeDefinitionPk') + '">'+ codeDefinition.get('definition') + '</option>');
+                        locations.each(function (codeDefinition) {
+                            $locationSelect.append('<option value="' + codeDefinition.get('codeDefinitionPk') + '">' + codeDefinition.get('definition') + '</option>');
                         });
                         _self.$('#selectLocation').show();
                         $locationSelect.prop('disabled', false);
+                    },
+                    error: function (object, xhr, options) {
+                        if (console.log && xhr && xhr.responseText) {
+                            console.log(xhr.status + " " + xhr.responseText);
+                        }
                     }
                 });
             }
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
         }
-        
+
     });
 
     return AcledSearchView;

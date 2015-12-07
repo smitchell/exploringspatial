@@ -6,12 +6,12 @@ define([
     'backbone',
     'models/Activity',
     'leaflet_markercluster'
-], function(_, Backbone, Activity) {
+], function (_, Backbone, Activity) {
 
     var ActivityMapLayerView = Backbone.View.extend({
         mapOffset: 60,
 
-        initialize: function(args) {
+        initialize: function (args) {
             this.map = args.map;
             this.activitiesLayer = null;
             this.originalCenter = null;
@@ -20,10 +20,12 @@ define([
             this.activityStart = null;
             this.activityEnd = null;
             this.collection = args.collection;
-            var CustomIcon = L.Icon.extend({options: {
-                iconSize: [33, 50],
-                iconAnchor: [16, 49]
-            }});
+            var CustomIcon = L.Icon.extend({
+                options: {
+                    iconSize: [33, 50],
+                    iconAnchor: [16, 49]
+                }
+            });
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
 
@@ -31,56 +33,62 @@ define([
             this.activitySearch.on('change', this.render, this);
             this.render();
             var _this = this;
-            $(window).resize (function() {
+            $(window).resize (function () {
                 if (_this.map && _this.activityLayer) {
                     _this.map.fitBounds(_this.activityLayer);
                 }
             })
         },
 
-        render: function() {
+        render: function () {
             if (this.activitiesLayer != null && this.map.hasLayer(this.activitiesLayer)) {
                 this.map.removeLayer(this.activitiesLayer);
             }
             var returnToSearch = $('.returnToSearch a');
             returnToSearch.unbind('click');
             var _self = this;
-            var geoJsonLayer = L.geoJson(this.collection.toJSON(),{
-                filter: function(feature, layers) {
+            var geoJsonLayer = L.geoJson(this.collection.toJSON(), {
+                filter: function (feature, layers) {
                     return _self.activitySearch.filterActivityJson(feature);
                 },
                 onEachFeature: _self.onEachFeature
             });
             // Do not create a markerClusterGroup if the geoJsonLayer map layer is empty.
             if (geoJsonLayer.getLayers().length > 0) {
-               this.activitiesLayer = L.markerClusterGroup();
-               this.activitiesLayer.addLayer(geoJsonLayer);
-               this.map.addLayer(this.activitiesLayer);
-               this.map.on('popupopen', function(event) {_self.onPopupOpen(event);});
-                returnToSearch.click(function(event){_self.onReturnToSearch(event)});
-               this.map.fitBounds(this.activitiesLayer.getBounds());
+                this.activitiesLayer = L.markerClusterGroup();
+                this.activitiesLayer.addLayer(geoJsonLayer);
+                this.map.addLayer(this.activitiesLayer);
+                this.map.on('popupopen', function (event) {
+                    _self.onPopupOpen(event);
+                });
+                returnToSearch.click(function (event) {
+                    _self.onReturnToSearch(event)
+                });
+                this.map.fitBounds(this.activitiesLayer.getBounds());
             }
         },
 
-        onEachFeature: function(feature, layer) {
+        onEachFeature: function (feature, layer) {
             var date = new Date(feature.properties.startTime);
             var triggerId = feature.properties.activityId;
             var msg = [];
             msg.push('<b>' + feature.properties.name + '</b><br/>');
             msg.push('Start: ' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '<br/>');
-            msg.push('Dist: ' + Math.round((feature.properties.totalMeters * 0.000621371)*100)/100 + ' mi<br/>');
+            msg.push('Dist: ' + Math.round((feature.properties.totalMeters * 0.000621371) * 100) / 100 + ' mi<br/>');
             msg.push('<a id="' + triggerId + '" class="popupTrigger" href="javascript:void(0)" />Go to Activity</a>');
             layer.bindPopup(msg.join(''), {maxWidth: 200});
         },
 
-        onPopupOpen: function(event) {
+        onPopupOpen: function (event) {
             var popup = event.popup;
             var _self = this;
-            $(popup._container).on('click','.popupTrigger', function(event) {_self.onOpenActivity(event, popup);});
+            $(popup._container).on('click', '.popupTrigger', function (event) {
+                _self.onOpenActivity(event, popup);
+            });
 
         },
 
-        onOpenActivity: function(event, popup) {
+        onOpenActivity: function (event, popup) {
             var location = popup._latlng;
             this.map.closePopup(popup);
             this.originalCenter = this.map.getCenter();
@@ -90,11 +98,16 @@ define([
             this.activity.fetch({
                 success: function () {
                     _this.renderActivity();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },
 
-        renderActivity: function() {
+        renderActivity: function () {
             $('#searchBox').slideUp();
             $('.returnToSearch').show();
             if (this.map.hasLayer(this.activitiesLayer)) {
@@ -116,7 +129,7 @@ define([
             var mapBoxDiv = $('.detailsMapBox');
             var top = mapBoxDiv[0].offsetTop;
             var height = mapBoxDiv.height();
-            mapBoxDiv.css({top: (top - this.mapOffset) + 'px',height: (height + this.mapOffset) + 'px'});
+            mapBoxDiv.css({top: (top - this.mapOffset) + 'px', height: (height + this.mapOffset) + 'px'});
 
             var mapDiv = $('.detailMap');
             var mapHeight = mapDiv.height() + this.mapOffset;
@@ -124,7 +137,7 @@ define([
             this.map.fitBounds(this.activityLayer.getBounds());
         },
 
-        onReturnToSearch: function(event) {
+        onReturnToSearch: function (event) {
             $('.returnToSearch').hide();
             $('#searchBox').slideDown();
             if (this.activitiesLayer != null) {
@@ -151,14 +164,14 @@ define([
             var mapBoxDiv = $('.detailsMapBox');
             var top = mapBoxDiv[0].offsetTop;
             var height = mapBoxDiv.height();
-            mapBoxDiv.css({top: (top + this.mapOffset) + 'px',height: (height - this.mapOffset) + 'px'});
+            mapBoxDiv.css({top: (top + this.mapOffset) + 'px', height: (height - this.mapOffset) + 'px'});
 
             var mapDiv = $('.detailMap');
             var mapHeight = mapDiv.height();
             mapDiv.css({top: '5px', height: (mapHeight - this.mapOffset) + 'px'});
         },
 
-        destroy: function() {
+        destroy: function () {
             $('.returnToSearch a').unbind('click');
             // Remove view from DOM
             this.remove();

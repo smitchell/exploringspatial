@@ -6,24 +6,24 @@ define([
     'backbone',
     'text!demos/demo5/templates/MapSearchView.html',
     'jquery-ui'
-], function(_, Backbone, templateHtml) {
+], function (_, Backbone, templateHtml) {
 
     var MapSearchView = Backbone.View.extend({
 
         events: {
-            'click #searchButton' : 'search',
-            'keypress .location' : 'searchOnEnter',
-            'keypress #keyword' : 'searchOnEnter'
+            'click #searchButton': 'search',
+            'keypress .location': 'searchOnEnter',
+            'keypress #keyword': 'searchOnEnter'
         },
 
-        initialize: function(args) {
+        initialize: function (args) {
             this.template = _.template(templateHtml);
             this.location = args.location;
             this.mapProviders = args.mapProviders;
             this.render();
         },
 
-        render: function() {
+        render: function () {
             var json = this.model.toJSON();
             json.minDate = this.formatDate(this.model.get('minDate'));
             json.maxDate = this.formatDate(this.model.get('minDate'));
@@ -36,7 +36,7 @@ define([
                 selectOtherMonths: true,
                 showOtherMonths: true,
                 showStatus: true,
-                onClose: function() {
+                onClose: function () {
                     this.focus();
                 }
             });
@@ -47,13 +47,13 @@ define([
                 selectOtherMonths: true,
                 showOtherMonths: true,
                 showStatus: true,
-                onClose: function() {
+                onClose: function () {
                     this.focus();
                 }
             });
         },
 
-        search: function() {
+        search: function () {
             var $searchButton = this.$('#searchButton');
             // No searching while a search is in progress
             if (!$searchButton.hasClass('searching')) {
@@ -87,7 +87,7 @@ define([
             }
         },
 
-        changeLocation: function(location) {
+        changeLocation: function (location) {
             var $searchButton = this.$('#searchButton');
             // Show the search in progress indicator
             $searchButton.addClass('searching');
@@ -109,14 +109,19 @@ define([
                     _self.location.set(geoCoder.toJSON());
                     _self.location.trigger('sync');
                 },
-                complete: function() {
+                complete: function () {
                     $searchButton.removeClass('searching');
                     $('.location').val('');
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },
 
-        scrubInput: function(value) {
+        scrubInput: function (value) {
             var scrubbed = '';
             if (typeof value != 'undefined' && value != null) {
                 scrubbed = value.trim();
@@ -128,14 +133,14 @@ define([
             return scrubbed;
         },
 
-        searchOnEnter: function(e) {
+        searchOnEnter: function (e) {
             if (e.keyCode != 13) {
                 return;
             }
             this.search();
         },
 
-        parseDate: function(value) {
+        parseDate: function (value) {
             if (value != null && value.length > 0) {
                 var parts = value.split('/');
                 if (parts.length = 3) {
@@ -145,14 +150,14 @@ define([
             return null;
         },
 
-        formatDate: function(date) {
+        formatDate: function (date) {
             if (date != null && date != '') {
                 return (date.getMonth() + 1) + '/' + date.getDate() + "/" + date.getFullYear();
             }
             return '';
         },
 
-        destroy: function() {
+        destroy: function () {
             // Remove view from DOM
             this.remove();
         }

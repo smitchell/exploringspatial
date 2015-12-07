@@ -7,7 +7,7 @@ define([
         'models/Demo'
 ], function(Backbone, Demo) {
 var Demos = Backbone.Collection.extend({
-    url: "http://data.exploringspatial.com/demos.json",
+    url: "./resources/demos.json",
    	model: Demo,
 
     parse: function(response) {

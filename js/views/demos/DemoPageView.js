@@ -16,12 +16,12 @@ define([
     'views/demos/DemoDescriptionView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone,
-             Demo1PageView, 
-             Demo2PageView, 
-             Demo3PageView, 
-             Demo4PageView, 
-             Demo5PageView, 
-             Demo6PageView, 
+             Demo1PageView,
+             Demo2PageView,
+             Demo3PageView,
+             Demo4PageView,
+             Demo5PageView,
+             Demo6PageView,
              Demo7PageView,
              Demo8PageView,
              Demo9PageView,
@@ -35,7 +35,7 @@ define([
         events: {
             'click .left': 'prev',
             'click .right': 'next',
-            'click .info' : 'openOverlay'
+            'click .info': 'openOverlay'
         },
 
         initialize: function (args) {
@@ -51,29 +51,31 @@ define([
             var _this = this;
             this.collection = new Demos();
             this.demoPageView = [
-            Demo1PageView,
-            Demo2PageView,
-            Demo3PageView,
-            Demo4PageView,
-            Demo5PageView,
-            Demo6PageView,
-            Demo7PageView,
-            Demo8PageView,
-            Demo9PageView];
-            $(window).resize (function() {
+                Demo1PageView,
+                Demo2PageView,
+                Demo3PageView,
+                Demo4PageView,
+                Demo5PageView,
+                Demo6PageView,
+                Demo7PageView,
+                Demo8PageView,
+                Demo9PageView];
+            $(window).resize (function () {
                 _this.resizeDemo();
                 _this.resizeOverlay();
             });
-           this.collection.fetch({
-               success: function() {
-                   if (args.demoId) {
-                       _this.render(args.demoId)
-                   }
-               },
-               error: function(error, a ,b , c) {
-                   console.log(error);
-               }
-           });
+            this.collection.fetch({
+                success: function () {
+                    if (args.demoId) {
+                        _this.render(args.demoId)
+                    }
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
+                }
+            });
         },
 
         render: function (demoId) {
@@ -96,7 +98,7 @@ define([
             this.demo = null;
 
             // Look for a demo descripiton matching the demoId.
-            this.collection.each(function(demo) {
+            this.collection.each(function (demo) {
                 if (demoId == demo.get('demoId')) {
                     $demoTitle.html(demo.get('title'));
                     _this.demo = demo;
@@ -106,12 +108,12 @@ define([
             // If none is found, then default to the last demo definition in the collection.
             if (this.demo == null) {
                 this.demo = this.collection.models[this.collection.length - 1];
-                demoId =  this.demo.get('demoId');
+                demoId = this.demo.get('demoId');
             }
 
             // Load the DemoPageView corresponding to the demo definition.
             this.currentDemo = null;
-            $.each(this.demoPageView, function(index, demoPageView) {
+            $.each(this.demoPageView, function (index, demoPageView) {
                 if (demoPageView.DEMO_ID == demoId) {
                     $demoTitle.html(_this.demo.get('title'));
                     _this.currentDemo = new demoPageView({el: $demoContainer});
@@ -123,7 +125,7 @@ define([
             }
         },
 
-        openOverlay: function(event) {
+        openOverlay: function (event) {
             if (event) {
                 event.preventDefault();
             }
@@ -138,7 +140,7 @@ define([
             }
         },
 
-        resizeOverlay: function() {
+        resizeOverlay: function () {
             var overlay = $('.overlay');
             if (overlay) {
                 var $demoContainer = $('#demoBody');
@@ -151,8 +153,7 @@ define([
             }
         },
 
-        destroyCurrentView: function() {
-            event.preventDefault();
+        destroyCurrentView: function () {
             if (this.currentDemo) {
                 if (this.demoDescriptionView) {
                     this.demoDescriptionView.destroy();
@@ -163,7 +164,7 @@ define([
 
                 this.currentDemo.$el.removeData().unbind();
 
-                if(this.currentDemo.destroy) {
+                if (this.currentDemo.destroy) {
                     this.currentDemo.destroy();
                 }
                 Backbone.View.prototype.remove.call(this.currentDemo);
@@ -171,7 +172,7 @@ define([
             }
         },
 
-        resizeDemo: function() {
+        resizeDemo: function () {
             var width = $('window').width();
             var buttons = $('.demoBanner ul');
             $('demoHeader').css({width: (width - buttons.width()) + 'px'});
@@ -180,7 +181,7 @@ define([
             }
         },
 
-        prev: function(event) {
+        prev: function (event) {
             event.preventDefault();
             var demoId = this.currentDemo.getDemoId() - 1;
             if (demoId >= 1) {
@@ -189,7 +190,7 @@ define([
             }
         },
 
-        next: function(event) {
+        next: function (event) {
             event.preventDefault();
             var demoId = this.currentDemo.getDemoId() + 1;
             if (demoId <= this.collection.length) {

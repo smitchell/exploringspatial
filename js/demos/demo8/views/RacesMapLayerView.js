@@ -106,6 +106,11 @@ define([
             this.activity.fetch({
                 success: function () {
                     _this.renderActivity();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },
