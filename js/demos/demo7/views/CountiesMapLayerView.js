@@ -69,11 +69,11 @@ define([
                     fillOpacity: 0.5
                 });
                 _this.clearLogo();
-                _this.unhighlightCounties();
+                _this.unhighlightCounties(event);
             }).on('mousemove', function(event) {
 
                 // Broadcast mouseout to all layers
-                _this.unhighlightCounties();
+                _this.unhighlightCounties(event);
 
                 // Use the Leaflet-PIP (point in polygon) library to find any county
                 // layers containing the point of the circle's mousemove event.
@@ -115,7 +115,7 @@ define([
             }).addTo(overlays);
         },
 
-        unhighlightCounties: function() {
+        unhighlightCounties: function(event) {
             this.countiesLayer.getLayers().forEach(function (layer) {
                 layer.fireEvent("mouseout", {
                     latlng: event.latlng,
