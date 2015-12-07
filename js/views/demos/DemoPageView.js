@@ -117,47 +117,6 @@ define([
                     _this.currentDemo = new demoPageView({el: $demoContainer});
                 }
             });
-            //switch(Number(demoId)) {
-            //    case 1:
-            //        $demoTitle.html('Bing and Google Map Plugins');
-            //        this.currentDemo = new Demo1PageView({el: $demoContainer});
-            //
-            //        break;
-            //    case 2:
-            //        $demoTitle.html('Earthquake Data on ArcGIS Online');
-            //        this.currentDemo = new Demo2PageView({el: $demoContainer});
-            //        break;
-            //    case 3:
-            //        $demoTitle.html('Earthquake Data on Mapbox');
-            //        this.currentDemo = new Demo3PageView({el: $demoContainer});
-            //        break;
-            //    case 4:
-            //        $demoTitle.html('Garmin-styled Map with Leaflet');
-            //        this.currentDemo = new Demo4PageView({el: $demoContainer});
-            //        break;
-            //    case 5:
-            //        $demoTitle.html('Electronic Running Log in GeoJSON Format');
-            //        this.currentDemo = new Demo5PageView({el: $demoContainer});
-            //        break;
-            //    case 6:
-            //        $demoTitle.html('Armed Conflict in Africa: 1971 - 2014');
-            //        this.currentDemo = new Demo6PageView({el: $demoContainer});
-            //        break;
-            //    case 7:
-            //        $demoTitle.html('Leaflet-PIP Example');
-            //        this.currentDemo = new Demo7PageView({el: $demoContainer});
-            //        break;
-            //    case 8:
-            //        $demoTitle.html('50-state Marathon Club Map With Leaflet-PIP');
-            //        this.currentDemo = new Demo8PageView({el: $demoContainer});
-            //        break;
-            //    default: {
-            //        demoId = this.collection.length;
-            //        $demoTitle.html('Geofencing With Leaflet-PIP');
-            //        this.currentDemo = new Demo9PageView({el: $demoContainer});
-            //        break;
-            //    }
-            //}
             if (this.initialLoad) {
                 this.openOverlay();
                 this.initialLoad = false;
@@ -174,7 +133,7 @@ define([
                     this.demoDescriptionView.destroy();
                 }
             } else {
-                this.demoDescriptionView = new DemoDescriptionView({demoId: this.currentDemo.DEMO_ID});
+                this.demoDescriptionView = new DemoDescriptionView({model: this.demo});
                 this.resizeOverlay();
             }
         },
@@ -186,9 +145,8 @@ define([
                 var width = $demoContainer.width();
                 overlay.css({
                     top: ($demoContainer.offset().top * 1.25) + 'px',
-                    left: (width * 0.15) + 'px',
-                    height: ($demoContainer.height() * 0.8) + 'px',
-                    width: (width * 0.80) + 'px'
+                    left: (width * 0.3) + 'px',
+                    width: (width * 0.50) + 'px'
                 });
             }
         },

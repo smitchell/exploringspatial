@@ -22,7 +22,6 @@ define([
 
     var initialize = function (args) {
         var router = new Router(this);
-
         var menuView = new MenuView({el: $('#navContainer')});
         new FooterView({el: $('#footer')});
         var contentWrapper = $('#content');
@@ -32,6 +31,7 @@ define([
         var demoPageView = null;
         var demoIndexView = null;
         router.on('route:home', function (actions) {
+            $('.overlay').hide();
             if (homePageView == null) {
                 homePageView = new HomePageView({el: contentWrapper});
             }
@@ -39,6 +39,7 @@ define([
             menuView.changeMenu('home')
         });
         router.on('route:demos', function (actions) {
+            $('.overlay').hide();
             if (demoIndexView == null) {
                 demoIndexView = new DemoIndexView({el: contentWrapper});
             }
@@ -54,6 +55,7 @@ define([
             menuView.changeMenu('')
         });
         router.on('route:about', function (actions) {
+            $('.overlay').hide();
             if (aboutPageView == null) {
                 aboutPageView = new AboutPageView({el: contentWrapper});
             }
@@ -61,6 +63,7 @@ define([
             menuView.changeMenu('about')
         });
         router.on('route:license', function (actions) {
+            $('.overlay').hide();
             if (licensePageView == null) {
                 licensePageView = new LicensePageView({el: contentWrapper});
             }

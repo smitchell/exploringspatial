@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'text!templates/demos/DemoDescriptionView.html',
-    'text!demos/demo1/templates/DemoDescriptionView.html'
+    'text!templates/demos/DemoIndexView.html'
 ], function ($, _, Backbone, templateHtml, template1Html) {
     var DemoDescriptionView = Backbone.View.extend({
 
@@ -12,15 +12,8 @@ define([
         },
 
         initialize: function (args) {
-            this.demoId = args.demoId;
             this.template = _.template(templateHtml);
-            switch (this.demo1) {
-                case 1:
-                {
-                    this.demoTemplate = _.template(template1Html);
-                    break;
-                }
-            }
+            this.demoTemplate = _.template(template1Html);
             this.render();
         },
 
@@ -34,6 +27,7 @@ define([
                 event.stopPropagation();
            		return false;
             });
+            $('.overlayPlaceholder').html(this.demoTemplate(this.model.toJSON()));
         },
 
         destroy: function() {

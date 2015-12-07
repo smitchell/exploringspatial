@@ -1,124 +1,14 @@
-<div id="container2">
-    <h1 style="color: white;">Index of Demos</h1>
-</div>
-<div class="demoIndex">
-
-    <div class="demoIndexWrapper">
-        <h1 id="demo9Title"><a href="#demo/9">Demo 9 - Privacy Geofencing</a></h1>
-
-        <div id="demo9Narrative" class="demoNarrative">
-            <p>This demo is for my blot post "<a target="_blank" href="https://exploringspatial.wordpress.com/2015/11/29/privacy-geofencing/">
-                    Privacy Geofencing</a>." It is done on the browser-side <i>only</i> because this is a static website. In the real world, privacy Geofencing would <strong>only</strong>
-                be done on the server-side so that no private coordinates are delivered in the JSON payload as it is in the demo.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo8Title"><a href="#demo/8">Demo 8 - "50-State Club" map</a></h1>
-        <div id="demo8Narrative" class="demoNarrative">
-            <p>This demo uses the uses <a href="https://github.com/mapbox/leaflet-pip" target="_blank">
-                Leaflet-PIP Plugin</a> to generate a <a href="http://www.50statesmarathonclub.com/" target="_blank">
-                50-State Marathon Club</a> style map on the fly in the web browser. This is for my blog post "<a href="https://exploringspatial.wordpress.com/2015/11/28/browser-side-geospatial-maps/" target="_blank">
-                        Browser-side Geospatial Maps</a>."</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo7Title"><a href="#demo/7">Demo 7 - Leaflet-PIP Plugin</a></h1>
-        <div id="demo7Narrative" class="demoNarrative">
-            <p>This demo is from my blot post "<a href="https://exploringspatial.wordpress.com/2015/11/25/breaking-dependence-on-vendor-map-apis-leaflet/" target="_blank">
-                    Breaking Dependence on Vendor Map APIs with Leaflet</a>." It uses a GeoJSON file containing Kansas counties and some overlapping shaps
-                to show how shape events can be handled. It also introduces the <a
-                        href="https://github.com/mapbox/leaflet-pip" target="_blank">
-                    Leaflet-PIP Plugin</a>.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo6Title"><a href="#demo/6">Demo 6 - Armed Conflict in Africa</a></h1>
-
-        <div id="demo6Narrative" class="demoNarrative">
-            <p>This demo uses the PruneCluster plugin to cluster over 99,000 incidents of armed conflict in Africa
-                between
-                1971 and 2014 from the <a href="http://www.acleddata.com" target="_blank">ACLED</a> 1971 - 2014 dataset.
-                The accompanying blog post will follow soon.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo5Title"><a href="#demo/5">Demo 5 - GeoJSON Feature Collection</a></h1>
-
-        <div id="demo5Narrative" class="demoNarrative">
-            <p> This demo is for my blog post "<a href="https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters/" target="_blank">
-                    How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>."
-                It shows the use of a Leaflet GeoJSON map layer to display a Feature Collection containing my
-                running activities from Garmin Connect.
-                A GeoJSON layer is created using JSON output by a GeoTools FeatureCollection. Each Feature in the
-                collection is an activity summary (no polyline).</p>
-
-            <p>It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper
-                around the GeoJSON layer.</p>
-
-            <p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker
-                cluster layer is replaced by a
-                Leaflet GeoJSON map layer built from an activity's GeoJSON. The "Return to Search" links swaps the map
-                layers back again.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo4Title"><a href="#demo/4">Demo 4 - Garmin-style Example</a></h1>
-
-        <div id="demo4Narrative" class="demoNarrative">
-            <p>This example, from my blog post
-                "<a href="https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet/" target="_blank">Rendering a GeoJSON layer in Leaflet</a>,"
-                shows the use of Backbone, Underscore, RequireJS and Leaflet to display a GeoJSON running activity from Garmin Connect.</p>
-
-            <p style="margin-bottom: 20px">This demo is almost complete. I still have to implement the Laps feature, and
-                implement the Google bike trails overlay.
-                Also, there is a bug in the map provider, type and overlay menus. I believe the trigger is picking a
-                Google overlay, like HYBRID, and then
-                switching to OSM or Bing, which don't support that. I haven't taken the time to track down the root
-                cause.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo3Title"><a href="#demo/3">Demo 3 - Mapbox Example</a></h1>
-
-        <div id="demo3Narrative" class="demoNarrative">
-            <p>This example is the "Hello World" of mapping, and is referenced from my blog post
-                                "<a href="https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online" target="_blank">MapBox vs ArcGIS Online</a>."
-                It uses the <a
-                    href="http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php" target="_blank">USGS feed of
-                earthquakes for the past 7 days</a>.
-                I used the feed from late August, 2013, to create this earthquake map for the <a
-                        href="http://www.mapbox.com/tilemill/docs/crashcourse/introduction/" target="_blank">TileMill
-                    Crash Course</a>.
-            </p>
-
-            <p>The tutorial has you import the <a href="http://earthquake.usgs.gov/earthquakes/feed/csv/2.5/week"
-                                                  target="_blank">USGS earthquake CSV file</a>,
-                add a legend and change some styles, and then export 6 zoom levels to import into MapBox. Below is a
-                link to the tutorial map tiles in an iFrame.</p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo2Title"><a href="#demo/2">Demo 2 - ArcGIS Earthquake Data</a></h1>
-
-        <div id="demo2Narrative" class="demoNarrative">
-            <p>This example is the "Hello World" of mapping, the <a
-                    href="http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php" target="_blank">USGS feed of
-                earthquakes for the past 7 days</a>.
-                I used the feed from late July, 2013, to create this earthquake map for one of the lessons in the <a
-                        href="https://www.coursera.org/course/maps" target="_blank">Geospatial Revolution</a> course.
-                This example is referenced from my blog post
-                    "<a href="https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online" target="_blank">MapBox vs ArcGIS Online</a>."
-            </p>
-        </div>
-    </div>
-    <div class="demoIndexWrapper">
-        <h1 id="demo1Title"><a href="#demo/1">Demo 1 - Basic Leaflet Example</a></h1>
-
-        <div id="demo1Narrative" class="demoNarrative">
-            <p>This is an example of privacy geofencing from my blog post "<a href="https://exploringspatial.wordpress.com/2013/08/22/learning-leaflet/" target="_blank">Learning Leaflet</a>."
-                It is lifted from Leaflet's <span style="font-style: italic;"><a
-                    href="http://leafletjs.com/examples/layers-control-example.html">Layer Groups and Layers Control</a></span>
-                tutorial and modified, shows the switching of base map tiles, including to Google and Bing Maps, with Leaflet.</p>>
-        </div>
-    </div>
-</div>
+<h1><a href="<%=href%>"><%=title%></a></h1>
+<div class="demoNarrative"><%=description%></div>
+<table>
+    <tr>
+        <th class="github"></th>
+        <td>
+            <a href="<%=github%>" target="_blank">GitHub Repository</a>
+        </td>
+<% if (typeof wordpressUrl != 'undefined') { %>
+        <th class="wordpress"></th>
+        <td><%=wordpressUrl%></td>
+<% } %>
+</tr>
+</table>
