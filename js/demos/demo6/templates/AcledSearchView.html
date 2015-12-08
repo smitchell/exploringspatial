@@ -3,7 +3,7 @@
         <div class="searchFieldContainer">
             <div class="searchFields">
                 <div class="searchHeader">Country:</div>
-                <select id="country_pk">
+                <select id="country_pk" style="height: 30px;">
                     <option value="-1" selected></option>
                     <% countries.each(function(codeDefinition){%>
                     <option value="<%= codeDefinition.get('codeDefinitionPk') %>"><%= codeDefinition.get('definition') %></option>

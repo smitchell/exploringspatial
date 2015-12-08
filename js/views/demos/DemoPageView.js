@@ -3,12 +3,10 @@ define([
     'underscore',
     'backbone',
     'collections/Demos',
-    'utils/StyleManager',
     'views/demos/DemoDescriptionView',
     'text!templates/demos/DemoPageView.html'
 ], function ($, _, Backbone,
              Demos,
-             StyleManager,
              DemoDescriptionView,
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
@@ -37,7 +35,6 @@ define([
             });
             this.collection.fetch({
                 success: function (collection, xhr, options) {
-                    _this.styleManager = new StyleManager(collection.length);
                     _this.render(args.demoId)
                 },
                 error: function (object, xhr, options) {
@@ -120,7 +117,6 @@ define([
         onLoadComplete: function (demoId, demoPageView) {
             this.destroyCurrentView();
             this.$el.html(this.template({}));
-            this.styleManager.addDemoStyleSheet(demoId);
 
             if (demoId <= 1) {
                 this.$('.left').hide();

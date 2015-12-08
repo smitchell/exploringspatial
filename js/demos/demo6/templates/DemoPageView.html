@@ -1,10 +1,15 @@
-<div id="searchBox" class="searchBox" style=""></div>
+<style type="text/css">
+    .ui-front {
+        z-index: 1002 !important;
+    }
+</style>
+<div id="searchBox" class="searchBox" style="position: absolute; width: 100%; height: 70px;"></div>
 <div class="returnToSearch" style="display: none">
     <ul class="buttons" style="position: absolute; right: 2px; top: 5px">
         <li><a id="returnTrigger"  style="{width: 100px}" href="javascript:void(0)">Return to Search</a></li>
     </ul>
 </div>
-<div id="detailsMapBox" class="detailsMapBox">
+<div id="detailsMapBox" class="detailsMapBox" style="top: 70px; bottom: 30px;">
     <div class="map-controls">
         <ul class="map-control-item map-zoom"></ul>
         <div class="map-control-item map-select map-provider"></div>
@@ -12,5 +17,7 @@
         <div class="map-control-item map-select map-layers"></div>
     </div>
     <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0" ></div>
-    <div id="progressbar" style="width: 100%; display: none"><div class="progress-label">Loading...</div></div>
+    <div id="progressbar" style="width: 100%; display: none; position: absolute; bottom: 0;">
+        <div class="progress-label" style="position: absolute; left: 50%; top: 4px; font-weight: bold; text-shadow: 1px 1px 0 #fff;">Loading...</div>
+    </div>
 </div>

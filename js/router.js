@@ -9,7 +9,7 @@ define([
     'views/LicensePageView',
     'views/demos/DemoIndexView',
     'views/demos/DemoPageView'
-], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoIndexView, DemoPageView, StyleManager) {
+], function ($, _, Backbone, MenuView, FooterView, HomePageView, AboutPageView, LicensePageView, DemoIndexView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId" : "demo",
