@@ -54,7 +54,7 @@ define([
             if (demoPageView == null) {
                 demoPageView = new DemoPageView({el: contentWrapper, demoId: numericId, router: router});
             } else {
-                demoPageView.render({demoId: numericId});
+                demoPageView.render(numericId);
             }
             menuView.changeMenu('')
         });

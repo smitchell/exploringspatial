@@ -32,7 +32,7 @@
 		"href": "#demo/4",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet' target='_blank'>Rendering a GeoJSON layer in Leaflet</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo4",
-		"description": "This demo is almost complete. I still have to implement the Laps feature, and implement the Google bike trails overlay. Also, there is a bug in the map provider, type and overlay menus. I believe the trigger is picking a Google overlay, like HYBRID, and then switching to OSM or Bing, which don't support that. I haven't taken the time to track down the root cause."
+		"description": "This demo is almost complete. I still have to implement the Laps feature, and implement the Google bike trails overlay. Also, there is a bug in the map provider, type and overlay menus. I believe the trigger is picking a Google overlay, like HYBRID, and then switching to OSM or Bing, which don't support that. I haven't taken the time to track down the root cause.</p><p>Use the vendor select list to change from Google to Bing. Use the Map overlay to change the map type for the selected vendor.</p>"
     },
 	{
 		"demoId": 5,
@@ -41,7 +41,7 @@
 		"href": "#demo/5",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters' target='_blank'>How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo5",
-		"description": "This example shows the use of a Leaflet GeoJSON map layer to display a Feature Collection containing my running activities from Garmin Connect. A GeoJSON layer is created using JSON output by a GeoTools FeatureCollection. Each Feature in the collection is an activity summary (no polyline).</p><p>It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper around the GeoJSON layer.</p><p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker cluster layer is replaced by a Leaflet GeoJSON map layer built from an activity's GeoJSON. The &ldquo;Return to Search&rdquo; links swaps the map layers back again."
+		"description": "This example shows the use of a Leaflet GeoJSON map layer to display a Feature Collection containing my running activities from Garmin Connect. A GeoJSON layer is created using JSON output by a GeoTools FeatureCollection. Each Feature in the collection is an activity summary (no polyline).</p><p>It also demonstrates Leaflet's Marker Cluster plugin. The marker cluster map layer is used as a wrapper around the GeoJSON layer.</p><p>Finally, this demo shows a click listener on the popup to drill down into the activity. The marker cluster layer is replaced by a Leaflet GeoJSON map layer built from an activity's GeoJSON. The &ldquo;Return to Search&rdquo; links swaps the map layers back again.</p><p>Click on a point cluster to drill into the data, or enter search criteria to filter data on-the-fly.</p>"
 	},
 	{
 		"demoId": 6,
@@ -49,7 +49,7 @@
 		"title": "Armed Conflict in Africa",
 		"href": "#demo/6",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo6",
-		"description": "<p>This demo uses the PruneCluster plugin to cluster over 99,000 incidents of armed conflict in Africa between 1971 and 2014 from the <a href='http://www.acleddata.com' target='_blank'>ACLED</a> 1971 - 2014 dataset. The accompanying blog post will follow soon.</p>"
+		"description": "<p>This demo uses the PruneCluster plugin to cluster over 99,000 incidents of armed conflict in Africa between 1971 and 2014 from the <a href='http://www.acleddata.com' target='_blank'>ACLED</a> 1971 - 2014 dataset. The accompanying blog post will follow soon.</p><p>Click on point clusters to drill into the data, or use the search options to filter data on-the-fly.</p>"
 	},
 	{
 		"demoId": 7,
@@ -58,7 +58,7 @@
 		"href": "#demo/7",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/25/breaking-dependence-on-vendor-map-apis-leaflet/' target='_blank'>Breaking Dependence on Vendor Map APIs with Leaflet</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo7",
-		"description": "<p>This demo uses a GeoJSON file containing Kansas counties and some overlapping shaps to show how shape events can be handled. It also introduces the <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a>.</p>"
+		"description": "<p>This demo uses a GeoJSON file containing Kansas counties and some overlapping shaps to show how shape events can be handled. It also introduces the <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a>.</p><p>Hover over county names, county shapes on the map, or the college circles to trigger highlighting.</p>"
 	},
 	{
 		"demoId": 8,
@@ -67,7 +67,7 @@
 		"href": "#demo/8",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/28/browser-side-geospatial-maps/' target='_blank'>Browser-side Geospatial Maps</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo8",
-		"description": "<p>This demo uses the uses <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a> to generate a <a href='http://www.50statesmarathonclub.com/' target='_blank'> 50-State Marathon Club</a> style map on the fly in the web browser.</p>"
+		"description": "<p>This demo uses the uses <a href='https://github.com/mapbox/leaflet-pip' target='_blank'> Leaflet-PIP Plugin</a> to generate a <a href='http://www.50statesmarathonclub.com/' target='_blank'> 50-State Marathon Club</a> style map on the fly in the web browser.</p><p>Change the race distance to change race filter.</p>"
 	},
 	{
 		"demoId": 9,
@@ -76,6 +76,6 @@
 		"href": "#demo/9",
 		"wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/29/privacy-geofencing/' target='_blank'>Privacy Geofencing</a>",
 		"github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo9",
-		"description": "<p>This demo shows privacy geofencing done on the browser-side. It is <i>only</i> this way because this is a static website. In the real world, privacy Geofencing would <strong>only</strong> be done on the server-side so that no private coordinates are delivered in the JSON payload as it is in the demo.</p>"
+		"description": "<p>This demo shows privacy geofencing done on the browser-side. It is <i>only</i> this way because this is a static website. In the real world, privacy Geofencing would <strong>only</strong> be done on the server-side so that no private coordinates are delivered in the JSON payload as it is in the demo.</p><p>Click the numbers at the bottom of the page to see 10 examples of privacy geofencing.</p>"
 	}
 ]}

@@ -3,12 +3,11 @@ define([
 ], function ($) {
     "use strict";
 
-    function StyleManager() {
-
+    function StyleManager(args) {
+        var maxDemo = args.maxDemo
     }
 
     StyleManager.prototype = {
-        maxDemo: 9,
         baseUrl: "js/demos/demo",
 
         cssPath: "/css/demo.css",

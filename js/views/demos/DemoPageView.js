@@ -12,7 +12,6 @@ define([
              DemoDescriptionView,
              templateHtml) {
     var DemoPageView = Backbone.View.extend({
-        styleManager: new StyleManager(),
 
         events: {
             'click .left': 'prev',
@@ -37,8 +36,9 @@ define([
                 _this.resizeOverlay();
             });
             this.collection.fetch({
-                success: function () {
-                  _this.render(args.demoId)
+                success: function (collection, xhr, options) {
+                    _this.styleManager = new StyleManager(collection.length);
+                    _this.render(args.demoId)
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -48,58 +48,67 @@ define([
             });
         },
 
-        render: function(demoId) {
+        render: function (demoId) {
             var _this = this;
             switch (demoId) {
-                case 1: {
+                case 1:
+                {
                     require(['demos/demo1/views/DemoPageView'], function (Demo1PageView) {
                         _this.onLoadComplete(demoId, Demo1PageView);
                     });
                     break;
                 }
-                case 2: {
+                case 2:
+                {
                     require(['demos/demo2/views/DemoPageView'], function (Demo2PageView) {
                         _this.onLoadComplete(demoId, Demo2PageView);
                     });
                     break;
                 }
-                case 3: {
+                case 3:
+                {
                     require(['demos/demo3/views/DemoPageView'], function (Demo3PageView) {
                         _this.onLoadComplete(demoId, Demo3PageView);
                     });
                     break;
                 }
-                case 4: {
+                case 4:
+                {
                     require(['demos/demo4/views/DemoPageView'], function (Demo4PageView) {
                         _this.onLoadComplete(demoId, Demo4PageView);
                     });
                     break;
                 }
-                case 5: {
+                case 5:
+                {
                     require(['demos/demo5/views/DemoPageView'], function (Demo5PageView) {
                         _this.onLoadComplete(demoId, Demo5PageView);
                     });
                     break;
                 }
-                case 6: {
+                case 6:
+                {
                     require(['demos/demo6/views/DemoPageView'], function (Demo6PageView) {
                         _this.onLoadComplete(demoId, Demo6PageView);
                     });
                     break;
                 }
-                case 7: {
+                case 7:
+                {
                     require(['demos/demo7/views/DemoPageView'], function (Demo7PageView) {
                         _this.onLoadComplete(demoId, Demo7PageView);
                     });
                     break;
                 }
-                case 8: {
+                case 8:
+                {
                     require(['demos/demo8/views/DemoPageView'], function (Demo8PageView) {
                         _this.onLoadComplete(demoId, Demo8PageView);
                     });
                     break;
                 }
-                default: {
+                default:
+                {
                     require(['demos/demo9/views/DemoPageView'], function (Demo9PageView) {
                         _this.onLoadComplete(demoId, Demo9PageView);
                     });
@@ -137,7 +146,7 @@ define([
                 this.demoModel = this.collection.models[this.collection.length - 1];
                 demoId = this.demoModel.get('demoId');
             }
-            
+
             this.currentDemolView = new demoPageView({el: $('#demoBody')});
             this.$('#demoTitle').html(_this.demoModel.get('title'));
 
