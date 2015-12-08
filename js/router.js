@@ -47,10 +47,14 @@ define([
             menuView.changeMenu('demos')
         });
         router.on('route:demo', function (demoId) {
+            var numericId = Number(demoId);
+            if (isNaN(numericId)) {
+                throw new Error('DemoId must be numeric.');
+            }
             if (demoPageView == null) {
-                demoPageView = new DemoPageView({el: contentWrapper, demoId: demoId, router: router});
+                demoPageView = new DemoPageView({el: contentWrapper, demoId: numericId, router: router});
             } else {
-                demoPageView.render({demoId: demoId});
+                demoPageView.render({demoId: numericId});
             }
             menuView.changeMenu('')
         });

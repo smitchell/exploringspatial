@@ -18,7 +18,7 @@ define([
             for(var i = 1; i <= this.maxDemo; i++) {
                 var styleSheet = $('#demo' + i);
                 if (styleSheet.length > 0 ) {
-                    if (i == demoId) {
+                    if (i === demoId) {
                         isMissing = true;
                     } else {
                         styleSheet.remove();
