@@ -4,14 +4,14 @@ define([
     'backbone',
     'text!templates/LicenseView.html'
 ], function ($, _, Backbone, templateHtml) {
-    var LicensePageView = Backbone.View.extend({
+    var LicenseView = Backbone.View.extend({
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();
         },
         render: function () {
-            this.$el.html(this.template({}));
+            this.$el.html(this.template());
         }
     });
-    return LicensePageView;
+    return LicenseView;
 });

@@ -3,9 +3,8 @@ define([
     'underscore',
     'backbone',
     'views/MenuView',
-    'views/FooterView',
-    'views/LicensePageView'
-], function ($, _, Backbone, MenuView, FooterView, LicensePageView) {
+    'views/FooterView'
+], function ($, _, Backbone, MenuView, FooterView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId": "demo",
@@ -18,78 +17,87 @@ define([
 
     var initialize = function () {
         var router = new Router(this);
-        var menuView = new MenuView({el: $('#navContainer')});
+        var _this = this;
+        _this.menuView = new MenuView({el: $('#navContainer')});
         new FooterView({el: $('#footer')});
         var contentWrapper = $('#content');
-        var homePageView = null;
-        var aboutPageView = null;
-        var licensePageView = null;
-        var demoPageView = null;
-        var demoIndexView = null;
-        $('.overlay').hide();
+        this.homePageView = null;
+        this.aboutPageView = null;
+        this.licenseView = null;
+        this.demoPageView = null;
+        this.demoIndexView = null;
 
         router.on('route:home', function () {
-            if (homePageView == null) {
+            $('.overlay').hide();
+            if (_this.homePageView == null) {
                 require(['views/home/HomePageView'], function (HomePageView) {
-                    homePageView = new HomePageView({el: contentWrapper});
-                    homePageView.render();
-                    menuView.changeMenu('home');
+                    _this.homePageView = new HomePageView({el: contentWrapper});
+                    _this.homePageView.render();
+                    _this.menuView.changeMenu('home');
                 });
             } else {
-                homePageView.render();
-                menuView.changeMenu('home');
+                _this.homePageView.render();
+                _this.menuView.changeMenu('home');
             }
         });
 
         router.on('route:demos', function () {
-            if (demoIndexView == null) {
+            $('.overlay').hide();
+            if (_this.demoIndexView == null) {
                 require(['views/demos/DemoIndexView'], function (DemoIndexView) {
-                    demoIndexView = new DemoIndexView({el: contentWrapper});
-                    demoIndexView.render();
-                    menuView.changeMenu('demos')
+                    _this.demoIndexView = new DemoIndexView({el: contentWrapper});
+                    _this.demoIndexView.render();
+                    _this.menuView.changeMenu('demos')
                 });
             } else {
-                demoIndexView.render();
-                menuView.changeMenu('demos')
+                _this.demoIndexView.render();
+                _this.menuView.changeMenu('demos')
             }
         });
 
         router.on('route:demo', function (demoId) {
+            $('.overlay').hide();
             var numericId = Number(demoId);
             if (isNaN(numericId)) {
                 throw new Error('DemoId must be numeric.');
             }
-            if (demoPageView == null) {
+            if (_this.demoPageView == null) {
                 require(['views/demos/DemoPageView'], function (DemoPageView) {
-                    demoPageView = new DemoPageView({el: contentWrapper, demoId: numericId, router: router});
-                    demoPageView.render(numericId);
-                    menuView.changeMenu('')
+                    _this.demoPageView = new DemoPageView({el: contentWrapper, demoId: numericId, router: router});
+                    _this.demoPageView.render(numericId);
+                    _this.menuView.changeMenu('')
                 });
             } else {
-                demoPageView.render(numericId);
-                menuView.changeMenu('')
+                _this.demoPageView.render(numericId);
+                _this.menuView.changeMenu('')
             }
         });
 
         router.on('route:about', function () {
-            if (aboutPageView == null) {
+            $('.overlay').hide();
+            if (_this.aboutPageView == null) {
                 require(['views/about/AboutPageView'], function (AboutPageView) {
-                    aboutPageView = new AboutPageView({el: contentWrapper});
-                    aboutPageView.render();
-                    menuView.changeMenu('about')
+                    _this.aboutPageView = new AboutPageView({el: contentWrapper});
+                    _this.aboutPageView.render();
+                    _this.menuView.changeMenu('about')
                 });
             } else {
-                aboutPageView.render();
-                menuView.changeMenu('about')
+                _this.aboutPageView.render();
+                _this.menuView.changeMenu('about')
             }
         });
 
         router.on('route:license', function () {
-            if (licensePageView == null) {
-                licensePageView = new LicensePageView({el: contentWrapper});
+            $('.overlay').hide();
+            if (_this.licenseView == null) {
+                require(['views/LicenseView'], function (LicenseView) {
+                    _this.licenseView = new LicenseView({el: contentWrapper});
+                    _this.licenseView.render();
+                });
+            } else {
+                _this.licenseView.render();
             }
-            licensePageView.render();
-
+            _this.menuView.changeMenu('')
         });
 
         Backbone.history.start();
