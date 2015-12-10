@@ -60,7 +60,7 @@ define([
                 throw new Error('DemoPageView.render() -- demoId isNaN ' + demoId);
             }
             demoId = numericId;
-            this.currentDemolView = "demo" + demoId;
+
             this.demoModel = null;
             // Look for a demo description matching the demoId.
             this.collection.each(function (demo) {
@@ -86,16 +86,17 @@ define([
             } else {
                 this.$('.right').show();
             }
-            var currentDemo = this.router.modules[this.currentDemolView];
-            if (typeof currentDemo == 'undefined') {
-                this.router.modules[this.currentDemolView] = 'loading';
+            this.currentDemoKey = "demo" + demoId;
+            var currentDemoView= this.router.modules[this.currentDemoKey];
+            if (typeof currentDemoView == 'undefined') {
+                this.router.modules[this.currentDemoKey] = 'loading';
                 require([this.demoModel.get('view')], function (demoPageView) {
-                    currentDemo = new demoPageView({el: '#demoBody'});
-                    _this.router.modules[_this.currentDemolView] = currentDemo;
-                    currentDemo.render();
+                    currentDemoView = new demoPageView({el: '#demoBody'});
+                    _this.router.modules[_this.currentDemoKey] = currentDemoView;
+                    currentDemoView.render();
                 });
-            } else if (currentDemo != 'loading') {
-                currentDemo.render();
+            } else if (currentDemoView != 'loading') {
+                currentDemoView.render();
             }
             if (this.initialLoad) {
                 this.openOverlay();
@@ -132,26 +133,26 @@ define([
         },
 
         destroyCurrentView: function () {
-            if (this.router.modules[this.currentDemolView]) {
+            if (this.router.modules[this.currentDemoKey]) {
                 if (this.demoDescriptionView) {
                     this.demoDescriptionView.destroy();
                     this.demoDescriptionView = null;
                 }
                 // COMPLETELY UNBIND THE VIEW
-                this.router.modules[this.currentDemolView].undelegateEvents();
+                this.router.modules[this.currentDemoKey].undelegateEvents();
 
-                this.router.modules[this.currentDemolView].$el.removeData().unbind();
+                this.router.modules[this.currentDemoKey].$el.removeData().unbind();
 
-                if (this.router.modules[this.currentDemolView].destroy) {
-                    this.router.modules[this.currentDemolView].destroy();
+                if (this.router.modules[this.currentDemoKey].destroy) {
+                    this.router.modules[this.currentDemoKey].destroy();
                 }
-                Backbone.View.prototype.remove.call(this.router.modules[this.currentDemolView]);
+                Backbone.View.prototype.remove.call(this.router.modules[this.currentDemoKey]);
 
             }
         },
 
         resizeDemo: function () {
-            var currentDemo = this.router.modules[this.currentDemolView];
+            var currentDemo = this.router.modules[this.currentDemoKey];
             if (typeof currentDemo != 'undefined' && currentDemo != 'loading' && currentDemo.sizeMaps) {
                 var width = $('window').width();
                 var buttons = $('.demoBanner ul');
@@ -162,7 +163,7 @@ define([
 
         prev: function (event) {
             event.preventDefault();
-            var currentDemo = this.router.modules[this.currentDemolView];
+            var currentDemo = this.router.modules[this.currentDemoKey];
             if (typeof currentDemo != 'undefined' && currentDemo != 'loading') {
                 var demoId = currentDemo.getDemoId() - 1;
                 if (demoId >= 1) {
@@ -174,7 +175,7 @@ define([
 
         next: function (event) {
             event.preventDefault();
-            var currentDemo = this.router.modules[this.currentDemolView];
+            var currentDemo = this.router.modules[this.currentDemoKey];
             if (typeof currentDemo != 'undefined' && currentDemo != 'loading') {
                 var demoId = currentDemo.getDemoId() + 1;
                 if (demoId <= this.collection.length) {
