@@ -6,23 +6,29 @@ define([
     'models/Activity',
     'collections/Activities',
     'leaflet_pip',
-    'text!demos/demo9/templates/DemoPageView.html'
+    'text!demos/demo9/templates/Demo9PageView.html'
 
 ], function ($, _, Backbone, MapEventDispatcher, Activity, Activities, leafletPip, templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo9PageView = Backbone.View.extend({
 
         events: {
             'click .page': 'onPageClick'
         },
 
-        initialize: function (args) {
+        initialize: function () {
             this.template = _.template(templateHtml);
+        },
+
+        /**
+         * Fetch any needed data here.
+         */
+        render: function() {
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
             this.activities.fetch({
                 success: function () {
-                    _this.render();
+                    _this.onFetchComplete();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -32,7 +38,7 @@ define([
             });
         },
 
-        render: function () {
+        onFetchComplete: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             // Center map on Sport+Spine for this demo
@@ -97,6 +103,11 @@ define([
             this.activity.fetch({
                 success: function () {
                     _this.onActivityFetched();
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
                 }
             });
         },
@@ -203,7 +214,5 @@ define([
 
     });
 
-    DemoPageView.DEMO_ID = 9;
-
-    return DemoPageView;
+    return Demo9PageView;
 });

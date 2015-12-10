@@ -2,13 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!demos/demo3/templates/DemoPageView.html'
+    'text!demos/demo2/templates/Demo2PageView.html'
 ], function ($, _, Backbone, templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo2PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            this.render();
         },
 
         render: function () {
@@ -16,7 +15,7 @@ define([
             var width = $window.width() - 100;
             var height = $window.height() - 220;
             this.$el.html(this.template({mapHeight: height, mapWidth: width}));
-            var s = "http://a.tiles.mapbox.com/v3/runner-steve.tillmill-tutorial.html";
+            var s = "http://www.arcgis.com/home/webmap/templates/OnePane/basicviewer/embed.html?webmap=0e73fa10d87940979c9e026578b8ce52&amp;gcsextent=-180,-50.7791,-17.7411,67.7838&amp;displayslider=true&amp;displayscalebar=true&amp;displaylegend=true&amp;displaybasemaps=true";
             var iframe1 = document.getElementById('iframe1');
             if (-1 == navigator.userAgent.indexOf("MSIE")) {
                 iframe1.src = s;
@@ -27,7 +26,7 @@ define([
         },
 
         sizeMaps: function () {
-            //no op
+            // no op
         },
 
         destroy: function () {
@@ -36,11 +35,10 @@ define([
         },
 
         getDemoId: function () {
-            return 3;
+            return 2;
         }
+
     });
 
-    DemoPageView.DEMO_ID = 3;
-
-    return DemoPageView;
+    return Demo2PageView;
 });

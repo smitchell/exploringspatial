@@ -2,6 +2,7 @@ var require = {
     baseUrl: 'js/lib',
     paths: {
         jquery: 'jquery',
+        "domReady": 'domReady',
         underscore: 'underscore',
         backbone: 'backbone',
         router: '../router',

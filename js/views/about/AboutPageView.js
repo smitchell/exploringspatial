@@ -2,7 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!templates/about/AboutPageView.html'
+    'text!templates/about/AboutPageView.html',
+    'domReady!'
 ], function ($, _, Backbone, templateHtml) {
     var AboutPageView = Backbone.View.extend({
         initialize: function () {

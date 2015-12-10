@@ -7,11 +7,11 @@ define([
     'demos/demo8/collections/States',
     'demos/demo8/views/StatesMapLayerView',
     'demos/demo8/views/RacesMapLayerView',
-    'text!demos/demo8/templates/DemoPageView.html',
+    'text!demos/demo8/templates/Demo8PageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, MapEventDispatcher, Activities, States, StatesMapLayerView, RacesMapLayerView, templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo8PageView = Backbone.View.extend({
         MARATHON: 'marathon',
         HALF_MARATHON: 'halfMarathon',
         FIVE_K: 'fiveK',
@@ -23,11 +23,15 @@ define([
         initialize: function () {
             this.template = _.template(templateHtml);
             this.maps = {};
+            this.raceType = this.MARATHON;
+        },
+
+       render: function() {
             this.states = new States();
             var _this = this;
             this.states.fetch({
                 success: function () {
-                    _this.fetchActivities();
+                    _this.onStatesFetched();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -35,16 +39,15 @@ define([
                     }
                 }
             });
-            this.raceType = this.MARATHON;
         },
 
-        fetchActivities: function () {
+        onStatesFetched: function () {
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
             this.activities.fetch({
                 success: function () {
-                    _this.render();
+                    _this.onActivitiesFetched();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -54,7 +57,7 @@ define([
             });
         },
 
-        render: function () {
+        onActivitiesFetched: function () {
             this.$el.html(this.template({
                 isMarathon: this.isSelected(this.MARATHON),
                 isHalf: this.isSelected(this.HALF_MARATHON),
@@ -188,7 +191,5 @@ define([
         }
     });
 
-    DemoPageView.DEMO_ID = 8;
-
-    return DemoPageView;
+    return Demo8PageView;
 });

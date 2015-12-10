@@ -3,101 +3,130 @@ define([
     'underscore',
     'backbone',
     'views/MenuView',
-    'views/FooterView'
-], function ($, _, Backbone, MenuView, FooterView) {
+    'views/FooterView',
+    'views/demos/DemoIndexView',
+    'views/demos/DemoPageView',
+    'domReady!'
+], function ($, _, Backbone, MenuView, FooterView, DemoIndexView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId": "demo",
-            "demos": "demos",
-            "about": "about",
-            "license": "license",
-            "*actions": "home"
+            "*actions": "defaultRoute"
         }
     });
 
     var initialize = function () {
         var router = new Router(this);
-        var _this = this;
-        _this.menuView = new MenuView({el: $('#navContainer')});
-        new FooterView({el: $('#footer')});
-        var contentWrapper = $('#content');
-        this.homePageView = null;
-        this.aboutPageView = null;
-        this.licenseView = null;
-        this.demoPageView = null;
-        this.demoIndexView = null;
+        router.menuView = new MenuView({el: $('#navContainer')});
+        router.modules = {};
+        router.modules.footer = new FooterView({el: $('#footer')});
 
-        router.on('route:home', function () {
+        router.on('route:defaultRoute', function (actions) {
             $('.overlay').hide();
-            if (_this.homePageView == null) {
-                require(['views/home/HomePageView'], function (HomePageView) {
-                    _this.homePageView = new HomePageView({el: contentWrapper});
-                    _this.homePageView.render();
-                    _this.menuView.changeMenu('home');
-                });
-            } else {
-                _this.homePageView.render();
-                _this.menuView.changeMenu('home');
+            var _this = this;
+            switch(actions)
+            {
+                case 'about':
+                {
+                    if (typeof this.modules.about == 'undefined') {
+                        this.modules.about = 'loading';
+                        try {
+                            require(['views/about/AboutPageView'], function (AboutPageView) {
+                                _this.modules.about = new AboutPageView({el: $('#content')});
+                                _this.modules.about.render();
+                                _this.menuView.changeMenu('about')
+                            });
+                        } catch (e) {
+                            // clear the loading indicator
+                            delete this.modules.about;
+                            throw e;
+                        }
+                    } else if (this.modules.about != 'loading') {
+                        this.modules.about.render();
+                        this.menuView.changeMenu('about')
+                    }
+                    break;
+                }
+                case 'demos':
+                {
+                    if (typeof this.modules.demos == 'undefined') {
+/*                        this.modules.demos = 'loading';
+                        try {
+                            require(['views/demos/DemoIndexView'], function (DemoIndexView) {
+                                _this.modules.demos = new DemoIndexView({el: $('#content')});
+                                _this.modules.demos.render();
+                                _this.menuView.changeMenu('demos')
+                            });
+                        } catch (e) {
+                            // clear the loading indicator
+                            delete this.modules.demos;
+                            throw e;
+                        }*/
+                        this.modules.demos = new DemoIndexView({el: $('#content')});
+                        this.modules.demos.render();
+                                               this.menuView.changeMenu('demos')
+                    } else if (this.modules.demos != 'loading') {
+                        this.modules.demos.render();
+                        this.menuView.changeMenu('demos')
+                    }
+                    break;
+                }
+                case 'license':
+                {
+                    if (typeof this.modules.license == 'undefined') {
+                        this.modules.license = 'loading';
+                        try {
+                            require(['views/LicensePageView'], function (LicensePageView) {
+                                _this.modules.license = new LicensePageView({el: $('#content')});
+                                _this.modules.license.render();
+                                _this.menuView.changeMenu('')
+                            });
+                        } catch (e) {
+                            // clear the loading indicator
+                            delete this.modules.license;
+                            throw e;
+                        }
+                    } else if (this.modules.license != 'loading') {
+                        this.modules.license.render();
+                        this.menuView.changeMenu('')
+                    }
+                    break;
+                }
+                default:
+                {
+                    if (typeof this.modules.home == 'undefined') {
+                        this.modules.home = 'loading';
+                        try {
+                            require(['views/home/HomePageView'], function (HomePageView) {
+                                _this.modules.home = new HomePageView({el: $('#content')});
+                                _this.modules.home.render();
+                                _this.menuView.changeMenu('home');
+                            });
+                        } catch (e) {
+                            // clear the loading indicator
+                            delete this.modules.home;
+                            throw e;
+                        }
+                    } else if (this.modules.home != 'loading') {
+                        this.modules.home.render();
+                        this.menuView.changeMenu('home');
+                    }
+                    break;
+                }
             }
         });
 
-        router.on('route:demos', function () {
+        router.on('route:demo', function (actions) {
             $('.overlay').hide();
-            if (_this.demoIndexView == null) {
-                require(['views/demos/DemoIndexView'], function (DemoIndexView) {
-                    _this.demoIndexView = new DemoIndexView({el: contentWrapper});
-                    _this.demoIndexView.render();
-                    _this.menuView.changeMenu('demos')
-                });
-            } else {
-                _this.demoIndexView.render();
-                _this.menuView.changeMenu('demos')
+            if (this.modules.demo == null) {
+                this.modules.demo = 'loading';
+                this.modules.demo = new DemoPageView({el: $('#content'), router: router});
+                this.modules.demo.loadData(actions);
+                this.menuView.changeMenu('')
+            } else if (this.modules.demo != 'loading') {
+                this.modules.demo.render(actions);
+                this.menuView.changeMenu('')
             }
-        });
-
-        router.on('route:demo', function (demoId) {
-            $('.overlay').hide();
-            var numericId = Number(demoId);
-            if (isNaN(numericId)) {
-                throw new Error('DemoId must be numeric.');
-            }
-            if (_this.demoPageView == null) {
-                require(['views/demos/DemoPageView'], function (DemoPageView) {
-                    _this.demoPageView = new DemoPageView({el: contentWrapper, demoId: numericId, router: router});
-                    _this.demoPageView.render(numericId);
-                    _this.menuView.changeMenu('')
-                });
-            } else {
-                _this.demoPageView.render(numericId);
-                _this.menuView.changeMenu('')
-            }
-        });
-
-        router.on('route:about', function () {
-            $('.overlay').hide();
-            if (_this.aboutPageView == null) {
-                require(['views/about/AboutPageView'], function (AboutPageView) {
-                    _this.aboutPageView = new AboutPageView({el: contentWrapper});
-                    _this.aboutPageView.render();
-                    _this.menuView.changeMenu('about')
-                });
-            } else {
-                _this.aboutPageView.render();
-                _this.menuView.changeMenu('about')
-            }
-        });
-
-        router.on('route:license', function () {
-            $('.overlay').hide();
-            if (_this.licenseView == null) {
-                require(['views/LicenseView'], function (LicenseView) {
-                    _this.licenseView = new LicenseView({el: contentWrapper});
-                    _this.licenseView.render();
-                });
-            } else {
-                _this.licenseView.render();
-            }
-            _this.menuView.changeMenu('')
         });
 
         Backbone.history.start();

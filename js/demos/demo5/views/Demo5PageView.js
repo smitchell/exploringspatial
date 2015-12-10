@@ -5,21 +5,27 @@ define([
     'collections/Activities',
     'views/maps/MapView',
     'demos/demo5/views/ActivitiesMapLayerView',
-    'text!demos/demo5/templates/DemoPageView.html'
+    'text!demos/demo5/templates/Demo5PageView.html'
 ], function ($, _,
              Backbone,
              Activities,
              MapView,
              ActivitiesMapLayerView,
              templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo5PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
+        },
+
+        /**
+         * Fetch any needed data here.
+         */
+        render: function() {
             this.collection = new Activities();
             this.collection.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
-            this.collection.fetch({
+            this.collection.onFetchComplete({
                 success: function () {
                     _this.render();
                 },
@@ -31,7 +37,7 @@ define([
             });
         },
 
-        render: function () {
+        onFetchComplete: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             this.mapView = new MapView();
@@ -65,7 +71,5 @@ define([
         }
     });
 
-    DemoPageView.DEMO_ID = 5;
-
-    return DemoPageView;
+    return Demo5PageView;
 });

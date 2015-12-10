@@ -2,16 +2,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!demos/demo1/templates/DemoPageView.html',
+    'text!demos/demo1/templates/Demo1PageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, templateHtml) {
 
-    var DemoPageView = Backbone.View.extend({
+    var Demo1PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            this.render();
             var _this = this;
             $(window).resize (function() {
                 if (_this.map && _this.overlays) {
@@ -90,6 +89,5 @@ define([
         }
     });
 
-    DemoPageView.DEMO_ID = 1;
-    return DemoPageView;
+    return Demo1PageView;
 });

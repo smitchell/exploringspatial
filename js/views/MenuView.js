@@ -5,6 +5,7 @@ define([
     'text!templates/MenuView.html'
 ], function ($, _, Backbone, templateHtml) {
     var MenuView = Backbone.View.extend({
+
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();

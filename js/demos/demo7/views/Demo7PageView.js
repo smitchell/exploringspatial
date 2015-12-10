@@ -7,19 +7,22 @@ define([
     'demos/demo7/views/CountiesListView',
     'demos/demo7/views/CountiesMapLayerView',
     'views/maps/MapView',
-    'text!demos/demo7/templates/DemoPageView.html',
+    'text!demos/demo7/templates/Demo7PageView.html',
     'leaflet_google',
     'leaflet_bing'
 ], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo7PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
+        },
+
+        render: function() {
             this.collection = new Counties();
             var _this = this;
             this.collection.fetch({
                 success: function () {
-                    _this.render();
+                    _this.onFetchComplete();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -29,7 +32,7 @@ define([
             });
         },
 
-        render: function () {
+        onFetchComplete: function () {
             this.collection.sort();
             this.$el.html(this.template());
             this.sizeMaps();
@@ -112,7 +115,5 @@ define([
 
     });
 
-    DemoPageView.DEMO_ID = 7;
-
-    return DemoPageView;
+    return Demo7PageView;
 });

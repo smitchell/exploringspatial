@@ -5,32 +5,38 @@ define([
     'models/Activity',
     'views/maps/MapView',
     'views/maps/ActivityMapLayerView',
-    'text!demos/demo4/templates/DemoPageView.html'
+    'text!demos/demo4/templates/Demo4PageView.html'
 ], function ($, _,
              Backbone,
              Activity,
              MapView,
              ActivityMapLayerView,
              templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo4PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
+        },
+
+        /**
+         * Fetch any needed data here.
+         */
+        render: function() {
             this.model = new Activity({activityId: 155155867});
             var _this = this;
-            this.model.fetch({
+            this.model.onFetchComplete({
                 success: function () {
                     _this.render();
                 },
-                error: function(object, xhr, options) {
+                error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
-                           console.log(xhr.status + " " + xhr.responseText);
+                        console.log(xhr.status + " " + xhr.responseText);
                     }
                 }
             });
         },
 
-        render: function () {
+        onFetchComplete: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             this.mapView = new MapView();
@@ -54,7 +60,5 @@ define([
         }
     });
 
-    DemoPageView.DEMO_ID = 4;
-
-    return DemoPageView;
+    return Demo4PageView;
 });

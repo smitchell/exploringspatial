@@ -6,7 +6,7 @@ define([
     'demos/demo6/collections/CodeDefinitions',
     'demos/demo6/views/AcledMapView',
     'demos/demo6/views/ArmedConflictLocationsView',
-    'text!demos/demo6/templates/DemoPageView.html'
+    'text!demos/demo6/templates/Demo6PageView.html'
 ], function ($, _,
              Backbone,
              AcledSearch,
@@ -14,15 +14,18 @@ define([
              AcledMapView,
              ArmedConflictLocationsView,
              templateHtml) {
-    var DemoPageView = Backbone.View.extend({
+    var Demo6PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
+        },
+
+        render: function() {
             this.collection = new CodeDefinitions("COUNTRY");
             var _this = this;
             this.collection.fetch({
                 success: function () {
-                    _this.render();
+                    _this.onFetchComplete();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -32,7 +35,7 @@ define([
             });
         },
 
-        render: function () {
+        onFetchComplete: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             var acledSearch = new AcledSearch();
@@ -73,7 +76,5 @@ define([
         }
     });
 
-    DemoPageView.DEMO_ID = 6;
-
-    return DemoPageView;
+    return Demo6PageView;
 });
