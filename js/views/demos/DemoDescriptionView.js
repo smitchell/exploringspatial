@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'text!templates/demos/DemoDescriptionView.html',
-    'text!templates/demos/DemoIndexView.html'
+    'text!templates/demos/DemoIndexItem.html'
 ], function ($, _, Backbone, templateHtml, template1Html) {
     var DemoDescriptionView = Backbone.View.extend({
 

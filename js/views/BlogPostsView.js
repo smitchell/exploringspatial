@@ -3,17 +3,21 @@ define([
     'underscore',
     'backbone',
     'collections/BlogPosts',
+    'text!templates/BlogPostsView.html',
     'text!templates/BlogPostView.html'
-], function ($, _, Backbone, BlogPosts, templateHtml) {
+], function ($, _, Backbone, BlogPosts, templateHtml, itemHtml) {
     var BlogPostsView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.itemTemplate = _.template(itemHtml);
             this.fetchData();
         },
 
         fetchData: function () {
-            this.$el.html("<div id='container2'> <h1 style='color: white;'>Blog Posts</h1> </div><div class='items'><div class='Loading'>Loading...</div></div>");
+            this.$el.html(this.template());
+            var $items = this.$('.items');
+            $items.html("<div class='Loading'>Loading...</div>");
             var _this = this;
             this.collection = new BlogPosts();
             this.collection.fetch({
@@ -29,8 +33,8 @@ define([
         },
 
         render: function () {
+            this.$el.html(this.template());
             var $items = this.$('.items');
-            $items.empty();
             var model, month, day, year;
             var _this = this;
             this.collection.each(function (blogPost) {
@@ -50,7 +54,7 @@ define([
                     model.date = [month, day, year].join('/');
 
                 }
-                $items.append(_this.template(model));
+                $items.append(_this.itemTemplate(model));
             });
         }
     });

@@ -2,6 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'views/HomePageView',
+    'views/AboutPageView',
     'views/MenuView',
     'views/FooterView',
     'views/LicensePageView',
@@ -9,7 +11,7 @@ define([
     'views/demos/DemoIndexView',
     'views/demos/DemoPageView',
     'domReady!'
-], function ($, _, Backbone, MenuView, FooterView, LicensePageView, BlogPostsView, DemoIndexView, DemoPageView) {
+], function ($, _, Backbone, HomePageView, AboutPageView, MenuView, FooterView, LicensePageView, BlogPostsView, DemoIndexView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId": "demo",
@@ -30,34 +32,19 @@ define([
                 case 'about':
                 {
                     if (typeof this.modules.about == 'undefined') {
-                        this.modules.about = 'loading';
-                        try {
-                            require(['views/AboutPageView'], function (AboutPageView) {
-                                _this.modules.about = new AboutPageView({el: $('#content')});
-                                _this.modules.about.render();
-                                _this.menuView.changeMenu('about')
-                            });
-                        } catch (e) {
-                            // clear the loading indicator
-                            delete this.modules.about;
-                            throw e;
-                        }
-                    } else if (this.modules.about != 'loading') {
-                        this.modules.about.render();
-                        this.menuView.changeMenu('about')
+                        this.modules.about = new AboutPageView({el: $('#content')});
                     }
+                    this.modules.about.render();
+                    this.menuView.changeMenu('about');
                     break;
                 }
                 case 'demos':
                 {
                     if (typeof this.modules.demos == 'undefined') {
                         this.modules.demos = new DemoIndexView({el: $('#content')});
-                        this.modules.demos.render();
-                        this.menuView.changeMenu('demos')
-                    } else if (this.modules.demos != 'loading') {
-                        this.modules.demos.render();
-                        this.menuView.changeMenu('demos')
                     }
+                    this.modules.demos.render();
+                    this.menuView.changeMenu('demos');
                     break;
                 }
                 case 'blogs':
@@ -83,22 +70,10 @@ define([
                 default:
                 {
                     if (typeof this.modules.home == 'undefined') {
-                        this.modules.home = 'loading';
-                        try {
-                            require(['views/HomePageView'], function (HomePageView) {
-                                _this.modules.home = new HomePageView({el: $('#content')});
-                                _this.modules.home.render();
-                                _this.menuView.changeMenu('home');
-                            });
-                        } catch (e) {
-                            // clear the loading indicator
-                            delete this.modules.home;
-                            throw e;
-                        }
-                    } else if (this.modules.home != 'loading') {
-                        this.modules.home.render();
-                        this.menuView.changeMenu('home');
+                        this.modules.home = new HomePageView({el: $('#content')});
                     }
+                    this.modules.home.render();
+                    this.menuView.changeMenu('home');
                     break;
                 }
             }

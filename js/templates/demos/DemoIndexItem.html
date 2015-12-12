@@ -1,0 +1,14 @@
+<h1><a href="<%=href%>"><%=title%></a></h1>
+<div class="demoNarrative"><%=description%></div>
+<table>
+    <tr>
+        <th class="github"></th>
+        <td>
+            <a href="<%=github%>" target="_blank">GitHub Repository</a>
+        </td>
+<% if (typeof wordpressUrl != 'undefined') { %>
+        <th class="wordpress"></th>
+        <td><%=wordpressUrl%></td>
+<% } %>
+</tr>
+</table>

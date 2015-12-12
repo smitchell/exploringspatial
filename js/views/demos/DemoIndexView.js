@@ -4,14 +4,18 @@ define([
     'backbone',
     'collections/Demos',
     'text!templates/demos/DemoIndexView.html',
+    'text!templates/demos/DemoIndexItem.html',
     'domReady!'
-], function ($, _, Backbone, Demos, templateHtml) {
+], function ($, _, Backbone, Demos, templateHtml, itemTemplateHtml) {
     var DemoIndexView = Backbone.View.extend({
         initialize: function (args) {
             this.template = _.template(templateHtml);
+            this.itemsTemplate = _.template(itemTemplateHtml);
             this.collection = new Demos();
             var _this = this;
-            this.$el.html("<div id='container2'> <h1 style='color: white;'>Index of Demos</h1> </div><div class='items'><div class='loading'>Loading...</div></div>");
+            this.$el.html(this.template());
+            var $items = this.$('.items');
+            $items.html("<div class='loading'>Loading...</div>");
             this.collection.fetch({
                 success: function () {
                     _this.render();
@@ -24,11 +28,13 @@ define([
             });
         },
         render: function () {
-
+            this.$el.html(this.template());
             var $items = this.$('.items');
-            $items.empty();
             for (var i = this.collection.length - 1; i >= 0; i--) {
-                $items.append(this.template(this.collection.models[i].toJSON()));
+                if (i < this.collection.length - 1) {
+                    $items.append('<hr/>');
+                }
+                $items.append(this.itemsTemplate(this.collection.models[i].toJSON()));
             }
         }
 
