@@ -4,10 +4,12 @@ define([
     'backbone',
     'views/MenuView',
     'views/FooterView',
+    'views/LicensePageView',
+    'views/BlogPostsView',
     'views/demos/DemoIndexView',
     'views/demos/DemoPageView',
     'domReady!'
-], function ($, _, Backbone, MenuView, FooterView, DemoIndexView, DemoPageView) {
+], function ($, _, Backbone, MenuView, FooterView, LicensePageView, BlogPostsView, DemoIndexView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId": "demo",
@@ -30,7 +32,7 @@ define([
                     if (typeof this.modules.about == 'undefined') {
                         this.modules.about = 'loading';
                         try {
-                            require(['views/about/AboutPageView'], function (AboutPageView) {
+                            require(['views/AboutPageView'], function (AboutPageView) {
                                 _this.modules.about = new AboutPageView({el: $('#content')});
                                 _this.modules.about.render();
                                 _this.menuView.changeMenu('about')
@@ -58,25 +60,24 @@ define([
                     }
                     break;
                 }
+                case 'blogs':
+                {
+                    if (typeof this.modules.blogPosts == 'undefined') {
+                        this.modules.blogPosts = new BlogPostsView({el: $('#content')});
+                        this.modules.blogPosts.fetchData();
+                    } else {
+                        this.modules.blogPosts.render();
+                    }
+                    this.menuView.changeMenu('blogs');
+                    break;
+                }
                 case 'license':
                 {
                     if (typeof this.modules.license == 'undefined') {
-                        this.modules.license = 'loading';
-                        try {
-                            require(['views/LicensePageView'], function (LicensePageView) {
-                                _this.modules.license = new LicensePageView({el: $('#content')});
-                                _this.modules.license.render();
-                                _this.menuView.changeMenu('')
-                            });
-                        } catch (e) {
-                            // clear the loading indicator
-                            delete this.modules.license;
-                            throw e;
-                        }
-                    } else if (this.modules.license != 'loading') {
-                        this.modules.license.render();
-                        this.menuView.changeMenu('')
+                        _this.modules.license = new LicensePageView({el: $('#content')});
                     }
+                    _this.modules.license.render();
+                    _this.menuView.changeMenu('');
                     break;
                 }
                 default:
@@ -84,7 +85,7 @@ define([
                     if (typeof this.modules.home == 'undefined') {
                         this.modules.home = 'loading';
                         try {
-                            require(['views/home/HomePageView'], function (HomePageView) {
+                            require(['views/HomePageView'], function (HomePageView) {
                                 _this.modules.home = new HomePageView({el: $('#content')});
                                 _this.modules.home.render();
                                 _this.menuView.changeMenu('home');

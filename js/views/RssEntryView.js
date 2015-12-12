@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!templates/home/RssEntryView.html'
+    'text!templates/RssEntryView.html'
 ], function ($, _, Backbone, templateHtml) {
     var RssEntryView = Backbone.View.extend({
         initialize: function () {

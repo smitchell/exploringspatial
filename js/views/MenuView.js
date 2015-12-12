@@ -17,17 +17,27 @@ define([
         },
         changeMenu: function(route) {
             this.$('.home').removeClass('YouAreHere');
+            this.$('.blogs').removeClass('YouAreHere');
             this.$('.about').removeClass('YouAreHere');
             this.$('.demos').removeClass('YouAreHere');
-            if (route == 'home') {
-                $('title').text('Exploring Spatial Home');
-                this.$('.home').addClass('YouAreHere');
-            } else if (route == 'about') {
-                $('title').text('About Exploring Spatial');
-                this.$('.about').addClass('YouAreHere');
-            } else if (route == 'demos') {
-                $('title').text('Exploring Spatial Demos');
-                this.$('.demos').addClass('YouAreHere');
+            var $title = $('title');
+            switch(route) {
+                case 'about':
+                    $title.text('About Exploring Spatial');
+                    this.$('.about').addClass('YouAreHere');
+                    break;
+                case 'blogs':
+                    $title.text('Exploring Spatial Blog Posts');
+                    this.$('.blogs').addClass('YouAreHere');
+                    break;
+                case 'demos':
+                    $title.text('Exploring Spatial Demos');
+                    this.$('.demos').addClass('YouAreHere');
+                    break;
+                default:
+                    $title.text('Exploring Spatial Home');
+                    this.$('.home').addClass('YouAreHere');
+                    break;
             }
         }
     });

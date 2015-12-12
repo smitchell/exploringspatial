@@ -11,6 +11,7 @@ define([
             this.template = _.template(templateHtml);
             this.collection = new Demos();
             var _this = this;
+            this.$el.html("<div id='container2'> <h1 style='color: white;'>Index of Demos</h1> </div><div class='items'><div class='loading'>Loading...</div></div>");
             this.collection.fetch({
                 success: function () {
                     _this.render();
@@ -23,13 +24,11 @@ define([
             });
         },
         render: function () {
-            this.$el.html("<div id='container2'> <h1 style='color: white;'>Index of Demos</h1> </div><div class='demoIndex'></div>");
-            var $demoIndex = this.$('.demoIndex');
+
+            var $items = this.$('.items');
+            $items.empty();
             for (var i = this.collection.length - 1; i >= 0; i--) {
-                if (i < this.collection.length - 1) {
-                    $demoIndex.append('<hr/>');
-                }
-                $demoIndex.append(this.template(this.collection.models[i].toJSON()));
+                $items.append(this.template(this.collection.models[i].toJSON()));
             }
         }
 
