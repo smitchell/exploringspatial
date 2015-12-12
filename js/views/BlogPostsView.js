@@ -17,7 +17,7 @@ define([
         fetchData: function () {
             this.$el.html(this.template());
             var $items = this.$('.items');
-            $items.html("<div class='Loading'>Loading...</div>");
+            $items.html("<div class='loading'></div>");
             var _this = this;
             this.collection = new BlogPosts();
             this.collection.fetch({

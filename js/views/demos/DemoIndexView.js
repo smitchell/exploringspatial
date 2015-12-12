@@ -15,7 +15,7 @@ define([
             var _this = this;
             this.$el.html(this.template());
             var $items = this.$('.items');
-            $items.html("<div class='loading'>Loading...</div>");
+            $items.html("<div class='loading'></div>");
             this.collection.fetch({
                 success: function () {
                     _this.render();
