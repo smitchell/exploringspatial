@@ -15,7 +15,8 @@ define([
             var $window = $(window);
             var width = $window.width() - 100;
             var height = $window.height() - 220;
-            this.$el.html(this.template({mapHeight: height, mapWidth: width}));
+            this.$el.html("<div class='loading'></div>");
+            this.$el.append(this.template({mapHeight: height, mapWidth: width}));
             var s = "http://a.tiles.mapbox.com/v3/runner-steve.tillmill-tutorial.html";
             var iframe1 = document.getElementById('iframe1');
             if (-1 == navigator.userAgent.indexOf("MSIE")) {

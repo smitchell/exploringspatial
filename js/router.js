@@ -21,6 +21,7 @@ define([
 
     var initialize = function () {
         var router = new Router(this);
+        router.version = '12.15';
         router.menuView = new MenuView({el: $('#navContainer')});
         router.modules = {};
         router.modules.footer = new FooterView({el: $('#footer')});
@@ -64,7 +65,6 @@ define([
                         _this.modules.license = new LicensePageView({el: $('#content')});
                     }
                     _this.modules.license.render();
-                    _this.menuView.changeMenu('');
                     break;
                 }
                 default:
@@ -85,11 +85,10 @@ define([
                 this.modules.demo = 'loading';
                 this.modules.demo = new DemoPageView({el: $('#content'), router: router});
                 this.modules.demo.loadData(actions);
-                this.menuView.changeMenu('')
             } else if (this.modules.demo != 'loading') {
                 this.modules.demo.render(actions);
-                this.menuView.changeMenu('')
             }
+            this.menuView.changeMenu('demos')
         });
 
         Backbone.history.start();

@@ -174,7 +174,7 @@ define([
                 var demoId = this.currentDemoView.getDemoId() - 1;
                 if (demoId >= 1) {
                     this.render(demoId);
-                    this.router.navigate("demo/" + demoId);
+                    this.router.navigate("demo/" + demoId + '?v=' + this.demoModel.get('version'));
                 }
             }
         },
@@ -185,7 +185,7 @@ define([
                 var demoId = this.currentDemoView.getDemoId() + 1;
                 if (demoId <= this.collection.length) {
                     this.render(demoId);
-                    this.router.navigate("demo/" + demoId);
+                    this.router.navigate("demo/" + demoId + '?v=' + this.demoModel.get('version'));
                 }
             }
         }
