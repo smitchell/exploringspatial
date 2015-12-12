@@ -16,15 +16,16 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.fetchData();
         },
 
         /**
          * Fetch any needed data here.
          */
-        render: function() {
+        fetchData: function() {
             this.model = new Activity({activityId: 155155867});
             var _this = this;
-            this.model.onFetchComplete({
+            this.model.fetch({
                 success: function () {
                     _this.render();
                 },
@@ -36,7 +37,7 @@ define([
             });
         },
 
-        onFetchComplete: function () {
+        render: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             this.mapView = new MapView();

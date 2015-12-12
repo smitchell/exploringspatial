@@ -16,7 +16,8 @@ define([
                 if (_this.map && _this.overlays) {
                     _this.map.fitBounds(_this.overlays);
                 }
-            })
+            });
+            this.render();
         },
 
         render: function () {

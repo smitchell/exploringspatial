@@ -8,6 +8,7 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.render();
         },
 
         render: function () {

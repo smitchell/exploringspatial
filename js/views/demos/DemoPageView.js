@@ -4,12 +4,31 @@ define([
     'backbone',
     'collections/Demos',
     'views/demos/DemoDescriptionView',
+    'demos/demo1/views/Demo1PageView',
+    'demos/demo2/views/Demo2PageView',
+    'demos/demo3/views/Demo3PageView',
+    'demos/demo4/views/Demo4PageView',
+    'demos/demo5/views/Demo5PageView',
+    'demos/demo6/views/Demo6PageView',
+    'demos/demo7/views/Demo7PageView',
+    'demos/demo8/views/Demo8PageView',
+    'demos/demo9/views/Demo9PageView',
     'text!templates/demos/DemoPageView.html',
     'domReady!'
 ], function ($, _, Backbone,
              Demos,
              DemoDescriptionView,
-             templateHtml) {
+             Demo1PageView,
+             Demo2PageView,
+             Demo3PageView,
+             Demo4PageView,
+             Demo5PageView,
+             Demo6PageView,
+             Demo7PageView,
+             Demo8PageView,
+             Demo9PageView,
+             templateHtml
+             ) {
     var DemoPageView = Backbone.View.extend({
 
         events: {
@@ -60,7 +79,6 @@ define([
                 throw new Error('DemoPageView.render() -- demoId isNaN ' + demoId);
             }
             demoId = numericId;
-
             this.demoModel = null;
             // Look for a demo description matching the demoId.
             this.collection.each(function (demo) {
@@ -87,17 +105,7 @@ define([
                 this.$('.right').show();
             }
             this.currentDemoKey = "demo" + demoId;
-            var currentDemoView= this.router.modules[this.currentDemoKey];
-            if (typeof currentDemoView == 'undefined') {
-                this.router.modules[this.currentDemoKey] = 'loading';
-                require([this.demoModel.get('view')], function (demoPageView) {
-                    currentDemoView = new demoPageView({el: '#demoBody'});
-                    _this.router.modules[_this.currentDemoKey] = currentDemoView;
-                    currentDemoView.render();
-                });
-            } else if (currentDemoView != 'loading') {
-                currentDemoView.render();
-            }
+            this.currentDemoView = eval("new Demo" + demoId + "PageView({el: '#demoBody'})");
             if (this.initialLoad) {
                 this.openOverlay();
                 this.initialLoad = false;
@@ -133,39 +141,37 @@ define([
         },
 
         destroyCurrentView: function () {
-            if (this.router.modules[this.currentDemoKey]) {
+            if (this.currentDemoView) {
                 if (this.demoDescriptionView) {
                     this.demoDescriptionView.destroy();
                     this.demoDescriptionView = null;
                 }
                 // COMPLETELY UNBIND THE VIEW
-                this.router.modules[this.currentDemoKey].undelegateEvents();
+                this.currentDemoView.undelegateEvents();
 
-                this.router.modules[this.currentDemoKey].$el.removeData().unbind();
+                this.currentDemoView.$el.removeData().unbind();
 
-                if (this.router.modules[this.currentDemoKey].destroy) {
-                    this.router.modules[this.currentDemoKey].destroy();
+                if (this.currentDemoView.destroy) {
+                    this.currentDemoView.destroy();
                 }
-                Backbone.View.prototype.remove.call(this.router.modules[this.currentDemoKey]);
+                Backbone.View.prototype.remove.call(this.currentDemoView);
 
             }
         },
 
         resizeDemo: function () {
-            var currentDemo = this.router.modules[this.currentDemoKey];
-            if (typeof currentDemo != 'undefined' && currentDemo != 'loading' && currentDemo.sizeMaps) {
+            if (typeof this.currentDemoView != 'undefined' && this.currentDemoView.sizeMaps) {
                 var width = $('window').width();
                 var buttons = $('.demoBanner ul');
                 $('demoHeader').css({width: (width - buttons.width()) + 'px'});
-                currentDemo.sizeMaps();
+                this.currentDemoView.sizeMaps();
             }
         },
 
         prev: function (event) {
             event.preventDefault();
-            var currentDemo = this.router.modules[this.currentDemoKey];
-            if (typeof currentDemo != 'undefined' && currentDemo != 'loading') {
-                var demoId = currentDemo.getDemoId() - 1;
+            if (typeof this.currentDemoView != 'undefined') {
+                var demoId = this.currentDemoView.getDemoId() - 1;
                 if (demoId >= 1) {
                     this.render(demoId);
                     this.router.navigate("demo/" + demoId);
@@ -175,9 +181,8 @@ define([
 
         next: function (event) {
             event.preventDefault();
-            var currentDemo = this.router.modules[this.currentDemoKey];
-            if (typeof currentDemo != 'undefined' && currentDemo != 'loading') {
-                var demoId = currentDemo.getDemoId() + 1;
+            if (typeof this.currentDemoView != 'undefined') {
+                var demoId = this.currentDemoView.getDemoId() + 1;
                 if (demoId <= this.collection.length) {
                     this.render(demoId);
                     this.router.navigate("demo/" + demoId);

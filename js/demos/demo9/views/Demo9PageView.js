@@ -17,18 +17,19 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.fetchData();
         },
 
         /**
          * Fetch any needed data here.
          */
-        render: function() {
+        fetchData: function() {
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
             this.activities.fetch({
                 success: function () {
-                    _this.onFetchComplete();
+                    _this.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -38,7 +39,7 @@ define([
             });
         },
 
-        onFetchComplete: function () {
+        render: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             // Center map on Sport+Spine for this demo

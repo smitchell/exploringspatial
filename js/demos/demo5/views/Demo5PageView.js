@@ -16,16 +16,17 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.fetchData();
         },
 
         /**
          * Fetch any needed data here.
          */
-        render: function() {
+        fetchData: function() {
             this.collection = new Activities();
             this.collection.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
             var _this = this;
-            this.collection.onFetchComplete({
+            this.collection.fetch({
                 success: function () {
                     _this.render();
                 },
@@ -37,7 +38,7 @@ define([
             });
         },
 
-        onFetchComplete: function () {
+        render: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             this.mapView = new MapView();

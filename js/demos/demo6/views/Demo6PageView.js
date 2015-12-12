@@ -18,14 +18,15 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.fetchData();
         },
 
-        render: function() {
+        fetchData: function() {
             this.collection = new CodeDefinitions("COUNTRY");
             var _this = this;
             this.collection.fetch({
                 success: function () {
-                    _this.onFetchComplete();
+                    _this.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -35,7 +36,7 @@ define([
             });
         },
 
-        onFetchComplete: function () {
+        render: function () {
             this.$el.html(this.template());
             this.sizeMaps();
             var acledSearch = new AcledSearch();

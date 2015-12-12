@@ -24,9 +24,10 @@ define([
             this.template = _.template(templateHtml);
             this.maps = {};
             this.raceType = this.MARATHON;
+            this.fetchData();
         },
 
-       render: function() {
+       fetchData: function() {
             this.states = new States();
             var _this = this;
             this.states.fetch({
@@ -47,7 +48,7 @@ define([
             var _this = this;
             this.activities.fetch({
                 success: function () {
-                    _this.onActivitiesFetched();
+                    _this.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -57,7 +58,7 @@ define([
             });
         },
 
-        onActivitiesFetched: function () {
+        render: function () {
             this.$el.html(this.template({
                 isMarathon: this.isSelected(this.MARATHON),
                 isHalf: this.isSelected(this.HALF_MARATHON),

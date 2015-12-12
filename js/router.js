@@ -24,8 +24,7 @@ define([
         router.on('route:defaultRoute', function (actions) {
             $('.overlay').hide();
             var _this = this;
-            switch(actions)
-            {
+            switch (actions) {
                 case 'about':
                 {
                     if (typeof this.modules.about == 'undefined') {
@@ -50,21 +49,9 @@ define([
                 case 'demos':
                 {
                     if (typeof this.modules.demos == 'undefined') {
-/*                        this.modules.demos = 'loading';
-                        try {
-                            require(['views/demos/DemoIndexView'], function (DemoIndexView) {
-                                _this.modules.demos = new DemoIndexView({el: $('#content')});
-                                _this.modules.demos.render();
-                                _this.menuView.changeMenu('demos')
-                            });
-                        } catch (e) {
-                            // clear the loading indicator
-                            delete this.modules.demos;
-                            throw e;
-                        }*/
                         this.modules.demos = new DemoIndexView({el: $('#content')});
                         this.modules.demos.render();
-                                               this.menuView.changeMenu('demos')
+                        this.menuView.changeMenu('demos')
                     } else if (this.modules.demos != 'loading') {
                         this.modules.demos.render();
                         this.menuView.changeMenu('demos')
