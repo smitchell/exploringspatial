@@ -1,58 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
     <url>
         <loc>http://www.exploringspatial.com</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/headshot.jpg</image:loc>
-        </image:image>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#home</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/headshot.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#about</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/gobblerGrind.jpg</image:loc>
-        </image:image>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/littlerock_thumb.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demos</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#blogs</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#license</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>never</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#demo1</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#demo2</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#demo3</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>http://www.exploringspatial.com/#demo4</loc>
-        <image:image>
-            <image:loc>http://www.exploringspatial.com/media/logo.jpg</image:loc>
-        </image:image>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demo5</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demo6</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demo7</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demo8</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>http://www.exploringspatial.com/#demo9</loc>
+        <lastmod>2015-12-13T16:57:35+00:00</lastmod>
+        <changefreq>weekly</changefreq>
     </url>
 </urlset>

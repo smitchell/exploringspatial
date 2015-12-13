@@ -1,5 +1,21 @@
-<html>
-<head>
-<title>Exploring Spatial</title>
-<META NAME="robots" CONTENT="INDEX, FOLLOW">
-</head>
+User-agent: *
+
+Disallow: /resources
+Disallow: /css
+Disallow: /js
+Disallow: /#search
+Allow: /#home
+Allow: /#demos
+Allow: /#blogs
+Allow: /#about
+Allow: /#license
+Allow: /#demo/1
+Allow: /#demo/2
+Allow: /#demo/3
+Allow: /#demo/4
+Allow: /#demo/5
+Allow: /#demo/6
+Allow: /#demo/7
+Allow: /#demo/8
+Allow: /#demo/9
+Sitemap: http://exploringspatial.com/sitemap.xml
