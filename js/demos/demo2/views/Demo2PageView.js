@@ -15,8 +15,7 @@ define([
             var $window = $(window);
             var width = $window.width() - 100;
             var height = $window.height() - 220;
-            this.$el.html("<div class='loading'></div>");
-            this.$el.append(this.template({mapHeight: height, mapWidth: width}));
+            this.$el.html(this.template({mapHeight: height, mapWidth: width}));
             var s = "http://www.arcgis.com/home/webmap/templates/OnePane/basicviewer/embed.html?webmap=0e73fa10d87940979c9e026578b8ce52&amp;gcsextent=-180,-50.7791,-17.7411,67.7838&amp;displayslider=true&amp;displayscalebar=true&amp;displaylegend=true&amp;displaybasemaps=true";
             var iframe1 = document.getElementById('iframe1');
             if (-1 == navigator.userAgent.indexOf("MSIE")) {

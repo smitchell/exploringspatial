@@ -8,13 +8,15 @@ define([
     'views/FooterView',
     'views/LicensePageView',
     'views/BlogPostsView',
+    'views/SearchPageView',
     'views/demos/DemoIndexView',
     'views/demos/DemoPageView',
     'domReady!'
-], function ($, _, Backbone, HomePageView, AboutPageView, MenuView, FooterView, LicensePageView, BlogPostsView, DemoIndexView, DemoPageView) {
+], function ($, _, Backbone, HomePageView, AboutPageView, MenuView, FooterView, LicensePageView, BlogPostsView, SearchPageView, DemoIndexView, DemoPageView) {
     var Router = Backbone.Router.extend({
         routes: {
             "demo/:demoId": "demo",
+            "search/:keywords": "search",
             "*actions": "defaultRoute"
         }
     });
@@ -28,6 +30,7 @@ define([
 
         router.on('route:defaultRoute', function (actions) {
             $('.overlay').hide();
+            $('#keywords').val('');
             var _this = this;
             switch (actions) {
                 case 'about':
@@ -81,6 +84,7 @@ define([
 
         router.on('route:demo', function (actions) {
             $('.overlay').hide();
+            $('#keywords').val('');
             if (this.modules.demo == null) {
                 this.modules.demo = 'loading';
                 this.modules.demo = new DemoPageView({el: $('#content'), router: router});
@@ -89,6 +93,16 @@ define([
                 this.modules.demo.render(actions);
             }
             this.menuView.changeMenu('demos')
+        });
+
+
+        router.on('route:search', function (keywords) {
+            $('.overlay').hide();
+            $('#keywords').val(keywords.split('+').join(' '));
+            if (this.modules.search == null) {
+                this.modules.search = new SearchPageView({el: $('#content')});
+            }
+            this.modules.search.fetchData(keywords);
         });
 
         Backbone.history.start();

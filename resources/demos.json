@@ -2,7 +2,7 @@
   "demos": [
     {
       "demoId": 1,
-      "created": "2013/08/22",
+      "created": "08/22/2013",
       "title": "Using Bing and Google Layers with Leaflet",
       "href": "#demo/1",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/22/learning-leaflet' target='_blank'>Learning Leaflet</a>",
@@ -12,7 +12,7 @@
     },
     {
       "demoId": 2,
-      "created": "2013/08/31",
+      "created": "08/31/2013",
       "title": "ArcGIS Earthquake Data",
       "href": "#demo/2",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online' target='_blank'>Mapbox vs ArcGIS Online</a>",
@@ -22,7 +22,7 @@
     },
     {
       "demoId": 3,
-      "created": "2013/08/31",
+      "created": "08/31/2013",
       "title": "Mapbox Example",
       "href": "#demo/3",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2013/08/31/mapbox-vs-arcgis-online' target='_blank'>Mapbox vs ArcGIS Online</a>",
@@ -32,7 +32,7 @@
     },
     {
       "demoId": 4,
-      "created": "2015/01/04",
+      "created": "01/04/2015",
       "title": "Rendering a GeoJSON layer in Leaflet",
       "href": "#demo/4",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/04/rendering-a-geojson-layer-in-leaflet' target='_blank'>Rendering a GeoJSON layer in Leaflet</a>",
@@ -42,7 +42,7 @@
     },
     {
       "demoId": 5,
-      "created": "2015/01/11",
+      "created": "01/11/2015",
       "title": "GeoJSON Feature Collection",
       "href": "#demo/5",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/01/11/how-to-display-feature-collection-geojson-with-leaflets-marker-clusters' target='_blank'>How to Display Feature Collection GeoJson with Leaflet’s Marker Clusters</a>",
@@ -52,7 +52,7 @@
     },
     {
       "demoId": 6,
-      "created": "2015/01/30",
+      "created": "01/30/2015",
       "title": "Armed Conflict in Africa",
       "href": "#demo/6",
       "github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo6",
@@ -61,7 +61,7 @@
     },
     {
       "demoId": 7,
-      "created": "2015/11/25",
+      "created": "11/25/2015",
       "title": "Leaflet-PIP Plugin",
       "href": "#demo/7",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/25/breaking-dependence-on-vendor-map-apis-leaflet/' target='_blank'>Breaking Dependence on Vendor Map APIs with Leaflet</a>",
@@ -71,7 +71,7 @@
     },
     {
       "demoId": 8,
-      "created": "2015/11/28",
+      "created": "11/28/2015",
       "title": "&ldquo;50-State Club&rdquo; map",
       "href": "#demo/8",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/28/browser-side-geospatial-maps/' target='_blank'>Browser-side Geospatial Maps</a>",
@@ -81,7 +81,7 @@
     },
     {
       "demoId": 9,
-      "created": "2015/11/29",
+      "created": "11/29/2015",
       "title": "Privacy Geofencing",
       "href": "#demo/9",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/11/29/privacy-geofencing/' target='_blank'>Privacy Geofencing</a>",

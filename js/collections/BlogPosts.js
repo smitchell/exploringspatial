@@ -1,13 +1,14 @@
 /**
- * BlogPosts is a Backbone Collection of BlogPost Backbone Models.
+ * BlogPosts is a Backbone Collection of blog post SearchResult Backbone Models.
  * Each model represents a single blog posts from Wordpress.
  */
 define([
         'backbone',
-        'models/BlogPost'
-], function(Backbone, BlogPost) {
+        'collections/SearchResults',
+        'models/SearchResult'
+], function(Backbone, SearchResults, SearchResult) {
 var BlogPosts = Backbone.Collection.extend({
-	model: BlogPost,
+    model: SearchResult,
 
     baseUrl: "https://public-api.wordpress.com/rest/v1.1/sites/exploringspatial.wordpress.com/posts",
 
@@ -27,7 +28,7 @@ var BlogPosts = Backbone.Collection.extend({
             url.push(value);
         });
         if (this.searchString) {
-            url.push('search=');
+            url.push('&search=');
             url.push(this.searchString);
         }
         url.push('&v=');
@@ -57,8 +58,7 @@ var BlogPosts = Backbone.Collection.extend({
                         }
                     }
                 }
-                var blogPost = new BlogPost(post);
-                posts.push(blogPost);
+                posts.push(new SearchResult(post));
             });
         }
         return posts;

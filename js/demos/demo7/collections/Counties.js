@@ -36,8 +36,8 @@ var Counties = Backbone.Collection.extend({
 		return json;
 	},
 
-    comparator: function( collection ){
-        return( collection.get( 'properties').get('name') );
+    comparator: function( model ){
+        return( model.get( 'properties').get('name') );
     },
 
 	getState: function() {

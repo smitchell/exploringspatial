@@ -10,7 +10,7 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            this.itemTemplate = _.template(itemHtml);
+            this.blogPostTemplate = _.template(itemHtml);
             this.fetchData();
         },
 
@@ -19,8 +19,8 @@ define([
             var $items = this.$('.items');
             $items.html("<div class='loading'></div>");
             var _this = this;
-            this.collection = new BlogPosts();
-            this.collection.fetch({
+            this.blogPosts = new BlogPosts();
+            this.blogPosts.fetch({
                 success: function () {
                     _this.render();
                 },
@@ -37,7 +37,7 @@ define([
             var $items = this.$('.items');
             var model, month, day, year;
             var _this = this;
-            this.collection.each(function (blogPost) {
+            this.blogPosts.each(function (blogPost) {
                 model = blogPost.toJSON();
                 var d = blogPost.get('date');
                 if (d) {
@@ -54,7 +54,7 @@ define([
                     model.date = [month, day, year].join('/');
 
                 }
-                $items.append(_this.itemTemplate(model));
+                $items.append(_this.blogPostTemplate(model));
             });
         }
     });

@@ -9,6 +9,16 @@ define([
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();
+            var _this = this;
+            $('.search a').click(function(event) {
+                _this.search();
+            });
+            $('.search input').on('keypress', function(event) {
+                if (event.keyCode != 13) {
+                    return;
+                }
+                _this.search();
+            });
         },
         render: function () {
             this.$el.html(this.template({}));
@@ -39,6 +49,23 @@ define([
                     this.$('.home').addClass('YouAreHere');
                     break;
             }
+        },
+
+        search: function () {
+            var keywords =  this.scrubInput($('#keywords').val());
+            window.location = "./#search/" + keywords;
+        },
+
+        scrubInput: function (value) {
+            var scrubbed = '';
+            if (typeof value != 'undefined' && value != null) {
+                scrubbed = value.trim();
+                if (scrubbed.length > 0) {
+                    scrubbed = scrubbed.split('<').join('');
+                    scrubbed = scrubbed.split('>').join('');
+                }
+            }
+            return scrubbed.split(' ').join('+');
         }
     });
     return MenuView;
