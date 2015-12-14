@@ -113,7 +113,7 @@ define([
             if (this.map.hasLayer(this.activitiesLayer)) {
                 this.map.removeLayer(this.activitiesLayer);
             }
-            var props = this.activity.get('properties');
+            $('#demoTitle').html(this.activity.get('properties').get('name'));
             var style = {
                 color: '#FF0000',
                 weight: 3,
