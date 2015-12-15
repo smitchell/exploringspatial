@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 //#include 'GPX.js'
 
 (function() {

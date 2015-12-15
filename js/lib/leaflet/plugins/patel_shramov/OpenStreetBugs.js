@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 /* global alert: true */
 L.OpenStreetBugs = L.FeatureGroup.extend({
 	options : {

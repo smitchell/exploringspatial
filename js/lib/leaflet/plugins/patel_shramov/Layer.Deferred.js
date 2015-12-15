@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 L.DeferredLayer = L.LayerGroup.extend({
 	options: {
 		js: [],

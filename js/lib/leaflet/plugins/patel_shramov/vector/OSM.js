@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 L.OSM = L.FeatureGroup.extend({
 	options: {
 		async: true,

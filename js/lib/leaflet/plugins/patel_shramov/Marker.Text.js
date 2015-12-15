@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 L.Icon.Text = L.Icon.extend({
 	initialize: function (text, options) {
 		this._text = text;

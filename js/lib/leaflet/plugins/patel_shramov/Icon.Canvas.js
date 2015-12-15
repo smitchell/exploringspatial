@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2011-2014, Pavel Shramov, Bruno Bergot
- */
 L.Icon.Canvas = L.Icon.extend({
 	options: {
 		iconSize: new L.Point(20, 20), // Have to be supplied
