@@ -14,6 +14,7 @@ var require = {
         leaflet_markercluster: 'leaflet/plugins/MarkerCluster/leaflet.markercluster-src',
         leaflet_prunecluster: 'leaflet/plugins/PruneCluster/PruneCluster',
         leaflet_pip: 'leaflet/plugins/leaflet-pip',
+        leaflet_hotline: 'leaflet/plugins/leaflet.hotline',
         apps: '../apps',
         collections: '../collections',
         models: '../models',
@@ -51,6 +52,9 @@ var require = {
         'leaflet_pip': {
             deps: ['leaflet'],
             exports: 'leafletPip'
+        },
+        'leaflet_hotline': {
+            deps: ['leaflet']
         }
     }
 };

@@ -13,6 +13,7 @@ define([
     'demos/demo7/views/Demo7PageView',
     'demos/demo8/views/Demo8PageView',
     'demos/demo9/views/Demo9PageView',
+    'demos/demo10/views/Demo10PageView',
     'text!templates/demos/DemoPageView.html',
     'domReady!'
 ], function ($, _, Backbone,
@@ -27,6 +28,7 @@ define([
              Demo7PageView,
              Demo8PageView,
              Demo9PageView,
+             Demo10PageView,
              templateHtml
              ) {
     var DemoPageView = Backbone.View.extend({
@@ -104,7 +106,6 @@ define([
             } else {
                 this.$('.right').show();
             }
-            this.currentDemoKey = "demo" + demoId;
             this.currentDemoView = eval("new Demo" + demoId + "PageView({el: '#demoBody'})");
             if (this.initialLoad) {
                 this.openOverlay();
@@ -170,9 +171,15 @@ define([
 
         prev: function (event) {
             event.preventDefault();
-            if (typeof this.currentDemoView != 'undefined') {
-                var demoId = this.currentDemoView.getDemoId() - 1;
-                if (demoId >= 1) {
+            if (typeof this.currentDemoView != 'undefined' &&  this.currentDemoView.getDemoId() > 1) {
+                var prevDemo;
+                var baseZeroIndex = this.currentDemoView.getDemoId() - 2;
+                if (baseZeroIndex >= 0) {
+                    prevDemo = this.collection.at(baseZeroIndex--);
+                    while (prevDemo.get('status') != 'Published' && baseZeroIndex >= 0) {
+                        prevDemo = this.collection.at(baseZeroIndex--);
+                    }
+                    var demoId = prevDemo.get('demoId');
                     this.render(demoId);
                     this.router.navigate("demo/" + demoId);
                 }
@@ -181,9 +188,15 @@ define([
 
         next: function (event) {
             event.preventDefault();
-            if (typeof this.currentDemoView != 'undefined') {
-                var demoId = this.currentDemoView.getDemoId() + 1;
-                if (demoId <= this.collection.length) {
+            if (typeof this.currentDemoView != 'undefined' && this.currentDemoView.getDemoId() < this.collection.length) {
+                var nextDemo;
+                var baseZeroIndex = this.currentDemoView.getDemoId();
+                if (baseZeroIndex < this.collection.length - 1) {
+                    nextDemo = this.collection.at(baseZeroIndex++);
+                    while (nextDemo.get('status') != 'Published' && baseZeroIndex < this.collection.length - 1) {
+                        nextDemo = this.collection.at(baseZeroIndex++);
+                    }
+                    var demoId = nextDemo.get('demoId');
                     this.render(demoId);
                     this.router.navigate("demo/" + demoId);
                 }

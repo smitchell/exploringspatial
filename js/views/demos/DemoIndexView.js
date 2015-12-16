@@ -30,11 +30,15 @@ define([
         render: function () {
             this.$el.html(this.template());
             var $items = this.$('.items');
+            var demo;
             for (var i = this.collection.length - 1; i >= 0; i--) {
-                if (i < this.collection.length - 1) {
-                    $items.append('<hr/>');
+                demo = this.collection.models[i];
+                if (demo.get('status') == 'Published') {
+                    if (i < this.collection.length - 1) {
+                        $items.append('<hr/>');
+                    }
+                    $items.append(this.itemsTemplate(this.collection.models[i].toJSON()));
                 }
-                $items.append(this.itemsTemplate(this.collection.models[i].toJSON()));
             }
         }
 

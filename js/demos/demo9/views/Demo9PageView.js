@@ -2,13 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'apps/MapEventDispatcher',
     'models/Activity',
     'collections/Activities',
     'leaflet_pip',
     'text!demos/demo9/templates/Demo9PageView.html'
 
-], function ($, _, Backbone, MapEventDispatcher, Activity, Activities, leafletPip, templateHtml) {
+], function ($, _, Backbone, Activity, Activities, leafletPip, templateHtml) {
     var Demo9PageView = Backbone.View.extend({
 
         events: {
