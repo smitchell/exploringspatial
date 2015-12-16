@@ -98,7 +98,7 @@ define([
             		};
             //var hotlineLayer = L.hotline(data, options).addTo(this.map);
             //var bounds = hotlineLayer.getBounds();
-          	//map.fitBounds(bounds, { padding: [16, 16] });
+          	//this.map.fitBounds(bounds, { padding: [16, 16] });
         },
 
         sizeMaps: function () {

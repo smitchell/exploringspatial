@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <meta name="robots" content="INDEX, FOLLOW"/>
+    <base href=".">
+    <link type="image/x-icon" href="http://www.exploringspatial.com/favicon.ico" rel="icon">
+    <link type="image/x-icon" href="http://www.exploringspatial.com/favicon.ico" rel="shortcut icon">
+    <title>Exploring Spatial.- Overland Park, KS | Personal geospatial learning lab</title>
+    <meta name="Description" content="Exploring Spatial is a personal learning lab for geospatial technologies.">
+    <meta name="Keywords" content="geospatial, backbone, leaflet, OSM, google">
+    <title>Exploring Spatial Homepage</title>
+    <link rel="stylesheet" href="../css/leaflet.css"/>
+    <link rel="stylesheet" href="../css/leaflet.label.css"/>
+    <link href="../css/style.css" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.ie.css"/>
+    <![endif]-->
+    <script type="application/javascript">
+        window.___gcfg = {
+            lang: 'en-US',
+            parsetags: 'explicit'
+        };
+    </script>
+    <script type="application/javascript" src="https://apis.google.com/js/platform.js" async defer></script>
+    <script type="application/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="../js/lib/jquery.js"></script>
+    <script src="../js/lib/leaflet/beta/leaflet-src.js"></script>
+    <script src="../js/lib/leaflet/plugins/leaflet.hotline.js"></script>
+    <script type="application/javascript">
+        //<![CDATA[
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-1918559-6', 'auto');
+        ga('require', 'linkid', 'linkid.js');
+        ga('send', 'pageview');
+
+        google.load("feeds", "1");
+
+        function sizeMaps() {
+            var $demoBody = $('#demoBody');
+            var width = $demoBody.width() - 28;
+            var height = $demoBody.height() - 40;
+            $('.detailMap').css({top: '5px', left: '5px', width: width + 'px', height: height + 'px'});
+        }
+
+        function render(json) {
+            var activity = $.parseJSON(json);
+            $('#demoTitle').html(activity.name +
+                    '<span style="font-size: 0.5em"> Avg Pace: 7:42 min/mi, Time: 23:47 <a href="https://connect.garmin.com/modern/activity/143414934" target="_blank">Link</a></span>');
+            sizeMaps();
+            var startLat = (activity.minLat + activity.maxLat)/2;
+            var startLon = (activity.minLon + activity.maxLon)/2;
+            var map = L.map('map_container', {
+                center: [startLat, startLon],
+                maxBounds: L.latLngBounds(L.latLng(activity.minLat, activity.minLon),
+                        L.latLng(activity.maxLat, activity.maxLon))
+            }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }));
+            map.fitBounds([
+                [activity.minLat, activity.minLon],
+                [activity.maxLat, activity.maxLon]
+            ]);
+
+            var lat, lng, speed;
+            var data = [];
+            var firstPoint = activity.measurements[0];
+            var minSpeed = firstPoint.speed;
+            var maxSpeed  = firstPoint.speed;
+            $.each(activity.measurements, function(i, activityMeasurement){
+                lat = activityMeasurement.lat;
+                lng = activityMeasurement.lon;
+                speed = activityMeasurement.metersPerSecond;
+                if (lat && lng && speed) {
+                    if (speed < minSpeed) {
+                        minSpeed = speed;
+                    }
+                    if (speed > maxSpeed) {
+                        maxSpeed = speed;
+                    }
+                    data.push([lat, lng, speed]);
+                }
+            });
+            var options =  {
+                        min: 3.3528,
+                        max: 3.57632,
+                        palette: {
+                            0.0: '#ff0000', // red
+                            0.5: '#ffff00', // yellow
+                            1.0: '#008800'  // green
+                        },
+                        weight: 5,
+                        outlineColor: '#000000',
+                        outlineWidth: 1
+                    };
+            var hotlineLayer = L.hotline(data, options).addTo(map);
+            var bounds = hotlineLayer.getBounds();
+            map.fitBounds(bounds, { padding: [16, 16] });
+        }
+
+        $( document ).ready(function() {
+            var activityId = 143414934;
+            var measurementsURL = 'http://data.exploringspatial.com/measurements/' + activityId;
+            $.ajax(measurementsURL, {
+               success: function(data) {
+                   render(data);
+               },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
+                }
+            });
+        });
+        //]]>
+    </script>
+</head>
+<body>
+<div id="outerWrapper">
+    <div id="innerWrapper">
+        <a href="../"><img id="byteworks" src="../media/logo.jpg" alt="Byteworks Logo"></a>
+        <div id="content">
+            <div id="demoBanner">
+                <h1 class="demoHeader" id="demoTitle">Color Gradient Polylines</h1>
+            </div>
+            <div id="demoBody">
+                <div id="detailsMapBox" class="detailsMapBox" style="top: 0; bottom: 0">
+                    <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0" ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        Copyright &copy; 2010 - 2015, Steven C Mitchell, <a href="../#license">MIT License</a>
+    </div>
+</div>
+</body>
+</html>
