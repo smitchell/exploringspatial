@@ -61,7 +61,7 @@ define([
                 [51.51, -0.047]
             ]).addTo(this.overlays).bindPopup("I am a polygon.");
             this.popup = L.popup();
-            map.on('click', this.onMapClick);
+            map.on('click', this.onMapClick, this);
             map.fitBounds(this.overlays.getBounds());
             this.map = map;
         },
