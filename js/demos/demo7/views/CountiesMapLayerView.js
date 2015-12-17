@@ -157,12 +157,12 @@ define([
         },
 
         onMouseover: function (event) {
-            event.layer.setStyle(this.highlightStyle);
+            event.target.setStyle(this.highlightStyle);
             this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOVER, {geoid: event.target.feature.properties.geoid});
         },
 
         onMouseout: function (event) {
-            event.layer.setStyle(this.defaultStyle);
+            event.target.setStyle(this.defaultStyle);
             this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
         },
         clearLogo: function () {

@@ -5,7 +5,7 @@ define([
     'underscore',
     'backbone',
     'models/Activity',
-    'leaflet_markercluster'
+    'leaflet_prunecluster'
 ], function (_, Backbone, Activity) {
 
     var ActivityMapLayerView = Backbone.View.extend({
@@ -47,24 +47,65 @@ define([
             var returnToSearch = $('.returnToSearch a');
             returnToSearch.unbind('click');
             var _self = this;
-            var geoJsonLayer = L.geoJson(this.collection.toJSON(), {
-                filter: function (feature, layers) {
-                    return _self.activitySearch.filterActivityJson(feature);
-                },
-                onEachFeature: _self.onEachFeature
+            var filteredActivities = [];
+            this.collection.each(function(activity) {
+                if (_self.activitySearch.filterActivityJson(activity)) {
+                    filteredActivities.push(activity);
+                }
             });
             // Do not create a markerClusterGroup if the geoJsonLayer map layer is empty.
-            if (geoJsonLayer.getLayers().length > 0) {
-                this.activitiesLayer = L.markerClusterGroup();
-                this.activitiesLayer.addLayer(geoJsonLayer);
+            if (filteredActivities.length > 0) {
+                this.activitiesLayer = new PruneClusterForLeaflet();
+                this.activitiesLayer.PrepareLeafletMarker = function (marker, data, category) {
+                    var date = new Date(data.startTime);
+                    var triggerId = data.activityId;
+                    var msg = [];
+                    msg.push('<b>' + data.name + '</b><br/>');
+                    msg.push('Start: ' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '<br/>');
+                    msg.push('Dist: ' + Math.round((data.totalMeters * 0.000621371) * 100) / 100 + ' mi<br/>');
+                    msg.push('<a id="' + triggerId + '" class="popupTrigger" href="javascript:void(0)" />Go to Activity</a>');
+                    if (marker.getPopup()) {
+                        marker.setPopupContent(msg.join(''), data.popupOptions);
+                    }
+                    else {
+                        marker.bindPopup(msg.join(''), data.popupOptions);
+                    }
+                };
                 this.map.addLayer(this.activitiesLayer);
+                var marker, minLat, minLon, maxLat, maxLon, lat, lng, coordinates;
+                $.each(filteredActivities, function(i, filteredActivity){
+                    coordinates = filteredActivity.get('geometry').get('coordinates');
+                    lat = coordinates[1];
+                    lng = coordinates[0];
+                    marker = new PruneCluster.Marker(lat, lng);
+                    marker.data = filteredActivity.get('properties').toJSON();
+                    _self.activitiesLayer.RegisterMarker(marker);
+                    if (typeof minLat == 'undefined' || lat < minLat) {
+                        minLat = lat;
+                    }
+                    if (typeof minLon == 'undefined' || lng < minLon) {
+                        minLon = lng;
+                    }
+                    if (typeof maxLat == 'undefined' || lat > maxLat) {
+                        maxLat = lat;
+                    }
+                    if (typeof maxLon == 'undefined' || lng > maxLon) {
+                        maxLon = lng;
+                    }
+                });
+
                 this.map.on('popupopen', function (event) {
                     _self.onPopupOpen(event);
                 });
                 returnToSearch.click(function (event) {
                     _self.onReturnToSearch(event)
                 });
-                this.map.fitBounds(this.activitiesLayer.getBounds());
+                if (!isNaN(minLat) && !isNaN(minLon) && !isNaN(maxLat) && !isNaN(maxLon)) {
+                    this.map.fitBounds(new L.LatLngBounds(
+                        new L.LatLng(minLat, minLon),
+                        new L.LatLng(maxLat, maxLon)));
+                }
+                this.activitiesLayer.ProcessView();
             }
         },
 

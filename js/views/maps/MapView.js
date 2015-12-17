@@ -6,7 +6,7 @@ define([
     'models/ActivitySearch',
     'models/MapProvider',
     'models/MapLayer',
-    'models/BingMapProvider',
+    //'models/BingMapProvider',
     'models/OsmMapProvider',
     'models/GoogleMapProvider',
     'models/Location',
@@ -22,7 +22,7 @@ define([
              ActivitySearch,
              MapProvider,
              MapLayer,
-             BingMapProvider,
+             //BingMapProvider,
              OsmMapProvider,
              GoogleMapProvider,
              Location,
@@ -64,7 +64,7 @@ define([
 
             // Define the base tile map providers. These views are wrappers around Leaflet map layer plugins.
             this.collection = new MapProviders([
-                new BingMapProvider({dispatcher: this.dispatcher}),
+                //new BingMapProvider({dispatcher: this.dispatcher}),
                 new GoogleMapProvider({dispatcher: this.dispatcher}),
                 new OsmMapProvider({dispatcher: this.dispatcher})
                 ]);
@@ -158,12 +158,13 @@ define([
                     return;
                 }
                 selectedProvider = this.collection.changeCurrentProvider(MapProvider.OSM);
-            } else if ($target.hasClass('map-provider-bing')){
-                if (previousProvider.get('name') ==  MapProvider.BING) {
-                    return;
-                }
-                selectedProvider = this.collection.changeCurrentProvider(MapProvider.BING);
             }
+            //else if ($target.hasClass('map-provider-bing')){
+            //    if (previousProvider.get('name') ==  MapProvider.BING) {
+            //        return;
+            //    }
+            //    selectedProvider = this.collection.changeCurrentProvider(MapProvider.BING);
+            //}
             if (selectedProvider != null) {
                 var layerType = MapLayer.ROAD;
 

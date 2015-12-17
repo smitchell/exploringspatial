@@ -2,33 +2,6 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    <script type="application/javascript">
-        // ref: http://www.abeautifulsite.net/detecting-mobile-devices-with-javascript/
-        var isMobile = {
-            Android: function () {
-                return navigator.userAgent.match(/Android/i);
-            },
-            BlackBerry: function () {
-                return navigator.userAgent.match(/BlackBerry/i);
-            },
-            iOS: function () {
-                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-            },
-            Opera: function () {
-                return navigator.userAgent.match(/Opera Mini/i);
-            },
-            Windows: function () {
-                return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
-            },
-            any: function () {
-                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
-            }
-        };
-        var isSmall = window.innerWidth < 800 || window.innerHeight < 600;
-        if (isMobile.any() || isSmall) {
-            window.location.replace("http://www.exploringspatial.com/mobileindex.html");
-        }
-    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
@@ -96,7 +69,7 @@
     <div id="innerWrapper">
         <div class="search"><input id="keywords" type="text" class="searchField" title="Search keywords"/><a href="javascript:void(0);"></a>
         </div>
-        <a href="#home"><img id="byteworks" src="media/logo.jpg" alt="Byteworks Logo"></a>
+        <a href="#home"><img id="byteworks" src="media/logo-sm.png" alt="Byteworks Logo"></a>
         <div id="navContainer"></div>
         <div id="content">
             <div id="container2"><h1 style="height: 30px"></h1></div>

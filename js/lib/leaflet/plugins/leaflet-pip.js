@@ -3,26 +3,38 @@ var gju = require('geojson-utils');
 
 var leafletPip = {
     bassackwards: false,
-    pointInLayer: function(p, layer, first) {
-        'use strict';
-        if (p instanceof L.LatLng) p = [p.lng, p.lat];
-        else if (leafletPip.bassackwards) p = p.concat().reverse();
+  getGeometry: function(l) {
+      var geom = null,
+          type = null;
 
-        var results = [];
+      if (l.toGeoJSON) {
+          geom = l.toGeoJSON().geometry;
+          type = (geom) ? geom.type : null;
 
-        layer.eachLayer(function(l) {
-            if (first && results.length) return;
-            if ((l instanceof L.MultiPolygon ||
-                 l instanceof L.Polygon) &&
-                gju.pointInPolygon({
-                    type: 'Point',
-                    coordinates: p
-                }, l.toGeoJSON().geometry)) {
-                results.push(l);
-            }
-        });
-        return results;
-    }
+          // checking for supported types (only MultiPolygon and Polygon)
+          if (type === "MultiPolygon" || type === "Polygon") {
+              return geom;
+          }
+      }
+
+      return null;
+  },
+  pointInLayer: function(p, layer, first) {
+      'use strict';
+      if (p instanceof L.LatLng) p = [p.lng, p.lat];
+      else if (leafletPip.bassackwards) p = p.concat().reverse();
+
+      var results = [];
+      layer.eachLayer(function(l) {
+          if (first && results.length) return;
+          var geom = leafletPip.getGeometry(l);
+          if (geom && gju.pointInPolygon({ type: 'Point', coordinates: p }, geom)) {
+              results.push(l);
+          }
+      });
+
+      return results;
+  }
 };
 
 module.exports = leafletPip;
@@ -93,7 +105,7 @@ module.exports = leafletPip;
   }
 
   gju.pointInBoundingBox = function (point, bounds) {
-    return !(point.coordinates[1] < bounds[0][0] || point.coordinates[1] > bounds[1][0] || point.coordinates[0] < bounds[0][1] || point.coordinates[0] > bounds[1][1]) 
+    return !(point.coordinates[1] < bounds[0][0] || point.coordinates[1] > bounds[1][0] || point.coordinates[0] < bounds[0][1] || point.coordinates[0] > bounds[1][1])
   }
 
   // Point in Polygon

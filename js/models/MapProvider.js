@@ -36,7 +36,7 @@ define([
         }
     });
     MapProvider.GOOGLE = 'google';
-    MapProvider.BING = 'bing';
+    //MapProvider.BING = 'bing';
     MapProvider.OSM = 'osm';
     return MapProvider;
 });

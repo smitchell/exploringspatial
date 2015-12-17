@@ -3,8 +3,8 @@ define([
     'underscore',
     'backbone',
     'text!demos/demo1/templates/Demo1PageView.html',
-    'leaflet_google',
-    'leaflet_bing'
+    'leaflet_google'
+    //'leaflet_bing'
 ], function ($, _, Backbone, templateHtml) {
 
     var Demo1PageView = Backbone.View.extend({
@@ -34,7 +34,7 @@ define([
                 subdomains: '1234'
             });
             var googleLayer = new L.Google('ROADMAP');
-            var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
+            //var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map_container', {
                 center: [51.505, -0.09],
                 zoom: 13,
@@ -42,7 +42,7 @@ define([
             });
             var baseLayers = {
                 'Google': googleLayer,
-                'Bing' : bingLayer,
+                //'Bing' : bingLayer,
                 'OSM': osmLayer,
                 'MapQuest': mapQuest
             };

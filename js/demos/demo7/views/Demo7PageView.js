@@ -8,8 +8,8 @@ define([
     'demos/demo7/views/CountiesMapLayerView',
     'views/maps/MapView',
     'text!demos/demo7/templates/Demo7PageView.html',
-    'leaflet_google',
-    'leaflet_bing'
+    'leaflet_google'
+    //'leaflet_bing'
 ], function ($, _, Backbone, MapEventDispatcher, Counties, CountiesListView, CountiesMapLayerView, MapView, templateHtml) {
     var Demo7PageView = Backbone.View.extend({
 
@@ -40,7 +40,7 @@ define([
 
             var baseLayers = {
                 'Google': new L.Google('ROADMAP'),
-                'Bing': new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY"),
+                //'Bing': new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY"),
                 'OSM': new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }),

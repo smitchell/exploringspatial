@@ -8,8 +8,7 @@ define([
     'demos/demo8/views/StatesMapLayerView',
     'demos/demo8/views/RacesMapLayerView',
     'text!demos/demo8/templates/Demo8PageView.html',
-    'leaflet_google',
-    'leaflet_bing'
+    'leaflet_google'
 ], function ($, _, Backbone, MapEventDispatcher, Activities, States, StatesMapLayerView, RacesMapLayerView, templateHtml) {
     var Demo8PageView = Backbone.View.extend({
         MARATHON: 'marathon',

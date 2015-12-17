@@ -1,51 +1,35 @@
 /*
- * L.TileLayer is used for standard xyz-numbered tile layers.
+ * Google layer using Google Maps API
  */
 
-/* global ymaps: true */
+/* global google: true */
 
-L.Yandex = L.Class.extend({
+L.Google = L.Layer.extend({
 	includes: L.Mixin.Events,
 
 	options: {
 		minZoom: 0,
 		maxZoom: 18,
+		tileSize: 256,
+		subdomains: 'abc',
+		errorTileUrl: '',
 		attribution: '',
 		opacity: 1,
-		traffic: false
+		continuousWorld: false,
+		noWrap: false,
+		mapOptions: {
+			backgroundColor: '#dddddd'
+		}
 	},
 
-	possibleShortMapTypes: {
-		schemaMap: 'map',
-		satelliteMap: 'satellite',
-		hybridMap: 'hybrid',
-		publicMap: 'publicMap',
-		publicMapInHybridView: 'publicMapHybrid'
-	},
-	
-	_getPossibleMapType: function (mapType) {
-		var result = 'yandex#map';
-		if (typeof mapType !== 'string') {
-			return result;
-		}
-		for (var key in this.possibleShortMapTypes) {
-			if (mapType === this.possibleShortMapTypes[key]) {
-				result = 'yandex#' + mapType;
-				break;
-			}
-			if (mapType === ('yandex#' + this.possibleShortMapTypes[key])) {
-				result = mapType;
-			}
-		}
-		return result;
-	},
-	
-	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
-	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
+	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
-		//Assigning an initial map type for the Yandex layer
-		this._type = this._getPossibleMapType(type);
+
+		this._ready = google.maps.Map !== undefined;
+		if (!this._ready) L.Google.asyncWait.push(this);
+
+		this._type = type || 'SATELLITE';
 	},
 
 	onAdd: function(map, insertAtTheBottom) {
@@ -59,21 +43,26 @@ L.Yandex = L.Class.extend({
 		// set up events
 		map.on('viewreset', this._resetCallback, this);
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
 		map.on('move', this._update, this);
 
-		map._controlCorners.bottomright.style.marginBottom = '3em';
+		map.on('zoomanim', this._handleZoomAnim, this);
+
+		//20px instead of 1em to avoid a slight overlap with google's attribution
+		map._controlCorners.bottomright.style.marginBottom = '20px';
 
 		this._reset();
-		this._update(true);
+		this._update();
 	},
 
 	onRemove: function(map) {
-		this._map._container.removeChild(this._container);
+		map._container.removeChild(this._container);
 
-		this._map.off('viewreset', this._resetCallback, this);
+		map.off('viewreset', this._resetCallback, this);
 
-		this._map.off('move', this._update, this);
+		map.off('move', this._update, this);
+
+		map.off('zoomanim', this._handleZoomAnim, this);
 
 		map._controlCorners.bottomright.style.marginBottom = '0em';
 	},
@@ -99,18 +88,11 @@ L.Yandex = L.Class.extend({
 			first = tilePane.firstChild;
 
 		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-yandex-layer leaflet-top leaflet-left');
-			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
+			this._container = L.DomUtil.create('div', 'leaflet-google-layer');
+			this._container.id = '_GMapContainer_' + L.Util.stamp(this);
 			this._container.style.zIndex = 'auto';
 		}
 
-		if (this.options.overlay) {
-			first = this._map._container.getElementsByClassName('leaflet-map-pane')[0];
-			first = first.nextSibling;
-			// XXX: Bug with layer order
-			if (L.Browser.opera)
-				this._container.className += ' leaflet-objects-pane';
-		}
 		tilePane.insertBefore(this._container, first);
 
 		this.setOpacity(this.options.opacity);
@@ -118,37 +100,44 @@ L.Yandex = L.Class.extend({
 	},
 
 	_initMapObject: function() {
-		if (this._yandex) return;
+		if (!this._ready) return;
+		this._google_center = new google.maps.LatLng(0, 0);
+		var map = new google.maps.Map(this._container, {
+			center: this._google_center,
+			zoom: 0,
+			tilt: 0,
+			mapTypeId: google.maps.MapTypeId[this._type],
+			disableDefaultUI: true,
+			keyboardShortcuts: false,
+			draggable: false,
+			disableDoubleClickZoom: true,
+			scrollwheel: false,
+			streetViewControl: false,
+			styles: this.options.mapOptions.styles,
+			backgroundColor: this.options.mapOptions.backgroundColor
+		});
 
-		// Check that ymaps.Map is ready
-		if (ymaps.Map === undefined) {
-			return ymaps.load(['package.map'], this._initMapObject, this);
-		}
+		var _this = this;
+		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
+			function() { _this.onReposition(); });
+		this._google = map;
 
-		// If traffic layer is requested check if control.TrafficControl is ready
-		if (this.options.traffic)
-			if (ymaps.control === undefined ||
-					ymaps.control.TrafficControl === undefined) {
-				return ymaps.load(['package.traffic', 'package.controls'],
-					this._initMapObject, this);
-			}
-		//Creating ymaps map-object without any default controls on it
-		var map = new ymaps.Map(this._container, { center: [0, 0], zoom: 0, behaviors: [], controls: [] });
-
-		if (this.options.traffic)
-			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
-
-		if (this._type === 'yandex#null') {
-			this._type = new ymaps.MapType('null', []);
-			map.container.getElement().style.background = 'transparent';
-		}
-		map.setType(this._type);
-
-		this._yandex = map;
-		this._update(true);
-		
-		//Reporting that map-object was initialized
+		google.maps.event.addListenerOnce(map, 'idle',
+			function() { _this._checkZoomLevels(); });
+		google.maps.event.addListenerOnce(map, 'tilesloaded',
+			function() { _this.fire('load'); });
+		//Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', { mapObject: map });
+	},
+
+	_checkZoomLevels: function() {
+		//setting the zoom level on the Google map may result in a different zoom level than the one requested
+		//(it won't go beyond the level for which they have data).
+		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
+		if (this._google.getZoom() !== this._map.getZoom()) {
+			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
+			this._map.setZoom( this._google.getZoom() );
+		}
 	},
 
 	_resetCallback: function(e) {
@@ -159,25 +148,54 @@ L.Yandex = L.Class.extend({
 		this._initContainer();
 	},
 
-	_update: function(force) {
-		if (!this._yandex) return;
-		this._resize(force);
+	_update: function(e) {
+		if (!this._google) return;
+		this._resize();
 
 		var center = this._map.getCenter();
-		var _center = [center.lat, center.lng];
-		var zoom = this._map.getZoom();
+		var _center = new google.maps.LatLng(center.lat, center.lng);
 
-		if (force || this._yandex.getZoom() !== zoom)
-			this._yandex.setZoom(zoom);
-		this._yandex.panTo(_center, {duration: 0, delay: 0});
+		this._google.setCenter(_center);
+		this._google.setZoom(Math.round(this._map.getZoom()));
+
+		this._checkZoomLevels();
 	},
 
-	_resize: function(force) {
-		var size = this._map.getSize(), style = this._container.style;
-		if (style.width === size.x + 'px' && style.height === size.y + 'px')
-			if (force !== true) return;
+	_resize: function() {
+		var size = this._map.getSize();
+		if (this._container.style.width === size.x &&
+				this._container.style.height === size.y)
+			return;
 		this.setElementSize(this._container, size);
-		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
-		this._yandex.container.fitToViewport();
+		this.onReposition();
+	},
+
+
+	_handleZoomAnim: function (e) {
+		var center = e.center;
+		var _center = new google.maps.LatLng(center.lat, center.lng);
+
+		this._google.setCenter(_center);
+		this._google.setZoom(Math.round(e.zoom));
+	},
+
+
+	onReposition: function() {
+		if (!this._google) return;
+		google.maps.event.trigger(this._google, 'resize');
 	}
 });
+
+L.Google.asyncWait = [];
+L.Google.asyncInitialize = function() {
+	var i;
+	for (i = 0; i < L.Google.asyncWait.length; i++) {
+		var o = L.Google.asyncWait[i];
+		o._ready = true;
+		if (o._container) {
+			o._initMapObject();
+			o._update();
+		}
+	}
+	L.Google.asyncWait = [];
+};

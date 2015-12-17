@@ -65,7 +65,7 @@ define([
             var _self = this;
             if (this.mainlandLayer != null) {
                 this.mainlandLayer.getLayers().forEach(function (layer) {
-                    _self.mainlandLayer.resetStyle(layer);
+                    layer.setStyle({color: '#3388FF'});
                 });
             }
         },
