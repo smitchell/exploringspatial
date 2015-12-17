@@ -4,7 +4,8 @@ define([
     'backbone',
     'models/Activity',
     'collections/ActivityMeasurements',
-    'text!demos/demo10/templates/Demo10PageView.html'
+    'text!demos/demo10/templates/Demo10PageView.html',
+    'leaflet_hotline'
 ], function ($, _, Backbone, Activity, ActivityMeasurements, templateHtml) {
     var Demo10PageView = Backbone.View.extend({
 
@@ -71,34 +72,32 @@ define([
             }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
-            this.map.fitBounds([
-                [minLat, minLon],
-                [maxLat, maxLon]
-            ]);
 
             var lat, lng, speed;
             var data = [];
             this.activityMeasurements.each(function(activityMeasurement){
                 lat = activityMeasurement.get("lat");
-                lng = activityMeasurement.get("lng");
+                lng = activityMeasurement.get("lon");
                 speed = activityMeasurement.get("metersPerSecond");
-                data.push([lat, lng, speed]);
+                if (lat && lng && speed) {
+                    data.push([lat, lng, speed]);
+                }
             });
             var options =  {
-            			min: 150,
-            			max: 350,
-            			palette: {
-            				0.0: '#008800',
-            				0.5: '#ffff00',
-            				1.0: '#ff0000'
-            			},
-            			weight: 5,
-            			outlineColor: '#000000',
-            			outlineWidth: 1
-            		};
-            //var hotlineLayer = L.hotline(data, options).addTo(this.map);
-            //var bounds = hotlineLayer.getBounds();
-          	//this.map.fitBounds(bounds, { padding: [16, 16] });
+                        min: 3.3528,  // 8:00 min/mi
+                        max: 3.57632, // 7:30 min/mi
+                        palette: {
+                            0.0: '#ff0000', // red
+                            0.5: '#ffff00', // yellow
+                            1.0: '#008800'  // green
+                        },
+                        weight: 5,
+                        outlineColor: '#000000',
+                        outlineWidth: 1
+                    };
+            var hotlineLayer = L.hotline(data, options).addTo(this.map);
+            var bounds = hotlineLayer.getBounds();
+            this.map.fitBounds(bounds, { padding: [16, 16] });
         },
 
         sizeMaps: function () {

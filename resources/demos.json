@@ -104,9 +104,9 @@
       "title": "Color Gradient Map Lines",
       "href": "#demo/10",
       "wordpressUrl": "<a href='https://exploringspatial.wordpress.com/2015/12/13/color-gradient-lines-begin-with-the-end-in-mind/' target='_blank'>Color Gradient Lines: Begin with the End in Mind</a>",
-      "github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo9",
-      "description": "<p>This demo is not yet complete.</p>",
-      "status": "Draft",
+      "github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo10f",
+      "description": "<p>This demo is not yet complete. It demonstrates the Leaflet Hotline plugin. It will undergo extensive changes over the coming weeks.</p>",
+      "status": "Published",
       "version": "2015.12.15"
     }
   ]

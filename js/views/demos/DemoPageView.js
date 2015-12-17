@@ -191,9 +191,9 @@ define([
             if (typeof this.currentDemoView != 'undefined' && this.currentDemoView.getDemoId() < this.collection.length) {
                 var nextDemo;
                 var baseZeroIndex = this.currentDemoView.getDemoId();
-                if (baseZeroIndex < this.collection.length - 1) {
+                if (baseZeroIndex < this.collection.length) {
                     nextDemo = this.collection.at(baseZeroIndex++);
-                    while (nextDemo.get('status') != 'Published' && baseZeroIndex < this.collection.length - 1) {
+                    while (nextDemo.get('status') != 'Published' && baseZeroIndex < this.collection.length) {
                         nextDemo = this.collection.at(baseZeroIndex++);
                     }
                     var demoId = nextDemo.get('demoId');
