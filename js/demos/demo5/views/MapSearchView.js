@@ -5,7 +5,7 @@ define([
     'underscore',
     'backbone',
     'text!demos/demo5/templates/MapSearchView.html',
-    'jquery-ui'
+    'jquery_ui'
 ], function (_, Backbone, templateHtml) {
 
     var MapSearchView = Backbone.View.extend({

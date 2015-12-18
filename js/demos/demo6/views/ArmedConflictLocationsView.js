@@ -9,7 +9,7 @@ define([
     'demos/demo6/collections/CodeDefinitions',
     'demos/demo6/collections/ArmedConflictLocations',
     'leaflet_prunecluster',
-    'jquery-ui'
+    'jquery_ui'
 ], function (_, Backbone, ArmedConflictLocation, ArmedConflictPopupView, CodeDefinitions, ArmedConflictLocations) {
 
     var ArmedConflictLocationsView = Backbone.View.extend({

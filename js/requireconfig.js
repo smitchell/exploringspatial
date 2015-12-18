@@ -1,15 +1,16 @@
 var require = {
     baseUrl: 'js/lib',
     paths: {
-        jquery: 'jquery',
-        "domReady": 'domReady',
-        underscore: 'underscore',
-        backbone: 'backbone',
+        jquery: 'jquery-2.1.4.min',
+        jquery_ui: 'jquery-ui.min',
+        domReady: 'domReady',
+        underscore: 'underscore-min',
+        backbone: 'backbone-min',
         router: '../router',
         leaflet: 'leaflet/beta/leaflet-src',
         //leaflet: 'leaflet/leaflet-src',
         leaflet_label: 'leaflet/plugins/leaflet.label',
-        json2: 'json2',
+        json2: 'json2.min',
         leaflet_google: 'leaflet/plugins/patel_shramov/tile/Google',
         //leaflet_bing: 'leaflet/plugins/patel_shramov/tile/Bing',
         leaflet_prunecluster: 'leaflet/plugins/PruneCluster/PruneCluster',
@@ -33,6 +34,9 @@ var require = {
         },
         'jquery': {
             exports: '$'
+        },
+        'jquery_ui': {
+            deps: ['jquery'],
         },
         'leaflet': {
             exports: 'L'

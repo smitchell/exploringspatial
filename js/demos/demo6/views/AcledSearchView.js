@@ -6,7 +6,7 @@ define([
     'backbone',
     'demos/demo6/collections/CodeDefinitions',
     'text!demos/demo6/templates/AcledSearchView.html',
-    'jquery-ui'
+    'jquery_ui'
 ], function (_, Backbone, CodeDefinitions, templateHtml) {
 
     var AcledSearchView = Backbone.View.extend({
