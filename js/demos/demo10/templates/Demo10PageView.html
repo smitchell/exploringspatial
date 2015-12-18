@@ -15,15 +15,14 @@
     <p>Controls courtesy of <a href="https://iosphere.github.io/Leaflet.hotline/demo/" target="_blank">Leaflet Hotline
         Demo</a></p>
     <aside>
-        <div class="fieldLabel">Pace Range 12:00 min/mi - 6:00 min/mi</div>
         <label>
-            <span class="fieldLabel">Min </span>
-            <input id="min" class="styleControl" type="range" min="2.5" max="4.4704" value="<%= minMetersPerSecond %>" step="0.0001"/>
+            <span class="fieldLabel">Min</span>
+            <input id="min" class="styleControl" type="range" min="1" max="5" value="<%= minMetersPerSecond %>" step="0.001"/><span id="minPace" > <%= minPace %> </span> (min/mi)
         </label>
         <br/>
         <label>
             <span class="fieldLabel">Max</span>
-            <input id="max" class="styleControl" type="range" min="2.5" max="4.4704" value="<%= maxMetersPerSecond %>" step="0.0001"/>
+            <input id="max" class="styleControl" type="range" min="1" max="5" value="<%= maxMetersPerSecond %>" step="0.001"/><span id="maxPace" > <%= maxPace %></span> (min/mi)
         </label>
         <br/>
         <label>

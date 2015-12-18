@@ -75,18 +75,19 @@ define([
             var seconds = (totalSeconds - (minutes * 60));
             model.time = minutes + ":" + seconds;
             var metersPerSecond = totalMeters / totalSeconds;
-            var minutesPerMile = 26.8224 / metersPerSecond;
-            minutes = Math.floor(minutesPerMile);
-            seconds = Math.floor((minutesPerMile - minutes) * 60);
-            model.pace = minutes + ":" + seconds;
+            model.pace = this.fromMpsToPace(metersPerSecond);
+            var minMetersPerSecond = 3.3528;  // 8:00 min/mi
+            var maxMetersPerSecond = 3.57632; // 7:30 min/mi
             var date = new Date(this.activity.get('properties').get('startTime'));
             model.date = this.months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
             model.outlineColor = '#000000';
             model.paletteColor1 = '#ff0000';
             model.paletteColor2 = '#ffff00';
             model.paletteColor3 = '#008800';
-            model.minMetersPerSecond = 3.3528;  // 8:00 min/mi
-            model.maxMetersPerSecond = 3.57632; // 7:30 min/mi
+            model.minMetersPerSecond = minMetersPerSecond;  // 8:00 min/mi
+            model.maxMetersPerSecond = maxMetersPerSecond; // 7:30 min/mi
+            model.minPace = this.fromMpsToPace(minMetersPerSecond);
+            model.maxPace = this.fromMpsToPace(maxMetersPerSecond);
             model.outlineWidth = 1;
             model.weight = 5;
             model.smoothFactor = 1;
@@ -154,6 +155,9 @@ define([
         updateStyle: function (event) {
             var style = {};
             style[event.target.id] = parseInt(event.target.value, 10);
+            if (event.target.id == 'min' || event.target.id == 'max') {
+                $('#' + event.target.id + 'Pace').html(this.fromMpsToPace(event.target.value));
+            }
             this.hotlineLayer.setStyle(style).redraw();
         },
 
@@ -164,6 +168,19 @@ define([
             var height = $sidepanel.height() - 15;
             var left = $sidepanel.width() + 10;
             $('.detailMap').css({top: '5px', left: left + 'px', width: width + 'px', height: height + 'px'});
+        },
+
+        fromMpsToPace: function(metersPerSecond) {
+            var minutesPerMile = 26.8224 / Number(metersPerSecond);
+            minutes = Math.floor(minutesPerMile);
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            seconds = Math.floor((minutesPerMile - minutes) * 60);
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            return minutes + ":" + seconds;
         },
 
         destroy: function () {
