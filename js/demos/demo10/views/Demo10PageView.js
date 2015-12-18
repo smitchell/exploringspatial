@@ -65,33 +65,13 @@ define([
         },
 
         render: function () {
-            var json = this.activity.toJSON();
-            var model = json.properties;
-            model.activityId = this.activity.get('activityId');
-            var totalMeters = this.activity.get('properties').get('totalMeters');
-            var totalSeconds = this.activity.get('properties').get('totalSeconds');
-            model.distance = Math.round(totalMeters * 0.000621371 * 10) / 10;
-            var minutes = Math.floor(totalSeconds / 60);
-            var seconds = (totalSeconds - (minutes * 60));
-            model.time = minutes + ":" + seconds;
-            var metersPerSecond = totalMeters / totalSeconds;
-            model.pace = this.fromMpsToPace(metersPerSecond);
-            var minMetersPerSecond = 3.3528;  // 8:00 min/mi
-            var maxMetersPerSecond = 3.57632; // 7:30 min/mi
-            var date = new Date(this.activity.get('properties').get('startTime'));
-            model.date = this.months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
-            model.outlineColor = '#000000';
-            model.paletteColor1 = '#ff0000';
-            model.paletteColor2 = '#ffff00';
-            model.paletteColor3 = '#008800';
-            model.minMetersPerSecond = minMetersPerSecond;  // 8:00 min/mi
-            model.maxMetersPerSecond = maxMetersPerSecond; // 7:30 min/mi
-            model.minPace = this.fromMpsToPace(minMetersPerSecond);
-            model.maxPace = this.fromMpsToPace(maxMetersPerSecond);
-            model.outlineWidth = 1;
-            model.weight = 5;
-            model.smoothFactor = 1;
-            this.$el.html(this.template(model));
+            // Create JSON to render html.
+            var model = this.createModelJson(this.activity);
+            json = this.generateSpeedJson(model);
+            json.model = model;
+            this.$el.html(this.template(json));
+
+            // Render map
             var properties = this.activity.get('properties');
             var minLat = properties.get('minLat');
             var minLon = properties.get('minLon');
@@ -112,30 +92,81 @@ define([
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }));
 
-            var lat, lng, speed;
-            var data = [];
-            this.activityMeasurements.each(function (activityMeasurement) {
-                lat = activityMeasurement.get("lat");
-                lng = activityMeasurement.get("lon");
-                speed = activityMeasurement.get("metersPerSecond");
-                if (lat && lng && speed) {
-                    data.push([lat, lng, speed]);
-                }
-            });
+            // Render hotline.
             var options = {
-                min: model.minMetersPerSecond,
-                max: model.maxMetersPerSecond,
+                min: json.rangeMinValue,
+                max: json.rangeMaxValue,
                 palette: {
-                    0.0: model.paletteColor1,
-                    0.5: model.paletteColor2,
-                    1.0: model.paletteColor3
+                    0.0: json.paletteColor1,
+                    0.5: json.paletteColor2,
+                    1.0: json.paletteColor3
                 },
                 weight: model.weight,
                 outlineColor: model.outlineColor,
                 outlineWidth: model.outlineWidth
             };
+            // Produce data for hotline.
+            var data = this.generateSpeedData(this.activityMeasurements);
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
+
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
+        },
+
+        createModelJson: function(activity) {
+            var model = activity.toJSON().properties;
+            model.activityId = activity.get('activityId');
+            var totalMeters = activity.get('properties').get('totalMeters');
+            var totalSeconds = activity.get('properties').get('totalSeconds');
+            model.distance = Math.round(totalMeters * 0.000621371 * 10) / 10;
+            var minutes = Math.floor(totalSeconds / 60);
+            var seconds = (totalSeconds - (minutes * 60));
+            model.time = minutes + ":" + seconds;
+            var metersPerSecond = totalMeters / totalSeconds;
+            model.pace = this.fromMpsToPace(metersPerSecond);
+            var date = new Date(this.activity.get('properties').get('startTime'));
+            model.date = this.months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+            return model;
+        },
+
+        generateSpeedData: function(activityMeasurements) {
+            var lat, lng, speed;
+            var data = [];
+            var _this = this;
+            activityMeasurements.each(function (activityMeasurement) {
+                lat = activityMeasurement.get("lat");
+                lng = activityMeasurement.get("lon");
+                speed = activityMeasurement.get("metersPerSecond");
+                if (lat && lng && speed) {
+                    data.push([lat, lng, speed * _this.rangeMultiplier]);
+                }
+            });
+            return data;
+        },
+
+        generateSpeedJson: function() {
+            // The slider doesn't work will with meters per second, so use a bigger number.
+            this.rangeMultiplier = 100;
+            var json = {};
+            json.outlineColor = '#000000';
+            json.paletteColor1 = '#ff0000';
+            json.paletteColor2 = '#ffff00';
+            json.paletteColor3 = '#008800';
+
+            var minMetersPerSecond = 3.3528;  // 8:00 min/mi
+            var maxMetersPerSecond = 3.57632; // 7:30 min/mi
+            json.rangeMinValue = minMetersPerSecond * this.rangeMultiplier;  // 8:00 min/mi
+            json.rangeMaxValue = maxMetersPerSecond * this.rangeMultiplier; // 7:30 min/mi
+            json.rangeUnits = '(min/mi)';
+            json.minValue = this.fromMpsToPace(minMetersPerSecond);
+            json.maxValue = this.fromMpsToPace(maxMetersPerSecond);
+            json.minLower = this.rangeMultiplier;
+            json.minUpper = 5 * this.rangeMultiplier;
+            json.maxLower = this.rangeMultiplier;
+            json.maxUpper = 5 * this.rangeMultiplier;
+            json.outlineWidth = 1;
+            json.weight = 5;
+            json.smoothFactor = 1;
+            return json;
         },
 
         updatePalette: function () {
@@ -156,7 +187,7 @@ define([
             var style = {};
             style[event.target.id] = parseInt(event.target.value, 10);
             if (event.target.id == 'min' || event.target.id == 'max') {
-                $('#' + event.target.id + 'Pace').html(this.fromMpsToPace(event.target.value));
+                $('#' + event.target.id + 'Value').html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
             }
             this.hotlineLayer.setStyle(style).redraw();
         },

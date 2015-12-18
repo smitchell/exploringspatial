@@ -1,28 +1,28 @@
 <div id="demo_sidepanel">
     <div class="fieldLabel">Name:</div>
     <div class="fieldValue">
-        <a href="https://connect.garmin.com/modern/activity/<%= activityId %>" target="_blank"><%= name %></a>
+        <a href="https://connect.garmin.com/modern/activity/<%= model.activityId %>" target="_blank"><%= model.name %></a>
     </div>
     <div class="fieldLabel">Date:</div>
-    <div class="fieldValue"> <%= date %></div>
+    <div class="fieldValue"> <%= model.date %></div>
     <div class="fieldLabel">Distance:</div>
-    <div class="fieldValue"> <%= distance %> (mi)</div>
+    <div class="fieldValue"> <%= model.distance %> (mi)</div>
     <div class="fieldLabel">Time:</div>
-    <div class="fieldValue"> <%= time %> (mm:ss)</div>
+    <div class="fieldValue"> <%= model.time %> (mm:ss)</div>
     <div class="fieldLabel">Pace:</div>
-    <div class="fieldValue"> <%= pace %> (min/mi)</div>
+    <div class="fieldValue"> <%= model.pace %> (min/mi)</div>
     <hr/>
     <p>Controls courtesy of <a href="https://iosphere.github.io/Leaflet.hotline/demo/" target="_blank">Leaflet Hotline
         Demo</a></p>
     <aside>
         <label>
             <span class="fieldLabel">Min</span>
-            <input id="min" class="styleControl" type="range" min="1" max="5" value="<%= minMetersPerSecond %>" step="0.001"/><span id="minPace" > <%= minPace %> </span> (min/mi)
+            <input id="min" class="styleControl" type="range" min="<%= minLower %>" max="<%= minUpper %>" value="<%= rangeMinValue %>"/><span id="minValue" > <%= minValue %> </span> <%= rangeUnits %>
         </label>
         <br/>
         <label>
             <span class="fieldLabel">Max</span>
-            <input id="max" class="styleControl" type="range" min="1" max="5" value="<%= maxMetersPerSecond %>" step="0.001"/><span id="maxPace" > <%= maxPace %></span> (min/mi)
+            <input id="max" class="styleControl" type="range" min="<%= maxLower %>" max="<%= maxUpper %>" value="<%= rangeMaxValue %>"/><span id="maxValue" > <%= maxValue %></span> <%= rangeUnits %>
         </label>
         <br/>
         <label>
