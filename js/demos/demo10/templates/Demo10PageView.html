@@ -1,3 +1,67 @@
+<div id="demo_sidepanel">
+    <div class="fieldLabel">Name:</div>
+    <div class="fieldValue">
+        <a href="https://connect.garmin.com/modern/activity/<%= activityId %>" target="_blank"><%= name %></a>
+    </div>
+    <div class="fieldLabel">Date:</div>
+    <div class="fieldValue"> <%= date %></div>
+    <div class="fieldLabel">Distance:</div>
+    <div class="fieldValue"> <%= distance %> (mi)</div>
+    <div class="fieldLabel">Time:</div>
+    <div class="fieldValue"> <%= time %> (mm:ss)</div>
+    <div class="fieldLabel">Pace:</div>
+    <div class="fieldValue"> <%= pace %> (min/mi)</div>
+    <hr/>
+    <p>Controls courtesy of <a href="https://iosphere.github.io/Leaflet.hotline/demo/" target="_blank">Leaflet Hotline
+        Demo</a></p>
+    <aside>
+        <div class="fieldLabel">Pace Range 12:00 min/mi - 6:00 min/mi</div>
+        <label>
+            <span class="fieldLabel">Min </span>
+            <input id="min" class="styleControl" type="range" min="2.5" max="4.4704" value="<%= minMetersPerSecond %>" step="0.0001"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Max</span>
+            <input id="max" class="styleControl" type="range" min="2.5" max="4.4704" value="<%= maxMetersPerSecond %>" step="0.0001"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Weight </span>
+            1 <input id="weight" class="styleControl" type="range" min="1" max="16" value="<%= weight %>"/> 16
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Outline width </span>
+            0 <input id="outlineWidth" class="styleControl" type="range" min="0" max="8" value="<%= outlineWidth %>"/> 8
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Outline color  </span>
+            <input id="outlineColor" class="styleControl" type="color" value="<%= outlineColor %>"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Palette color 1</span>
+            <input id="paletteColor1" class="paletteColor" type="color" value="<%= paletteColor3 %>"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Palette color 2</span>
+            <input id="paletteColor2" class="paletteColor" type="color" value="<%= paletteColor2 %>"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Palette color 3</span>
+            <input id="paletteColor3" class="paletteColor" type="color" value="<%= paletteColor1 %>"/>
+        </label>
+        <br/>
+        <label>
+            <span class="fieldLabel">Smooth factor </span>
+            0 <input type="range" id="smoothFactor" class="styleControl" value="<%= smoothFactor %>" min="0" max="10"/> 10
+        </label>
+    </aside>
+</div>
 <div id="detailsMapBox" class="detailsMapBox" style="top: 0; bottom: 0">
-    <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0" ></div>
+    <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0"></div>
 </div>
