@@ -12,7 +12,8 @@ define([
         events: {
             'input .paletteColor': 'updatePalette',
             'input #outlineColor': 'updateOutlineColor',
-            'input .styleControl': 'updateStyle'
+            'input .styleControl': 'updateStyle',
+            'click .gradientMenu a': 'updateMetric'
         },
 
         months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -20,6 +21,7 @@ define([
         initialize: function () {
             this.template = _.template(templateHtml);
             this.fetchData();
+            this.isPace = true;
         },
 
         /**
@@ -67,9 +69,20 @@ define([
         render: function () {
             // Create JSON to render html.
             var model = this.createModelJson(this.activity);
-            json = this.generateSpeedJson(model);
+            if (this.isPace) {
+                json = this.generateSpeedJson(model);
+            } else {
+                json = this.generateHeartRateJson(model);
+            }
             json.model = model;
             this.$el.html(this.template(json));
+            if (this.isPace) {
+                $('.heartRate').removeClass('YouAreHere');
+                $('.pace').addClass('YouAreHere');
+            } else {
+                $('.heartRate').addClass('YouAreHere');
+                $('.pace').removeClass('YouAreHere');
+            }
 
             // Render map
             var properties = this.activity.get('properties');
@@ -106,7 +119,12 @@ define([
                 outlineWidth: model.outlineWidth
             };
             // Produce data for hotline.
-            var data = this.generateSpeedData(this.activityMeasurements);
+            var data;
+            if (this.isPace) {
+                data = this.generateSpeedData(this.activityMeasurements);
+            } else {
+                data = this.generateHeartRateData(this.activityMeasurements);
+            }
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
 
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
@@ -143,6 +161,21 @@ define([
             return data;
         },
 
+        generateHeartRateData: function(activityMeasurements) {
+            var lat, lng, bpm;
+            var data = [];
+            var _this = this;
+            activityMeasurements.each(function (activityMeasurement) {
+                lat = activityMeasurement.get("lat");
+                lng = activityMeasurement.get("lon");
+                bpm = activityMeasurement.get("heartRate");
+                if (lat && lng && bpm) {
+                    data.push([lat, lng, bpm]);
+                }
+            });
+            return data;
+        },
+
         generateSpeedJson: function() {
             // The slider doesn't work will with meters per second, so use a bigger number.
             this.rangeMultiplier = 100;
@@ -163,6 +196,28 @@ define([
             json.minUpper = 5 * this.rangeMultiplier;
             json.maxLower = this.rangeMultiplier;
             json.maxUpper = 5 * this.rangeMultiplier;
+            json.outlineWidth = 1;
+            json.weight = 5;
+            json.smoothFactor = 1;
+            return json;
+        },
+
+        generateHeartRateJson: function() {
+            this.rangeMultiplier = 1;
+            var json = {};
+            json.outlineColor = '#000000';
+            json.paletteColor3 = '#ff0000';
+            json.paletteColor2 = '#ffff00';
+            json.paletteColor1 = '#008800';
+            json.rangeMinValue = 175;
+            json.rangeMaxValue = 185;
+            json.rangeUnits = 'bpm';
+            json.minValue = json.rangeMinValue;
+            json.maxValue = json.rangeMaxValue;
+            json.minLower = 70;
+            json.minUpper = 200;
+            json.maxLower = 70;
+            json.maxUpper = 200;
             json.outlineWidth = 1;
             json.weight = 5;
             json.smoothFactor = 1;
@@ -195,7 +250,12 @@ define([
             var style = {};
             style[event.target.id] = parseInt(event.target.value, 10);
             if (event.target.id == 'min' || event.target.id == 'max') {
-                $('#' + event.target.id + 'Value').html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
+                var elem =   $('#' + event.target.id + 'Value');
+                if (this.isPace) {
+                    elem.html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
+                } else {
+                    elem.html(event.target.value);
+                }
             }
             this.hotlineLayer.setStyle(style).redraw();
         },
@@ -220,6 +280,15 @@ define([
                 seconds = "0" + seconds;
             }
             return minutes + ":" + seconds;
+        },
+
+        updateMetric: function(event) {
+            var $pace = $('.pace');
+            var $heartRate = $('.heartRate');
+            this.isPace =  $heartRate.hasClass('YouAreHere');
+            $pace.toggleClass('YouAreHere');
+            $heartRate.toggleClass('YouAreHere');
+            this.render();
         },
 
         destroy: function () {

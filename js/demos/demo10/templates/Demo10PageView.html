@@ -1,5 +1,10 @@
 <div id="demo_sidepanel">
-    <div class="fieldLabel">Name:</div>
+    <ul class="gradientMenu">
+        <li><img src="media/nav_spacer.gif" alt=""></li>
+        <li class="heartRate"><a href="javascript:void(0);">Heart Rate</a></li><li><img src="media/nav_spacer.gif" alt=""></li>
+        <li class="pace"><a href="javascript:void(0);">Pace</a></li><li><img src="media/nav_spacer.gif" alt=""></li>
+    </ul>
+    <div class="fieldLabel" style="clear: both">Name:</div>
     <div class="fieldValue">
         <a href="https://connect.garmin.com/modern/activity/<%= model.activityId %>" target="_blank"><%= model.name %></a>
     </div>
