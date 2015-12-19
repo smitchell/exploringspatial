@@ -170,17 +170,25 @@ define([
         },
 
         updatePalette: function () {
+            var color1 = $('#paletteColor1').val();
+            var color2 = $('#paletteColor2').val();
+            var color3 = $('#paletteColor3').val();
             this.hotlineLayer.setStyle({
                 'palette': {
-                    0.0: $('#paletteColor1').val(),
-                    0.5: $('#paletteColor2').val(),
-                    1.0: $('#paletteColor3').val()
+                    0.0: color1,
+                    0.5: color2,
+                    1.0: color3
                 }
             }).redraw();
+            $('#palette1').html(color1);
+            $('#palette2').html(color2);
+            $('#palette3').html(color3);
         },
 
         updateOutlineColor: function () {
-            this.hotlineLayer.setStyle({'outlineColor': $('#outlineColor').val()}).redraw();
+            var color =   $('#outlineColor').val();
+            this.hotlineLayer.setStyle({'outlineColor': color}).redraw();
+            $('#outlineHex').html(color);
         },
 
         updateStyle: function (event) {
