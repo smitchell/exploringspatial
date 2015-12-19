@@ -23,6 +23,13 @@ define([
             this.template = _.template(templateHtml);
             this.fetchData();
             this.isPace = true;
+            this.smallIcon = L.Icon.extend({
+                options: {
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8],
+                    iconUrl: 'http://www.exploringspatial.com/media/target.png'
+                }
+            });
         },
 
         /**
@@ -301,9 +308,74 @@ define([
             this.render();
         },
 
+        onChartMouseOver: function (meters) {
+            this.clearDotMarker();
+            var measurement = this.binarySearch(this.activityMeasurements.models, meters);
+            if (measurement) {
+                var lat = measurement.get('lat');
+                var lng = measurement.get('lon');
+                this.dotMarker = L.marker(L.latLng(lat, lng), {icon: new this.smallIcon()}).addTo(this.map);
+            }
+        },
+
+        onChartMouseOut: function () {
+            this.clearDotMarker();
+        },
+
+        clearDotMarker: function () {
+            if (this.dotMarker) {
+                this.map.removeLayer(this.dotMarker);
+                delete this.dotMarker;
+            }
+        },
+
+        binarySearch: function (measures, meters) {
+            var mid, distanceMeters;
+            var lo = -1, hi = measures.length;
+            while (hi - lo > 1) {
+                mid = Math.round((lo + hi)/2);
+                distanceMeters = measures[mid].get('distanceMeters');
+                if (distanceMeters <= meters) {
+                    lo = mid;
+                } else {
+                    hi = mid;
+                }
+            }
+
+            var prev, next;
+            if (lo > -1 && lo < measures.length) {
+                prev = measures[lo];
+            }
+            if (hi > -1 && hi < measures.length) {
+                next = measures[hi];
+            }
+            // Return null if nothing was found.
+            if (!prev && !next) {
+                return null;
+            }
+
+            // Return prev is next is not defined
+            if (prev && (prev.get(distanceMeters) == meters || !next)) {
+                return prev;
+            }
+
+            // Return next if prev is not defined.
+            if (next && (next.get(distanceMeters) == meters || !prev)) {
+                return next;
+            }
+
+            // Return the closest of the two
+            if (Math.abs(next.get(distanceMeters) - meters) < Math.abs(prev.get(distanceMeters) - meters)) {
+                return next;
+            }
+            return prev;
+        },
+
         createChart: function (activity, activityMeasurements) {
+            var _this = this;
             var totalMeters = activity.get('properties').get('totalMeters');
             var metersToMiles = 0.000621371;
+            var milesToMeters = 1609.34;
             var metersToFeet = 3.28084;
             var data = [];
             var i = 0;
@@ -368,7 +440,7 @@ define([
                         },
                         labels: {
                             formatter: function () {
-                                return Math.round(this.value * 100)/100;
+                                return Math.round(this.value * 100) / 100;
                             }
                         },
                         min: 0
@@ -385,17 +457,17 @@ define([
                         series: {
                             point: {
                                 events: {
-                                    mouseOver: function(event) {
-                                        //console.log("Point mouseOver: " + event.target.x + ", " + event.target.y);
+                                    mouseOver: function (event) {
+                                        _this.onChartMouseOver(event.target.x * milesToMeters);
                                     },
-                                    mouseOut: function(event) {
-                                        //console.log("Point mouseOut: " + event.target.x + ", " + event.target.y);
+                                    mouseOut: function (event) {
+                                        _this.onChartMouseOut();
                                     }
                                 }
                             },
                             events: {
-                                mouseOut: function() {
-                                    //console.log("Series mouseOut: ");
+                                mouseOut: function () {
+                                    _this.onChartMouseOut();
                                 }
                             }
                         }
