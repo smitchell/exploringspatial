@@ -6,6 +6,7 @@ var require = {
         domReady: 'domReady',
         underscore: 'underscore-min',
         backbone: 'backbone-min',
+        highcharts: 'highcharts',
         router: '../router',
         leaflet: 'leaflet/beta/leaflet-src',
         //leaflet: 'leaflet/leaflet-src',
@@ -31,6 +32,9 @@ var require = {
         'backbone': {
             deps: ['underscore', 'json2'],
             exports: 'Backbone'
+        },
+        'highcharts': {
+            exports: 'highcharts'
         },
         'jquery': {
             exports: '$'

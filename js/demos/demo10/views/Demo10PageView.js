@@ -2,11 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'highcharts',
     'models/Activity',
     'collections/ActivityMeasurements',
     'text!demos/demo10/templates/Demo10PageView.html',
     'leaflet_hotline'
-], function ($, _, Backbone, Activity, ActivityMeasurements, templateHtml) {
+], function ($, _, Backbone, highcharts, Activity, ActivityMeasurements, templateHtml) {
     var Demo10PageView = Backbone.View.extend({
 
         events: {
@@ -128,9 +129,11 @@ define([
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
 
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
+
+            this.chart = this.createChart(this.activity, this.activityMeasurements);
         },
 
-        createModelJson: function(activity) {
+        createModelJson: function (activity) {
             var model = activity.toJSON().properties;
             model.activityId = activity.get('activityId');
             var totalMeters = activity.get('properties').get('totalMeters');
@@ -146,7 +149,7 @@ define([
             return model;
         },
 
-        generateSpeedData: function(activityMeasurements) {
+        generateSpeedData: function (activityMeasurements) {
             var lat, lng, speed;
             var data = [];
             var _this = this;
@@ -161,7 +164,7 @@ define([
             return data;
         },
 
-        generateHeartRateData: function(activityMeasurements) {
+        generateHeartRateData: function (activityMeasurements) {
             var lat, lng, bpm;
             var data = [];
             var _this = this;
@@ -176,7 +179,7 @@ define([
             return data;
         },
 
-        generateSpeedJson: function() {
+        generateSpeedJson: function () {
             // The slider doesn't work will with meters per second, so use a bigger number.
             this.rangeMultiplier = 100;
             var json = {};
@@ -202,15 +205,15 @@ define([
             return json;
         },
 
-        generateHeartRateJson: function() {
+        generateHeartRateJson: function () {
             this.rangeMultiplier = 1;
             var json = {};
             json.outlineColor = '#000000';
             json.paletteColor3 = '#ff0000';
             json.paletteColor2 = '#ffff00';
             json.paletteColor1 = '#008800';
-            json.rangeMinValue = 175;
-            json.rangeMaxValue = 185;
+            json.rangeMinValue = 176;
+            json.rangeMaxValue = 180;
             json.rangeUnits = 'bpm';
             json.minValue = json.rangeMinValue;
             json.maxValue = json.rangeMaxValue;
@@ -241,7 +244,7 @@ define([
         },
 
         updateOutlineColor: function () {
-            var color =   $('#outlineColor').val();
+            var color = $('#outlineColor').val();
             this.hotlineLayer.setStyle({'outlineColor': color}).redraw();
             $('#outlineHex').html(color);
         },
@@ -250,7 +253,7 @@ define([
             var style = {};
             style[event.target.id] = parseInt(event.target.value, 10);
             if (event.target.id == 'min' || event.target.id == 'max') {
-                var elem =   $('#' + event.target.id + 'Value');
+                var elem = $('#' + event.target.id + 'Value');
                 if (this.isPace) {
                     elem.html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
                 } else {
@@ -264,12 +267,19 @@ define([
             var $demoBody = $('#demoBody');
             var $sidepanel = $('#demo_sidepanel');
             var width = $demoBody.width() - $sidepanel.width() - 30;
-            var height = $sidepanel.height() - 15;
+            var height = $sidepanel.height() - 215;
             var left = $sidepanel.width() + 10;
-            $('.detailMap').css({top: '5px', left: left + 'px', width: width + 'px', height: height + 'px'});
+            $('.detailMap').css({
+                top: '5px',
+                bottom: '200px',
+                left: left + 'px',
+                width: width + 'px',
+                height: height + 'px'
+            });
+            $('.detailChart').css({bottom: '0px', left: left + 'px', width: width + 'px', height: '200px'});
         },
 
-        fromMpsToPace: function(metersPerSecond) {
+        fromMpsToPace: function (metersPerSecond) {
             var minutesPerMile = 26.8224 / Number(metersPerSecond);
             minutes = Math.floor(minutesPerMile);
             if (minutes < 10) {
@@ -282,13 +292,121 @@ define([
             return minutes + ":" + seconds;
         },
 
-        updateMetric: function(event) {
+        updateMetric: function (event) {
             var $pace = $('.pace');
             var $heartRate = $('.heartRate');
-            this.isPace =  $heartRate.hasClass('YouAreHere');
+            this.isPace = $heartRate.hasClass('YouAreHere');
             $pace.toggleClass('YouAreHere');
             $heartRate.toggleClass('YouAreHere');
             this.render();
+        },
+
+        createChart: function (activity, activityMeasurements) {
+            var totalMeters = activity.get('properties').get('totalMeters');
+            var metersToMiles = 0.000621371;
+            var metersToFeet = 3.28084;
+            var data = [];
+            var i = 0;
+            var firstMeasurement = activityMeasurements.at(i++);
+            var elev = null;
+            while (elev = null) {
+                var elevationMeters = firstMeasurement.get("elevationMeters");
+                if (elevationMeters) {
+                    elev = Math.round(elevationMeters * metersToFeet);
+                } else {
+                    firstMeasurement = activityMeasurements.at(i++);
+                }
+            }
+            var minElevation = elev;
+            var maxElevation = elev;
+            activityMeasurements.each(function (activityMeasurement) {
+                var elevationMeters = activityMeasurement.get("elevationMeters");
+                var miles = activityMeasurement.get("distanceMeters") * metersToMiles;
+                if (elevationMeters && miles) {
+                    elev = elevationMeters * metersToFeet;
+                    if (elev > maxElevation) {
+                        maxElevation = elev;
+                    }
+                    if (elev < minElevation) {
+                        minElevation = elev;
+                    }
+                    data.push([miles, elev]);
+                }
+            });
+
+            $('#chart').highcharts({
+                    chart: {
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: '',
+                        style: {
+                            display: 'none'
+                        }
+                    },
+                    subtitle: {
+                        text: '',
+                        style: {
+                            display: 'none'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Elevation (ft)'
+                        },
+                        labels: {
+                            formatter: function () {
+                                return Math.round(this.value);
+                            }
+                        },
+                        min: minElevation,
+                        max: maxElevation
+                    },
+                    xAxis: {
+                        title: {
+                            text: 'Distance (mi)'
+                        },
+                        labels: {
+                            formatter: function () {
+                                return Math.round(this.value * 100)/100;
+                            }
+                        },
+                        min: 0
+                    },
+                    tooltip: {
+                        formatter: function () {
+                            return Math.round(this.y) + ' ft.';
+                        }
+                    },
+                    plotOptions: {
+                        area: {
+                            fillOpacity: 0.5
+                        },
+                        series: {
+                            point: {
+                                events: {
+                                    mouseOver: function(event) {
+                                        //console.log("Point mouseOver: " + event.target.x + ", " + event.target.y);
+                                    },
+                                    mouseOut: function(event) {
+                                        //console.log("Point mouseOut: " + event.target.x + ", " + event.target.y);
+                                    }
+                                }
+                            },
+                            events: {
+                                mouseOut: function() {
+                                    //console.log("Series mouseOut: ");
+                                }
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Elevation',
+                            data: data
+                        }]
+                }
+            );
         },
 
         destroy: function () {
