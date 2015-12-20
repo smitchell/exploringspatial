@@ -134,7 +134,7 @@ define([
                 var $demoContainer = $('#demoBody');
                 var width = $demoContainer.width();
                 overlay.css({
-                    top: ($demoContainer.offset().top * 1.25) + 'px',
+                    top: ($demoContainer.offset().top * 1.8) + 'px',
                     left: (width * 0.3) + 'px',
                     width: (width * 0.50) + 'px'
                 });
