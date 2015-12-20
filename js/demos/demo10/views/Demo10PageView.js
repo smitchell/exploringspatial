@@ -2,19 +2,18 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'highcharts',
+    'apps/MapEventDispatcher',
     'models/Activity',
     'collections/ActivityMeasurements',
+    'demos/demo10/views/ElevationChartView',
+    'demos/demo10/views/HotlineControlsView',
     'text!demos/demo10/templates/Demo10PageView.html',
     'text!demos/demo10/templates/Infobox.html',
     'leaflet_hotline'
-], function ($, _, Backbone, highcharts, Activity, ActivityMeasurements, templateHtml, infoTemplateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Activity, ActivityMeasurements, ElevationChartView, HotlineControlsView, templateHtml, infoTemplateHtml) {
     var Demo10PageView = Backbone.View.extend({
 
         events: {
-            'input .paletteColor': 'updatePalette',
-            'input #outlineColor': 'updateOutlineColor',
-            'input .styleControl': 'updateStyle',
             'click .gradientMenu a': 'updateMetric'
         },
 
@@ -33,7 +32,10 @@ define([
                 }
             });
             this.metersToMiles = 0.000621371;
-            this.metersToFeet = 3.28084;
+            this.dispatcher = MapEventDispatcher;
+            this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
+            this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
+            this.dispatcher.on(this.dispatcher.Events.CHANGE_STYLE, this.onChangeHotlineStyle, this);
         },
 
         /**
@@ -81,10 +83,16 @@ define([
         render: function () {
             // Create JSON to render html.
             var model = this.createModelJson(this.activity);
+            var json;
             if (this.isPace) {
                 json = this.generateSpeedJson(model);
             } else {
                 json = this.generateHeartRateJson(model);
+            }
+            if (this.hotlineControlsView) {
+                this.hotlineControlsView.render();
+            } else {
+                this.hotlineControlsView = new HotlineControlsView({el: this.$el, dispatcher: this.dispatcher});
             }
             json.model = model;
             this.$el.html(this.template(json));
@@ -149,8 +157,15 @@ define([
                 }
             });
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
-
-            this.chart = this.createChart(this.activity, this.activityMeasurements);
+            if (this.elevationChartView) {
+                this.elevationChartView.render();
+            } else {
+                this.elevationChartView = new ElevationChartView({
+                    el: this.$('#chart'),
+                    collection: this.activityMeasurements,
+                    dispatcher: this.dispatcher
+                });
+            }
         },
 
         createModelJson: function (activity) {
@@ -247,40 +262,8 @@ define([
             return json;
         },
 
-        updatePalette: function () {
-            var color1 = $('#paletteColor1').val();
-            var color2 = $('#paletteColor2').val();
-            var color3 = $('#paletteColor3').val();
-            this.hotlineLayer.setStyle({
-                'palette': {
-                    0.0: color1,
-                    0.5: color2,
-                    1.0: color3
-                }
-            }).redraw();
-            $('#palette1').html(color1);
-            $('#palette2').html(color2);
-            $('#palette3').html(color3);
-        },
-
-        updateOutlineColor: function () {
-            var color = $('#outlineColor').val();
-            this.hotlineLayer.setStyle({'outlineColor': color}).redraw();
-            $('#outlineHex').html(color);
-        },
-
-        updateStyle: function (event) {
-            var style = {};
-            style[event.target.id] = parseInt(event.target.value, 10);
-            if (event.target.id == 'min' || event.target.id == 'max') {
-                var elem = $('#' + event.target.id + 'Value');
-                if (this.isPace) {
-                    elem.html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
-                } else {
-                    elem.html(event.target.value);
-                }
-            }
-            this.hotlineLayer.setStyle(style).redraw();
+        onChangeHotlineStyle: function(event) {
+            this.hotlineLayer.setStyle(event.style).redraw();
         },
 
         sizeMaps: function () {
@@ -321,7 +304,8 @@ define([
             this.render();
         },
 
-        onChartMouseOver: function (meters) {
+        onChartMouseOver: function (event) {
+            var meters = event.distanceMeters;
             this.clearDotMarker();
             var measurement = this.binarySearch(this.activityMeasurements.models, meters);
             if (measurement) {
@@ -406,119 +390,13 @@ define([
             return prev;
         },
 
-        createChart: function (activity, activityMeasurements) {
-            var _this = this;
-            var totalMeters = activity.get('properties').get('totalMeters');
-            var milesToMeters = 1609.34;
-            var data = [];
-            var i = 0;
-            var firstMeasurement = activityMeasurements.at(i++);
-            var elev = null;
-            while (elev = null) {
-                var elevationMeters = firstMeasurement.get("elevationMeters");
-                if (elevationMeters) {
-                    elev = Math.round(elevationMeters * this.metersToFeet);
-                } else {
-                    firstMeasurement = activityMeasurements.at(i++);
-                }
-            }
-            var minElevation = elev;
-            var maxElevation = elev;
-            activityMeasurements.each(function (activityMeasurement) {
-                var elevationMeters = activityMeasurement.get("elevationMeters");
-                var miles = activityMeasurement.get("distanceMeters") * _this.metersToMiles;
-                if (elevationMeters && miles) {
-                    elev = elevationMeters * _this.metersToFeet;
-                    if (elev > maxElevation) {
-                        maxElevation = elev;
-                    }
-                    if (elev < minElevation) {
-                        minElevation = elev;
-                    }
-                    data.push([miles, elev]);
-                }
-            });
-
-            $('#chart').highcharts({
-                    chart: {
-                        zoomType: 'xy'
-                    },
-                    title: {
-                        text: '',
-                        style: {
-                            display: 'none'
-                        }
-                    },
-                    subtitle: {
-                        text: '',
-                        style: {
-                            display: 'none'
-                        }
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'Elevation (ft)'
-                        },
-                        labels: {
-                            formatter: function () {
-                                return Math.round(this.value);
-                            }
-                        },
-                        min: minElevation,
-                        max: maxElevation
-                    },
-                    xAxis: {
-                        title: {
-                            text: 'Distance (mi)'
-                        },
-                        labels: {
-                            formatter: function () {
-                                return Math.round(this.value * 100) / 100;
-                            }
-                        },
-                        min: 0
-                    },
-                    tooltip: {
-                        crosshairs: {
-                            color: 'green',
-                            dashStyle: 'solid'
-                        },
-                        formatter: function () {
-                            return Math.round(this.y) + ' ft.';
-                        }
-                    },
-                    plotOptions: {
-                        area: {
-                            fillOpacity: 0.5
-                        },
-                        series: {
-                            point: {
-                                events: {
-                                    mouseOver: function (event) {
-                                        _this.onChartMouseOver(event.target.x * milesToMeters);
-                                    },
-                                    mouseOut: function (event) {
-                                        _this.onChartMouseOut();
-                                    }
-                                }
-                            },
-                            events: {
-                                mouseOut: function () {
-                                    _this.onChartMouseOut();
-                                }
-                            }
-                        }
-                    },
-                    series: [
-                        {
-                            name: 'Elevation',
-                            data: data
-                        }]
-                }
-            );
-        },
-
         destroy: function () {
+            if (this.hotlineControlsView) {
+                this.hotlineControlsView.destroy();
+            }
+            if (this.elevationChartView) {
+                this.elevationChartView.destroy();
+            }
             // Remove view from DOM
             this.remove();
         },

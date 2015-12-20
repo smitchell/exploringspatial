@@ -10,7 +10,6 @@ var require = {
         router: '../router',
         leaflet: 'leaflet/beta/leaflet-src',
         //leaflet: 'leaflet/leaflet-src',
-        leaflet_label: 'leaflet/plugins/leaflet.label',
         json2: 'json2.min',
         leaflet_google: 'leaflet/plugins/patel_shramov/tile/Google',
         //leaflet_bing: 'leaflet/plugins/patel_shramov/tile/Bing',
@@ -34,13 +33,13 @@ var require = {
             exports: 'Backbone'
         },
         'highcharts': {
-            exports: 'highcharts'
+            exports: 'Highcharts'
         },
         'jquery': {
             exports: '$'
         },
         'jquery_ui': {
-            deps: ['jquery'],
+            deps: ['jquery']
         },
         'leaflet': {
             exports: 'L'

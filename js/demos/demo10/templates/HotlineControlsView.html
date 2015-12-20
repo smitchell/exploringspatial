@@ -1,0 +1,49 @@
+<hr/>
+<p>Controls courtesy of <a href="https://iosphere.github.io/Leaflet.hotline/demo/" target="_blank">Leaflet Hotline
+    Demo</a></p>
+<aside>
+    <label>
+        <span class="fieldLabel">Min</span>
+        <input id="min" class="styleControl" type="range" min="<%= minLower %>" max="<%= minUpper %>" value="<%= rangeMinValue %>"/><span id="minValue" > <%= minValue %> </span> <%= rangeUnits %>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Max</span>
+        <input id="max" class="styleControl" type="range" min="<%= maxLower %>" max="<%= maxUpper %>" value="<%= rangeMaxValue %>"/><span id="maxValue" > <%= maxValue %></span> <%= rangeUnits %>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Weight </span>
+        1 <input id="weight" class="styleControl" type="range" min="1" max="16" value="<%= weight %>"/> 16
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Outline width </span>
+        0 <input id="outlineWidth" class="styleControl" type="range" min="0" max="8" value="<%= outlineWidth %>"/> 8
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Outline color  </span>
+        <input id="outlineColor" class="styleControl" type="color" value="<%= outlineColor %>"/> <span id="outlineHex"><%= outlineColor %></span>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Palette color 1</span>
+        <input id="paletteColor1" class="paletteColor" type="color" value="<%= paletteColor1 %>"/> <span id="palette1"><%= paletteColor1 %></span>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Palette color 2</span>
+        <input id="paletteColor2" class="paletteColor" type="color" value="<%= paletteColor2 %>"/> <span id="palette2"><%= paletteColor2 %></span>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Palette color 3</span>
+        <input id="paletteColor3" class="paletteColor" type="color" value="<%= paletteColor3 %>"/> <span id="palette3"><%= paletteColor3 %></span>
+    </label>
+    <br/>
+    <label>
+        <span class="fieldLabel">Smooth factor </span>
+        0 <input type="range" id="smoothFactor" class="styleControl" value="<%= smoothFactor %>" min="0" max="10"/> 10
+    </label>
+</aside>

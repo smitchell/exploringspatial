@@ -1,21 +1,32 @@
 <div id="demo_sidepanel">
     <ul class="gradientMenu">
-        <li><img src="media/nav_spacer.gif" alt=""></li>
-        <li class="heartRate"><a href="javascript:void(0);">Heart Rate</a></li><li><img src="media/nav_spacer.gif" alt=""></li>
-        <li class="pace"><a href="javascript:void(0);">Pace</a></li><li><img src="media/nav_spacer.gif" alt=""></li>
+        <li class="heartRate"><a href="javascript:void(0);">Heart Rate</a></li>
+        <li class="pace"><a href="javascript:void(0);">Pace</a></li><li>
     </ul>
-    <div class="fieldLabel" style="clear: both">Name:</div>
-    <div class="fieldValue">
-        <a href="https://connect.garmin.com/modern/activity/<%= model.activityId %>" target="_blank"><%= model.name %></a>
-    </div>
-    <div class="fieldLabel">Date:</div>
-    <div class="fieldValue"> <%= model.date %></div>
-    <div class="fieldLabel">Distance:</div>
-    <div class="fieldValue"> <%= model.distance %> (mi)</div>
-    <div class="fieldLabel">Time:</div>
-    <div class="fieldValue"> <%= model.time %> (mm:ss)</div>
-    <div class="fieldLabel">Pace:</div>
-    <div class="fieldValue"> <%= model.pace %> (min/mi)</div>
+    <hr style="clear: both"/>
+    <table class="measurements">
+        <tr>
+            <th>Name:</th>
+            <td><a href="https://connect.garmin.com/modern/activity/<%= model.activityId %>" target="_blank"><%= model.name %></a></td>
+        </tr>
+        <tr>
+            <th>Date:</th>
+            <td><%= model.date %></td>
+        </tr>
+        <tr>
+            <th>Distance:</th>
+            <td><%= model.distance %> (mi)</td>
+        </tr>
+        <tr>
+            <th>Time:</th>
+            <td><%= model.time %> (mm:ss)</td>
+        </tr>
+        <tr>
+            <th>Pace:</th>
+            <td><%= model.pace %> (min/mi)</td>
+        </tr>
+        <tr>
+    </table>
     <hr/>
     <p>Controls courtesy of <a href="https://iosphere.github.io/Leaflet.hotline/demo/" target="_blank">Leaflet Hotline
         Demo</a></p>
@@ -65,6 +76,7 @@
             0 <input type="range" id="smoothFactor" class="styleControl" value="<%= smoothFactor %>" min="0" max="10"/> 10
         </label>
     </aside>
+
 </div>
 <div id="detailsMapBox" class="detailsMapBox" style="top: 0; bottom: 0">
     <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0"></div>

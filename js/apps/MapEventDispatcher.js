@@ -23,7 +23,12 @@ define([
         // Demo 8
         RACE_SELECTED:      'RACE_SELECTED',
         RACE_ADDED:         'RACE_ADDED',
-        RACE_ZOOMED:        'RACE_ZOOMED'
+        RACE_ZOOMED:        'RACE_ZOOMED',
+
+        // Demo 10
+        CHART_MOUSEOVER:    'CHART_MOUSEOVER',
+        CHART_MOUSEOUT:     'CHART_MOUSEOUT',
+        CHANGE_STYLE:       'CHANGE_STYLE'
     };
 
     var MapEventDispatcher = _.extend({}, Backbone.Events);
