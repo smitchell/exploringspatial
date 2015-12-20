@@ -6,8 +6,9 @@ define([
     'models/Activity',
     'collections/ActivityMeasurements',
     'text!demos/demo10/templates/Demo10PageView.html',
+    'text!demos/demo10/templates/Infobox.html',
     'leaflet_hotline'
-], function ($, _, Backbone, highcharts, Activity, ActivityMeasurements, templateHtml) {
+], function ($, _, Backbone, highcharts, Activity, ActivityMeasurements, templateHtml, infoTemplateHtml) {
     var Demo10PageView = Backbone.View.extend({
 
         events: {
@@ -21,6 +22,7 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.infoTemplate = _.template(infoTemplateHtml);
             this.fetchData();
             this.isPace = true;
             this.smallIcon = L.Icon.extend({
@@ -30,6 +32,8 @@ define([
                     iconUrl: 'http://www.exploringspatial.com/media/target.png'
                 }
             });
+            this.metersToMiles = 0.000621371;
+            this.metersToFeet = 3.28084;
         },
 
         /**
@@ -122,6 +126,11 @@ define([
                     0.5: json.paletteColor2,
                     1.0: json.paletteColor3
                 },
+                mouseOver: function (event) {
+                    if (console.log) {
+                        console.log(event.latlng);
+                    }
+                },
                 weight: model.weight,
                 outlineColor: model.outlineColor,
                 outlineWidth: model.outlineWidth
@@ -134,7 +143,11 @@ define([
                 data = this.generateHeartRateData(this.activityMeasurements);
             }
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
-
+            this.hotlineLayer.on('mouseover', function (event) {
+                if(console.log) {
+                    console.log(event.latlng);
+                }
+            });
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
 
             this.chart = this.createChart(this.activity, this.activityMeasurements);
@@ -145,7 +158,7 @@ define([
             model.activityId = activity.get('activityId');
             var totalMeters = activity.get('properties').get('totalMeters');
             var totalSeconds = activity.get('properties').get('totalSeconds');
-            model.distance = Math.round(totalMeters * 0.000621371 * 10) / 10;
+            model.distance = Math.round(totalMeters * this.metersToMiles * 10) / 10;
             var minutes = Math.floor(totalSeconds / 60);
             var seconds = (totalSeconds - (minutes * 60));
             model.time = minutes + ":" + seconds;
@@ -314,7 +327,24 @@ define([
             if (measurement) {
                 var lat = measurement.get('lat');
                 var lng = measurement.get('lon');
-                this.dotMarker = L.marker(L.latLng(lat, lng), {icon: new this.smallIcon()}).addTo(this.map);
+                var latLng = L.latLng(lat, lng);
+                this.dotMarker = L.marker(latLng, {icon: new this.smallIcon()}).addTo(this.map);
+
+                // Create three markers and set their icons to cssIcon
+                var json = {
+                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100)/100,
+                    pace: this.fromMpsToPace(measurement.get('metersPerSecond')),
+                    heartRate:  measurement.get('heartRate')
+                };
+                var cssIcon = L.divIcon({
+                  // Specify a class name we can refer to in CSS.
+                  className: 'css-icon',
+                  // Set marker width and height
+                    iconAnchor: [150, 30],
+                  iconSize: [130, 60],
+                    html: this.infoTemplate(json)
+                });
+                this.bullseyeLabel = L.marker(latLng, {icon: cssIcon}).addTo(this.map);
             }
         },
 
@@ -323,6 +353,10 @@ define([
         },
 
         clearDotMarker: function () {
+            if (this.bullseyeLabel) {
+                this.map.removeLayer(this.bullseyeLabel);
+                delete this.bullseyeLabel;
+            }
             if (this.dotMarker) {
                 this.map.removeLayer(this.dotMarker);
                 delete this.dotMarker;
@@ -333,7 +367,7 @@ define([
             var mid, distanceMeters;
             var lo = -1, hi = measures.length;
             while (hi - lo > 1) {
-                mid = Math.round((lo + hi)/2);
+                mid = Math.round((lo + hi) / 2);
                 distanceMeters = measures[mid].get('distanceMeters');
                 if (distanceMeters <= meters) {
                     lo = mid;
@@ -354,17 +388,18 @@ define([
                 return null;
             }
 
-            // Return prev is next is not defined
+            // Return prev if it equals the specified distance or next is not defined
             if (prev && (prev.get(distanceMeters) == meters || !next)) {
                 return prev;
             }
 
-            // Return next if prev is not defined.
+            // Return next if it equals the specified distance or prev is not defined
             if (next && (next.get(distanceMeters) == meters || !prev)) {
                 return next;
             }
 
-            // Return the closest of the two
+            // Return prev or next, whichever is closest to the specified distance.
+            // (NOTE: this is where one could project a point in between the two if the gaps were large)
             if (Math.abs(next.get(distanceMeters) - meters) < Math.abs(prev.get(distanceMeters) - meters)) {
                 return next;
             }
@@ -374,9 +409,7 @@ define([
         createChart: function (activity, activityMeasurements) {
             var _this = this;
             var totalMeters = activity.get('properties').get('totalMeters');
-            var metersToMiles = 0.000621371;
             var milesToMeters = 1609.34;
-            var metersToFeet = 3.28084;
             var data = [];
             var i = 0;
             var firstMeasurement = activityMeasurements.at(i++);
@@ -384,7 +417,7 @@ define([
             while (elev = null) {
                 var elevationMeters = firstMeasurement.get("elevationMeters");
                 if (elevationMeters) {
-                    elev = Math.round(elevationMeters * metersToFeet);
+                    elev = Math.round(elevationMeters * this.metersToFeet);
                 } else {
                     firstMeasurement = activityMeasurements.at(i++);
                 }
@@ -393,9 +426,9 @@ define([
             var maxElevation = elev;
             activityMeasurements.each(function (activityMeasurement) {
                 var elevationMeters = activityMeasurement.get("elevationMeters");
-                var miles = activityMeasurement.get("distanceMeters") * metersToMiles;
+                var miles = activityMeasurement.get("distanceMeters") * _this.metersToMiles;
                 if (elevationMeters && miles) {
-                    elev = elevationMeters * metersToFeet;
+                    elev = elevationMeters * _this.metersToFeet;
                     if (elev > maxElevation) {
                         maxElevation = elev;
                     }
@@ -446,6 +479,10 @@ define([
                         min: 0
                     },
                     tooltip: {
+                        crosshairs: {
+                            color: 'green',
+                            dashStyle: 'solid'
+                        },
                         formatter: function () {
                             return Math.round(this.y) + ' ft.';
                         }

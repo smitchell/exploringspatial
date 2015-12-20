@@ -12,7 +12,6 @@ define([
             this.key = args.key;
             var _self = this;
             window.BingGeoCoderCallback = function(response) {
-                console.log(JSON.stringify(response));
                 _self.parse(response);
             };
         },
