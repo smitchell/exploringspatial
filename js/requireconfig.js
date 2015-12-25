@@ -8,7 +8,7 @@ var require = {
         backbone: 'backbone-min',
         highcharts: 'highcharts',
         router: '../router',
-        leaflet: 'leaflet/beta/leaflet-src',
+        leaflet: 'leaflet/beta/leaflet-1.0.0-b1',
         //leaflet: 'leaflet/leaflet-src',
         json2: 'json2.min',
         leaflet_google: 'leaflet/plugins/patel_shramov/tile/Google',

@@ -14,6 +14,7 @@ define([
     'demos/demo8/views/Demo8PageView',
     'demos/demo9/views/Demo9PageView',
     'demos/demo10/views/Demo10PageView',
+    'demos/demo11/views/Demo11PageView',
     'text!templates/demos/DemoPageView.html',
     'domReady!'
 ], function ($, _, Backbone,
@@ -29,6 +30,7 @@ define([
              Demo8PageView,
              Demo9PageView,
              Demo10PageView,
+             Demo11PageView,
              templateHtml
              ) {
     var DemoPageView = Backbone.View.extend({

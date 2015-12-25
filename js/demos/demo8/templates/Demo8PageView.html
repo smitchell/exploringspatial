@@ -1,7 +1,6 @@
 <div id="searchBox" class="raceSelector">
     <form name="RaceType">
-        <fieldset class="raceRadioGroup" style="width: 425px; padding-left: 25px;">
-            Select a race distance:
+        <fieldset class="raceRadioGroup">
             <input type="radio" name="race" value="marathon" id="full" <%= isMarathon %> /><label for="full"> Full
             Marathon</label>
             <input type="radio" name="race" value="halfMarathon" id="half" <%= isHalf %> /><label for="half"> Half
@@ -11,7 +10,7 @@
     </form>
 </div>
 <div class="returnToSearch" style="display: none">
-    <ul class="buttons" style="position: absolute; right: 2px; top: 5px">
+    <ul class="buttons" style="position: absolute; right: 2px; top: -2px">
         <li><a id="returnTrigger"  style="{width: 75px}" href="javascript:void(0)">Return to Search</a></li>
     </ul>
 </div>

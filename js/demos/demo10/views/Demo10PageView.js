@@ -111,19 +111,12 @@ define([
             var maxLat = properties.get('maxLat');
             var maxLon = properties.get('maxLon');
             this.sizeMaps();
-            this.startLat = (minLat + maxLat) / 2;
-            this.startLon = (minLon + maxLon) / 2;
-            this.map = L.map('map_container', {
-                center: [this.startLat, this.startLon],
-                scrollWheelZoom: false,
-                touchZoom: false,
-                doubleClickZoom: false,
-                zoomControl: true,
-                dragging: true,
-                keyboard: false
-            }).addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }));
+            this.map = L.map('map_container').setView([(minLat + maxLat) / 2, (minLon + maxLon) / 2], 14);
+
+            L.tileLayer(
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(this.map);
 
             // Render hotline.
             var options = {
@@ -133,11 +126,6 @@ define([
                     0.0: json.paletteColor1,
                     0.5: json.paletteColor2,
                     1.0: json.paletteColor3
-                },
-                mouseOver: function (event) {
-                    if (console.log) {
-                        console.log(event.latlng);
-                    }
                 },
                 weight: model.weight,
                 outlineColor: model.outlineColor,
@@ -151,10 +139,12 @@ define([
                 data = this.generateHeartRateData(this.activityMeasurements);
             }
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
+            var marker;
             this.hotlineLayer.on('mouseover', function (event) {
-                if(console.log) {
-                    console.log(event.latlng);
+                if (marker) {
+                    marker.remove(map)
                 }
+                marker = L.marker(event.latlng).addTo(map);
             });
             this.map.fitBounds(this.hotlineLayer.getBounds(), {padding: [16, 16]});
             if (this.elevationChartView) {
@@ -262,7 +252,7 @@ define([
             return json;
         },
 
-        onChangeHotlineStyle: function(event) {
+        onChangeHotlineStyle: function (event) {
             this.hotlineLayer.setStyle(event.style).redraw();
         },
 
@@ -316,16 +306,16 @@ define([
 
                 // Create three markers and set their icons to cssIcon
                 var json = {
-                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100)/100,
+                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100) / 100,
                     pace: this.fromMpsToPace(measurement.get('metersPerSecond')),
-                    heartRate:  measurement.get('heartRate')
+                    heartRate: measurement.get('heartRate')
                 };
                 var cssIcon = L.divIcon({
-                  // Specify a class name we can refer to in CSS.
-                  className: 'css-icon',
-                  // Set marker width and height
+                    // Specify a class name we can refer to in CSS.
+                    className: 'css-icon',
+                    // Set marker width and height
                     iconAnchor: [150, 30],
-                  iconSize: [130, 60],
+                    iconSize: [130, 60],
                     html: this.infoTemplate(json)
                 });
                 this.bullseyeLabel = L.marker(latLng, {icon: cssIcon}).addTo(this.map);
