@@ -3,15 +3,22 @@ define([
     'underscore',
     'backbone',
     'apps/MapEventDispatcher',
-    'models/Activity',
+    'models/Location',
+    'models/GoogleGeoCoder',
     'collections/ActivityMeasurements',
     'demos/demo11/views/ElevationChartView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, MapEventDispatcher, Activity, ActivityMeasurements, ElevationChartView, templateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Location, GoogleGeoCoder, ActivityMeasurements, ElevationChartView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
+
+        events: {
+            'click #location a': 'changeLocation',
+            'keypress #location': 'searchOnEnter'
+        },
 
         initialize: function () {
             this.template = _.template(templateHtml);
+            this.location = new Location();
             this.smallIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
@@ -23,6 +30,8 @@ define([
             this.dispatcher = MapEventDispatcher;
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
+            // listen for location changes from the map search view.
+            this.location.on('sync', this.syncMapLocation, this);
             this.render();
         },
 
@@ -31,7 +40,8 @@ define([
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer( new L.Google('ROADMAP'));
-            this.map.setView([39.097836, -94.581642], 16);
+            this.location.set({lat: 39.097836, lon: -94.581642, zoom: 16 }, {silent: true});
+            this.syncMapLocation(); // Uses this.location to pan/zoom the map.
             if (this.elevationChartView) {
                 this.elevationChartView.render();
             } else {
@@ -157,6 +167,59 @@ define([
                 return next;
             }
             return prev;
+        },
+
+        changeLocation: function (location) {
+
+             // Throw out things that don't belong in a keyword search.
+             location = this.scrubInput(location);
+
+             var geoCoder = new GoogleGeoCoder();
+
+             // Clear the previous search results
+             geoCoder.clear({silent: true});
+
+             // Execute the search. If the query is successful the MapView will be notified
+             // because it is bound to the Location model sync event.
+             geoCoder.set('query', location);
+             var _self = this;
+             geoCoder.fetch({
+                 success: function () {
+                     _self.location.set(geoCoder.toJSON());
+                     _self.location.trigger('sync');
+                 },
+                 complete: function () {
+                     $searchButton.removeClass('searching');
+                     $('.location').val('');
+                 },
+                 error: function (object, xhr, options) {
+                     if (console.log && xhr && xhr.responseText) {
+                         console.log(xhr.status + " " + xhr.responseText);
+                     }
+                 }
+             });
+         },
+
+        syncMapLocation: function() {
+            if (this.location != null) {
+                var lat = this.location.get('lat');
+                var lon = this.location.get('lon');
+                var zoom = 10;
+                if (this.location.get('zoom') != null) {
+                    zoom = this.location.get('zoom');
+                }
+                if (lat != null && lon != null) {
+                    var center = L.latLng(lat, lon);
+                    this.map.setView(center, zoom);
+                }
+            }
+        },
+
+        searchOnEnter: function (e) {
+            if (e.keyCode != 13) {
+                return;
+            }
+            this.changeLocation();
         },
 
         destroy: function () {
