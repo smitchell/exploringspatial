@@ -1,5 +1,5 @@
 /**
- * Location is a Backbone model representing a place in the world
+ * Location is a Backbone model representing a place in the world. It is used by the GeoCode examples.
  *
  */
 define([

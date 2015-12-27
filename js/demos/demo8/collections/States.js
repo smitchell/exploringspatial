@@ -4,11 +4,11 @@
  */
 define([
         'backbone',
-        'models/GeoJsonFeature'
-], function(Backbone, GeoJsonFeature) {
+        'models/Feature'
+], function(Backbone, Feature) {
 var States = Backbone.Collection.extend({
 	url: "http://data.exploringspatial.com/states/states.json",
-	model: GeoJsonFeature,
+	model: Feature,
 
 	/**
 	 * Override Backbone parse to convert properties of properties into child Backbone models.

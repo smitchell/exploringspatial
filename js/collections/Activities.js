@@ -1,5 +1,5 @@
 /**
- * Activities is a Backbone Collection of GeoJsonFeature Backbone Models.
+ * Activities is a Backbone Collection of Activity Backbone Models.
  * Each model represents a single activity from a Garmin device..
  */
 define([

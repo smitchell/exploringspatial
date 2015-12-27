@@ -26,6 +26,14 @@ define([
                     iconUrl: 'http://www.exploringspatial.com/media/target.png'
                 }
             });
+            var CustomIcon = L.Icon.extend({
+                options: {
+                    iconSize: [33, 50],
+                    iconAnchor: [16, 49]
+                }
+            });
+            this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
+            this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.metersToMiles = 0.000621371;
             this.dispatcher = MapEventDispatcher;
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
@@ -41,6 +49,7 @@ define([
             this.sizeMaps();
             this.map = L.map('map_container').addLayer( new L.Google('ROADMAP'));
             this.location.set({lat: 39.097836, lon: -94.581642, zoom: 16 }, {silent: true});
+            this.geoJsonLayer = L.geoJson().addTo(this.map);
             this.syncMapLocation(); // Uses this.location to pan/zoom the map.
             if (this.elevationChartView) {
                 this.elevationChartView.render();

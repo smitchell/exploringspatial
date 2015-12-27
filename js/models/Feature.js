@@ -1,5 +1,5 @@
 /**
- * Activity is a Backbone model representing a Garmin Activity.
+ * Feature is a Backbone model representing an GeoJSON feature.
  *
  * See http://geojson.org/geojson-spec.html#feature-objects
  *
@@ -11,7 +11,6 @@
  *
  * <li> If a feature has a commonly used identifier, that identifier should be included as a member of the feature object with the name "id".</li>
  * </ul>
- *
  */
 define([
     'underscore',
@@ -19,12 +18,12 @@ define([
     'models/Geometry',
     'models/Properties'
 ], function (_, Backbone, Geometry, Properties) {
-    var Activity = Backbone.Model.extend({
-        urlRoot: "http://data.exploringspatial.com/activity/",
-        idAttribute: "activityId",
+    var Feature = Backbone.Model.extend({
 
         default: {
-            type: "Feature"
+            type: "Feature",
+            geometry: new Geometry(),
+            properties: new Properties()
         },
 
         /**
@@ -41,15 +40,15 @@ define([
         /**
          * Override Backbone toJSON to return child Backbone models into properties of properties.
          */
-        toJSON: function () {
+        toJSON: function() {
             var json = _.clone(this.attributes);
-            for (var attr in json) {
-                if ((json[attr] instanceof Backbone.Model) || (json[attr] instanceof Backbone.Collection)) {
-                    json[attr] = json[attr].toJSON();
-                }
+            for(var attr in json) {
+              if((json[attr] instanceof Backbone.Model) || (json[attr] instanceof Backbone.Collection)) {
+                json[attr] = json[attr].toJSON();
+              }
             }
             return json;
         }
     });
-    return Activity;
+    return Feature;
 });
