@@ -259,8 +259,8 @@ define([
         sizeMaps: function () {
             var $demoBody = $('#demoBody');
             var $sidepanel = $('#demo_sidepanel');
-            var width = $demoBody.width() - $sidepanel.width() - 30;
-            var height = $sidepanel.height() - 215;
+            var width = $demoBody.width() - $sidepanel.width() - 15;
+            var height = $sidepanel.height() - 200;
             var left = $sidepanel.width() + 10;
             $('.detailMap').css({
                 top: '5px',

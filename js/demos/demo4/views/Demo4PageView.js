@@ -46,8 +46,8 @@ define([
 
         sizeMaps: function () {
             var $demoBody = $('#demoBody');
-            var width = $demoBody.width() - 28;
-            var height = $demoBody.height() - 40;
+            var width = $demoBody.width() - 12;
+            var height = $demoBody.height() - 24;
             $('.detailMap').css({top: '5px', left: '5px', width: width + 'px', height: height + 'px'});
         },
 

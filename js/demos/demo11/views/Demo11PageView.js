@@ -12,7 +12,7 @@ define([
     var Demo11PageView = Backbone.View.extend({
 
         events: {
-            'click #location a': 'changeLocation',
+            'click .location a': 'changeLocation',
             'keypress #location': 'searchOnEnter'
         },
 
@@ -56,8 +56,8 @@ define([
         sizeMaps: function () {
             var $demoBody = $('#demoBody');
             var $sidepanel = $('#demo_sidepanel');
-            var width = $demoBody.width() - $sidepanel.width() - 30;
-            var height = $sidepanel.height() - 215;
+            var width = $demoBody.width() - $sidepanel.width() - 10;
+            var height = $sidepanel.height() - 200;
             var left = $sidepanel.width() + 10;
             $('.detailMap').css({
                 top: '5px',
@@ -169,7 +169,11 @@ define([
             return prev;
         },
 
-        changeLocation: function (location) {
+        changeLocation: function () {
+            var location = this.$('#location').val().trim();
+            if (location.length < 3) {
+                return;
+            }
 
              // Throw out things that don't belong in a keyword search.
              location = this.scrubInput(location);
@@ -189,7 +193,6 @@ define([
                      _self.location.trigger('sync');
                  },
                  complete: function () {
-                     $searchButton.removeClass('searching');
                      $('.location').val('');
                  },
                  error: function (object, xhr, options) {
@@ -221,6 +224,19 @@ define([
             }
             this.changeLocation();
         },
+
+        scrubInput: function (value) {
+            var scrubbed = '';
+            if (typeof value != 'undefined' && value != null) {
+                scrubbed = value.trim();
+                if (scrubbed.length > 0) {
+                    scrubbed = scrubbed.split('<').join('');
+                    scrubbed = scrubbed.split('>').join('');
+                }
+            }
+            return scrubbed;
+        },
+
 
         destroy: function () {
             if (this.elevationChartView) {

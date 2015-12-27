@@ -159,15 +159,15 @@ define([
             if (stateWidth < 25) {
                 stateWidth = 25;
             }
-            var stateHeight = (height * 0.5 - 25);
+            var stateHeight = (height * 0.5 - 10);
             if (stateHeight < 25) {
                 stateHeight = 25;
             }
-            var mainlandWidth = (width * 0.75) - 45;
+            var mainlandWidth = (width * 0.75) - 15;
             if (mainlandWidth < 25) {
                 mainlandWidth = 25;
             }
-            var mainlandHeight = stateHeight * 2 + 22;
+            var mainlandHeight = stateHeight * 2 + 7;
             if (mainlandHeight < 50) {
                 mainlandHeight = 50;
             }

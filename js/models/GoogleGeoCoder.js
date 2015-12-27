@@ -19,7 +19,7 @@ define([
             _self = this;
             this.getGeoCoder().geocode({'address': this.get('query')}, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0) {
-                    _self.set({lat: results[0].geometry.location.lat(), lon: results[0].geometry.location.lng()});
+                    _self.set({lat: results[0].geometry.location.lat(), lon: results[0].geometry.location.lng(), name: results.formatted_address});
                     if (typeof options != 'undefined' && options.success != 'undefined') {
                         options.success(results);
                     }
