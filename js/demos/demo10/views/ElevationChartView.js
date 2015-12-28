@@ -1,9 +1,8 @@
 define([
     'jquery',
-    'underscore',
     'backbone',
     'highcharts'
-], function ($, _, Backbone, Highcharts) {
+], function ($, Backbone, Highcharts) {
     var ElevationChartView = Backbone.View.extend({
 
         initialize: function (args) {
@@ -19,22 +18,22 @@ define([
             var milesToMeters = 1609.34;
             var data = [];
             var i = 0;
-            var firstMeasurement = this.collection.at(i++);
+            var firstMeasurement = this.collection[i++];
 
             var elev = null;
             while (elev = null) {
-                var elevationMeters = firstMeasurement.get("elevationMeters");
+                var elevationMeters = firstMeasurement[2];
                 if (elevationMeters) {
                     elev = Math.round(elevationMeters * metersToFeet);
                 } else {
-                    firstMeasurement = this.collection.at(i++);
+                    firstMeasurement = this.collection[i++];
                 }
             }
             var minElevation = elev;
             var maxElevation = elev;
-            this.collection.each(function (measurement) {
-                var elevationMeters = measurement.get("elevationMeters");
-                var miles = measurement.get("distanceMeters") * metersToMiles;
+            $.each(this.collection, function (i, measurement) {
+                var elevationMeters = measurement[2];
+                var miles = measurement[3] * metersToMiles;
                 if (elevationMeters && miles) {
                     elev = elevationMeters * metersToFeet;
                     if (elev > maxElevation) {

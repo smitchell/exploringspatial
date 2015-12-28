@@ -49,6 +49,33 @@ define([
                 }
             }
             return json;
+        },
+
+        /**
+         * The "metrics" property is a make of the metric names
+         * corresponding to the values in each coordinant array.
+         * The purpose of this method is to return the index of
+         * the coorinate value corresponding to the requested name.
+         *
+         * @param name - The name of the metric.
+         * @returns {number} - The index of the value in coordiante array corresponding to the metric name.
+         */
+        getMetricIndex: function(name) {
+            var index = -1;
+            var properties = this.get('properties');
+            if (properties && properties != null) {
+                var metrics = properties.get('metrics');
+                if (metrics && metrics != null) {
+                    for (var i = 0; i < metrics.length - 1; i++) {
+                        if (metrics[i] === name) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+
+            }
+            return index;
         }
     });
     return Activity;

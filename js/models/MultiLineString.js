@@ -7,15 +7,13 @@
  *
  */
 define([
-    'underscore',
-    'backbone',
-    'collection/Coordinates'
-], function (_, Backbone, Coordinates) {
+    'backbone'
+], function (Backbone) {
     var MultiLineString = Backbone.Model.extend({
 
         default: {
             type: "MultiLineString",
-            coordinates: new Coordinates()
+            coordinates: []
         },
 
         /**

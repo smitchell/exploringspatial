@@ -11,13 +11,12 @@
  *
  */
 define([
-    'backbone',
-    'collections/Coordinates'
-], function (Backbone, Coordinates) {
+    'backbone'
+], function (Backbone) {
     var Geometry = Backbone.Model.extend({
         defaults: {
             // type: (required) "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", or "GeometryCollection"
-            coordinates: new Coordinates()
+            coordinates: []
         }
     });
     return Geometry;

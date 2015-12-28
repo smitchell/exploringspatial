@@ -4,13 +4,12 @@ define([
     'backbone',
     'apps/MapEventDispatcher',
     'models/Activity',
-    'collections/ActivityMeasurements',
     'demos/demo10/views/ElevationChartView',
     'demos/demo10/views/HotlineControlsView',
     'text!demos/demo10/templates/Demo10PageView.html',
     'text!demos/demo10/templates/Infobox.html',
     'leaflet_hotline'
-], function ($, _, Backbone, MapEventDispatcher, Activity, ActivityMeasurements, ElevationChartView, HotlineControlsView, templateHtml, infoTemplateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Activity, ElevationChartView, HotlineControlsView, templateHtml, infoTemplateHtml) {
     var Demo10PageView = Backbone.View.extend({
 
         events: {
@@ -44,12 +43,11 @@ define([
         fetchData: function () {
             var activityId = 143414934;
             this.activity = new Activity({'activityId': activityId});
+            this.activity.urlRoot = 'http://data.exploringspatial.com/measurements/';
             var _this = this;
-            this.loading = 2;
             this.activity.fetch({
                 success: function () {
-                    _this.loading -= 1;
-                    _this.checkCompleted();
+                    _this.render();
                 },
                 error: function (object, xhr, options) {
                     _this.loading -= 1;
@@ -58,26 +56,6 @@ define([
                     }
                 }
             });
-            this.activityMeasurements = new ActivityMeasurements();
-            this.activityMeasurements.setActivityId(activityId);
-            this.activityMeasurements.fetch({
-                success: function () {
-                    _this.loading -= 1;
-                    _this.checkCompleted();
-                },
-                error: function (object, xhr, options) {
-                    _this.loading -= 1;
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
-                    }
-                }
-            });
-        },
-
-        checkCompleted: function () {
-            if (this.loading < 1) {
-                this.render();
-            }
         },
 
         render: function () {
@@ -105,13 +83,12 @@ define([
             }
 
             // Render map
-            var properties = this.activity.get('properties');
-            var minLat = properties.get('minLat');
-            var minLon = properties.get('minLon');
-            var maxLat = properties.get('maxLat');
-            var maxLon = properties.get('maxLon');
+            var bbox = this.activity.get('properties').get('bbox');
+            var southWest = L.latLng(bbox[1], bbox[0]),
+                northEast = L.latLng(bbox[3], bbox[2]),
+                bounds = L.latLngBounds(southWest, northEast);
             this.sizeMaps();
-            this.map = L.map('map_container').setView([(minLat + maxLat) / 2, (minLon + maxLon) / 2], 14);
+            this.map = L.map('map_container').fitBounds(bounds);
 
             L.tileLayer(
                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -133,10 +110,11 @@ define([
             };
             // Produce data for hotline.
             var data;
+            var coordiantes = this.activity.get('geometry').get('coordinates');
             if (this.isPace) {
-                data = this.generateSpeedData(this.activityMeasurements);
+                data = this.generateSpeedData(coordiantes);
             } else {
-                data = this.generateHeartRateData(this.activityMeasurements);
+                data = this.generateHeartRateData(coordiantes);
             }
             this.hotlineLayer = L.hotline(data, options).addTo(this.map);
             var marker;
@@ -152,7 +130,7 @@ define([
             } else {
                 this.elevationChartView = new ElevationChartView({
                     el: this.$('#chart'),
-                    collection: this.activityMeasurements,
+                    collection: coordiantes,
                     dispatcher: this.dispatcher
                 });
             }
@@ -174,14 +152,17 @@ define([
             return model;
         },
 
-        generateSpeedData: function (activityMeasurements) {
+        generateSpeedData: function (coordinates) {
             var lat, lng, speed;
             var data = [];
             var _this = this;
-            activityMeasurements.each(function (activityMeasurement) {
-                lat = activityMeasurement.get("lat");
-                lng = activityMeasurement.get("lon");
-                speed = activityMeasurement.get("metersPerSecond");
+            var latIndex = this.activity.getMetricIndex('lat');
+            var lonIndex = this.activity.getMetricIndex('lon');
+            var speedIndex = this.activity.getMetricIndex('metersPerSecond');
+            $.each(coordinates, function (i, coordinate) {
+                lat = coordinate[latIndex];
+                lng = coordinate[lonIndex];
+                speed = coordinate[speedIndex];
                 if (lat && lng && speed) {
                     data.push([lat, lng, speed * _this.rangeMultiplier]);
                 }
@@ -189,14 +170,16 @@ define([
             return data;
         },
 
-        generateHeartRateData: function (activityMeasurements) {
+        generateHeartRateData: function (coordinates) {
             var lat, lng, bpm;
             var data = [];
-            var _this = this;
-            activityMeasurements.each(function (activityMeasurement) {
-                lat = activityMeasurement.get("lat");
-                lng = activityMeasurement.get("lon");
-                bpm = activityMeasurement.get("heartRate");
+            var latIndex = this.activity.getMetricIndex('lat');
+            var lonIndex = this.activity.getMetricIndex('lon');
+            var bpmIndex = this.activity.getMetricIndex('heartRate');
+            $.each(coordinates, function (i, coordinate) {
+                lat = coordinate[latIndex];
+                lng = coordinate[lonIndex];
+                bpm = coordinate[bpmIndex];
                 if (lat && lng && bpm) {
                     data.push([lat, lng, bpm]);
                 }
@@ -297,18 +280,23 @@ define([
         onChartMouseOver: function (event) {
             var meters = event.distanceMeters;
             this.clearDotMarker();
-            var measurement = this.binarySearch(this.activityMeasurements.models, meters);
+            var measurement = this.binarySearch(this.activity.get('geometry').get('coordinates'), meters);
+            var latIndex = this.activity.getMetricIndex('lat');
+            var lonIndex = this.activity.getMetricIndex('lon');
+            var distIndex = this.activity.getMetricIndex('distMeters');
+            var speedIndex = this.activity.getMetricIndex('metersPerSecond');
+            var hrIndex = this.activity.getMetricIndex('heartRate');
             if (measurement) {
-                var lat = measurement.get('lat');
-                var lng = measurement.get('lon');
+                var lat = measurement[latIndex];
+                var lng =measurement[lonIndex];
                 var latLng = L.latLng(lat, lng);
                 this.dotMarker = L.marker(latLng, {icon: new this.smallIcon()}).addTo(this.map);
 
                 // Create three markers and set their icons to cssIcon
                 var json = {
-                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100) / 100,
-                    pace: this.fromMpsToPace(measurement.get('metersPerSecond')),
-                    heartRate: measurement.get('heartRate')
+                    distance: Math.round(measurement[distIndex] * this.metersToMiles * 100) / 100,
+                    pace: this.fromMpsToPace(measurement[speedIndex]),
+                    heartRate: measurement[hrIndex]
                 };
                 var cssIcon = L.divIcon({
                     // Specify a class name we can refer to in CSS.
@@ -338,11 +326,12 @@ define([
         },
 
         binarySearch: function (measures, meters) {
+            var distIndex = this.activity.getMetricIndex('distMeters');
             var mid, distanceMeters;
             var lo = -1, hi = measures.length;
             while (hi - lo > 1) {
                 mid = Math.round((lo + hi) / 2);
-                distanceMeters = measures[mid].get('distanceMeters');
+                distanceMeters = measures[mid][distIndex];
                 if (distanceMeters <= meters) {
                     lo = mid;
                 } else {
@@ -363,18 +352,18 @@ define([
             }
 
             // Return prev if it equals the specified distance or next is not defined
-            if (prev && (prev.get(distanceMeters) == meters || !next)) {
+            if (prev && (prev[distIndex] == meters || !next)) {
                 return prev;
             }
 
             // Return next if it equals the specified distance or prev is not defined
-            if (next && (next.get(distanceMeters) == meters || !prev)) {
+            if (next && (next[distIndex] == meters || !prev)) {
                 return next;
             }
 
             // Return prev or next, whichever is closest to the specified distance.
             // (NOTE: this is where one could project a point in between the two if the gaps were large)
-            if (Math.abs(next.get(distanceMeters) - meters) < Math.abs(prev.get(distanceMeters) - meters)) {
+            if (Math.abs(next[distIndex] - meters) < Math.abs(prev[distIndex] - meters)) {
                 return next;
             }
             return prev;
