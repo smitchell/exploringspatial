@@ -14,6 +14,7 @@ define([
 
         initialize: function (args) {
             this.dispatcher = args.dispatcher;
+            this.rangeMultiplier = args.rangeMultiplier
         },
 
         updatePalette: function () {
@@ -44,7 +45,7 @@ define([
             style[event.target.id] = parseInt(event.target.value, 10);
             if (event.target.id == 'min' || event.target.id == 'max') {
                 var elem = $('#' + event.target.id + 'Value');
-                if ($('.heartRate').hasClass('YouAreHere')) {
+                if ($('.pace').hasClass('YouAreHere')) {
                     elem.html(this.fromMpsToPace(event.target.value / this.rangeMultiplier));
                 } else {
                     elem.html(event.target.value);

@@ -70,7 +70,7 @@ define([
             if (this.hotlineControlsView) {
                 this.hotlineControlsView.render();
             } else {
-                this.hotlineControlsView = new HotlineControlsView({el: this.$el, dispatcher: this.dispatcher});
+                this.hotlineControlsView = new HotlineControlsView({el: this.$el, dispatcher: this.dispatcher, rangeMultiplier: this.rangeMultiplier});
             }
             json.model = model;
             this.$el.html(this.template(json));
