@@ -1,3 +1,8 @@
+<style>
+    #map_container:active {
+        cursor: crosshair !important;
+    }
+</style>
 <div id="demo_sidepanel">
     <aside>
         <label class="location">
@@ -8,7 +13,7 @@
         <br/>
         <label>
             <span class="fieldLabel">Name:</span>
-            <input id="name" type="text" title="Route name." style="margin-left: 20px; width: 190px" />
+            <input id="name" type="text" title="Route name." style="margin-left: 20px; width: 190px" value="<%= model.name %>"/>
         </label>
         <br/>
     </aside>

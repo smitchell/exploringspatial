@@ -1,3 +1,4 @@
+"use strict";
 define([
     'jquery',
     'underscore',
@@ -5,10 +6,10 @@ define([
     'apps/MapEventDispatcher',
     'models/Location',
     'models/GoogleGeoCoder',
-    'collections/ActivityMeasurements',
+    'models/Feature',
     'demos/demo11/views/ElevationChartView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, MapEventDispatcher, Location, GoogleGeoCoder, ActivityMeasurements, ElevationChartView, templateHtml) {
+], function ($, _, Backbone, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
 
         events: {
@@ -40,11 +41,26 @@ define([
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             // listen for location changes from the map search view.
             this.location.on('sync', this.syncMapLocation, this);
+            this.model = new Feature();
+            this.model.get('properties').set('name','');
+            this.smallIcon = L.Icon.extend({
+                options: {
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8],
+                    iconUrl: 'http://www.exploringspatial.com/media/target.png'
+                }
+            });
+            this.toolTipCssIcon = L.divIcon({
+                className: 'map-tooltip',
+                iconAnchor: [230, 12],
+                iconSize: [205, 18],
+                html: 'Click the map to add your first point.'
+            });
             this.render();
         },
 
         render: function () {
-            this.$el.html(this.template());
+            this.$el.html(this.template({model: this.model.get('properties').toJSON()}));
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer( new L.Google('ROADMAP'));
@@ -59,6 +75,24 @@ define([
                     collection: [],
                     dispatcher: this.dispatcher
                 });
+            }
+
+            var geometry = this.model.get('geometry');
+            if (!geometry.get('type') || geometry.get('coordinates').length == 0) {
+                // Add getting started tooltip
+                var _this = this;
+                $('#map_container').css('cursor','crosshair');
+                this.map.on('mousemove', _this.addToolTip, this);
+                this.map.on('mouseout', _this.clearDotMarker, this);
+            } else {
+                $('#map_container').css('cursor','');
+            }
+        },
+
+        addToolTip: function(event) {
+            this.clearDotMarker();
+            if (event.latlng) {
+                this.bullseyeLabel = L.marker(event.latlng, {icon: this.toolTipCssIcon}).addTo(this.map);
             }
         },
 
@@ -80,11 +114,11 @@ define([
 
         fromMpsToPace: function (metersPerSecond) {
             var minutesPerMile = 26.8224 / Number(metersPerSecond);
-            minutes = Math.floor(minutesPerMile);
+            var minutes = Math.floor(minutesPerMile);
             if (minutes < 10) {
                 minutes = "0" + minutes;
             }
-            seconds = Math.floor((minutesPerMile - minutes) * 60);
+            var seconds = Math.floor((minutesPerMile - minutes) * 60);
             if (seconds < 10) {
                 seconds = "0" + seconds;
             }
@@ -93,9 +127,10 @@ define([
 
 
         onChartMouseOver: function (event) {
+            return;  //TODO
             var meters = event.distanceMeters;
             this.clearDotMarker();
-            var measurement = this.binarySearch(this.activityMeasurements.models, meters);
+            var measurement = this.binarySearch(this.model.get('geometry').get('coordiantes)'), meters);
             if (measurement) {
                 var lat = measurement.get('lat');
                 var lng = measurement.get('lon');

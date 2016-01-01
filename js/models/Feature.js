@@ -20,7 +20,7 @@ define([
 ], function (_, Backbone, Geometry, Properties) {
     var Feature = Backbone.Model.extend({
 
-        default: {
+        defaults: {
             type: "Feature",
             geometry: new Geometry(),
             properties: new Properties()
