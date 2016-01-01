@@ -302,7 +302,7 @@ define([
                     // Specify a class name we can refer to in CSS.
                     className: 'css-icon',
                     // Set marker width and height
-                    iconAnchor: [150, 30],
+                    iconAnchor: [155, 32],
                     iconSize: [130, 60],
                     html: this.infoTemplate(json)
                 });
