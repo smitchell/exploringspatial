@@ -2,12 +2,14 @@
 define([
     'jquery',
     'backbone',
-    'leaflet'
-], function ($, Backbone, L) {
+    'leaflet',
+    'models/Command'
+], function ($, Backbone, L, Command) {
     var RouteTerminusView = Backbone.View.extend({
 
         initialize: function (args) {
             this.map = args.map;
+            this.commands = args.commands;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [33, 50],
@@ -27,7 +29,7 @@ define([
             if (this.model.get('type') === 'Point') {
                 point = this.model.get('coordinates');
                 this.addStartingPoint(L.latLng(point[1], point[0]));
-            } else  if (this.model.get('type') === 'MultiLineString') {
+            } else if (this.model.get('type') === 'MultiLineString') {
                 var lineStrings = this.model.get('coordinates');
                 if (lineStrings.length > 0) {
                     lineString = lineStrings[0];
@@ -42,7 +44,7 @@ define([
             }
         },
 
-        addStartingPoint: function(latLng) {
+        addStartingPoint: function (latLng) {
             if (this.markerGroup) {
                 this.startPoint = L.marker(latLng, {icon: this.startIcon}).addTo(this.markerGroup);
             } else {
@@ -51,7 +53,7 @@ define([
             }
         },
 
-        addEndingPoint: function(latLng) {
+        addEndingPoint: function (latLng) {
             this.endPoint = L.marker(latLng, {icon: this.endIcon}).addTo(this.markerGroup);
         },
 

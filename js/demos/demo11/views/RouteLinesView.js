@@ -2,12 +2,16 @@
 define([
     'jquery',
     'backbone',
-    'leaflet'
-], function ($, Backbone, L) {
+    'leaflet',
+    'models/Command'
+], function ($, Backbone, L, Command) {
     var RouteLinesView = Backbone.View.extend({
+
+        commands: [],
 
         initialize: function (args) {
             this.map = args.map;
+            this.commands = args.commands;
             this.listenTo(this.model, 'change:coordinates', this.render);
         },
 

@@ -8,16 +8,20 @@ define([
     'models/Location',
     'models/GoogleGeoCoder',
     'models/Feature',
+    'models/Command',
+    'collections/Commands',
     'demos/demo11/views/ElevationChartView',
     'demos/demo11/views/RouteTerminusView',
     'demos/demo11/views/RouteLinesView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
+], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
 
         events: {
             'click .location a': 'changeLocation',
-            'keypress #location': 'searchOnEnter'
+            'keypress #location': 'searchOnEnter',
+            'click .undo a' : 'handleUndo',
+            'keypress .undo a' : 'handleUndo'
         },
 
         initialize: function () {
@@ -51,7 +55,8 @@ define([
                 iconSize: [205, 18],
                 html: 'Click the map to add your first point.'
             });
-            this.ordinatesSize = 4; // lon, lat, elev, meters
+            this.commands = new Commands();
+            this.commands.on('change', this.commandChanged, this);
             this.render();
         },
 
@@ -74,24 +79,25 @@ define([
             }
 
             var _this = this;
-            this.map.on('click', _this.addPoint, this);
+            this.map.on('click', _this.handleAddPoint, this);
             var geometry = this.model.get('geometry');
+            var $mapContainer = $('#map_container');
+            $mapContainer.css('cursor', 'crosshair');
             if (!geometry.get('type') || geometry.get('coordinates').length == 0) {
                 // Add getting started tooltip
-
-                $('#map_container').css('cursor', 'crosshair');
-                this.map.on('mousemove', _this.addToolTip, this);
-                this.map.on('mouseout', _this.clearDotMarker, this);
+                this.addTooltip();
             } else {
-                $('#map_container').css('cursor', '');
+                $mapContainer.css('cursor', '');
             }
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
-                model: geometry
+                model: geometry,
+                commands: this.commands
             });
             this.RouteLinesView = new RouteLinesView({
                 map: this.map,
-                model: geometry
+                model: geometry,
+                commands: this.commands
             });
         },
 
@@ -102,15 +108,75 @@ define([
             }
         },
 
-        addPoint: function (event) {
+        removeLastPoint: function (event) {
+            var geometry = this.model.get('geometry');
+            var coordinates, newLineString, lineStrings;
+            if (geometry.get('type') === 'MultiLineString') {
+                lineStrings = geometry.get('coordinates'); // Array of line strings
+
+                // Get the last point of the last line.
+                var lineString = lineStrings.pop(); // get last line of line strings
+                lineString.pop(); // remove the last point
+                if (lineString.length > 1) {
+                    lineStrings.push(lineString);
+                }
+                if (lineStrings.length > 0) {
+                    geometry.set({'coordinates': lineStrings});
+                } else if (lineString.length > 0) {
+                    geometry.set({type: 'Point', coordinates: lineString[0]});
+                } else {
+                    geometry.set({type: '', coordinates: []});
+                    this.addToolTip();
+                }
+                // TODO - Find out why this was necessary
+                geometry.trigger('change:coordinates');
+
+            } else {
+                geometry.set({'type': '', 'coordinates': []});
+            }
+
+        },
+
+        addTooltip: function() {
+            this.map.on('mousemove', this.addToolTip, this);
+            this.map.on('mouseout', this.clearDotMarker, this);
+        },
+
+
+        removeTooltip: function() {
+            this.map.off('mousemove');
+            this.map.off('mouseout');
+            this.clearDotMarker();
+        },
+
+        handleAddPoint: function (event) {
             var _this = this;
+            var command = new Command();
+            command.do = function () {
+                _this.addPoint(event);
+            };
+            command.undo = function () {
+                _this.removeLastPoint();
+            };
+            command.do();
+            this.commands.add(command);
+            this.commands.trigger('change');
+        },
+
+        handleUndo: function() {
+            var command = this.commands.pop();
+            if (command) {
+                command.undo();
+            }
+            this.commands.trigger('change');
+        },
+
+        addPoint: function (event) {
             var coordinates, newLineString, lineStrings;
             var geometry = this.model.get('geometry');
             // Clear tooltip after first click.
             if (geometry.get('coordinates').length === 0) {
-                this.map.off('mousemove');
-                this.map.off('mouseout');
-                this.clearDotMarker();
+                this.removeTooltip();
             }
 
             if (geometry.get('type') === 'MultiLineString') {
@@ -329,6 +395,15 @@ define([
                 }
             }
             return scrubbed;
+        },
+
+        commandChanged: function () {
+            if (this.commands.length > 0) {
+                this.$('.undo').show();
+            } else {
+                this.$('.undo').hide();
+                this.addTooltip();
+            }
         },
 
 
