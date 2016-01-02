@@ -3,13 +3,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'leaflet',
     'apps/MapEventDispatcher',
     'models/Location',
     'models/GoogleGeoCoder',
     'models/Feature',
     'demos/demo11/views/ElevationChartView',
+    'demos/demo11/views/RouteTerminusView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, templateHtml) {
+], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, RouteTerminusView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
 
         events: {
@@ -27,14 +29,6 @@ define([
                     iconUrl: 'http://www.exploringspatial.com/media/target.png'
                 }
             });
-            var CustomIcon = L.Icon.extend({
-                options: {
-                    iconSize: [33, 50],
-                    iconAnchor: [16, 49]
-                }
-            });
-            this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
-            this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.metersToMiles = 0.000621371;
             this.dispatcher = MapEventDispatcher;
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
@@ -42,7 +36,7 @@ define([
             // listen for location changes from the map search view.
             this.location.on('sync', this.syncMapLocation, this);
             this.model = new Feature();
-            this.model.get('properties').set('name','');
+            this.model.get('properties').set('name', '');
             this.smallIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
@@ -56,6 +50,7 @@ define([
                 iconSize: [205, 18],
                 html: 'Click the map to add your first point.'
             });
+            this.ordinatesSize = 4; // lon, lat, elev, meters
             this.render();
         },
 
@@ -63,8 +58,8 @@ define([
             this.$el.html(this.template({model: this.model.get('properties').toJSON()}));
             // Render map
             this.sizeMaps();
-            this.map = L.map('map_container').addLayer( new L.Google('ROADMAP'));
-            this.location.set({lat: 39.097836, lon: -94.581642, zoom: 16 }, {silent: true});
+            this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
+            this.location.set({lat: 39.097836, lon: -94.581642, zoom: 16}, {silent: true});
             this.geoJsonLayer = L.geoJson().addTo(this.map);
             this.syncMapLocation(); // Uses this.location to pan/zoom the map.
             if (this.elevationChartView) {
@@ -77,23 +72,72 @@ define([
                 });
             }
 
+            var _this = this;
+            this.map.on('click', _this.addPoint, this);
             var geometry = this.model.get('geometry');
             if (!geometry.get('type') || geometry.get('coordinates').length == 0) {
                 // Add getting started tooltip
-                var _this = this;
-                $('#map_container').css('cursor','crosshair');
+
+                $('#map_container').css('cursor', 'crosshair');
                 this.map.on('mousemove', _this.addToolTip, this);
                 this.map.on('mouseout', _this.clearDotMarker, this);
             } else {
-                $('#map_container').css('cursor','');
+                $('#map_container').css('cursor', '');
             }
+            this.routeTerminusView = new RouteTerminusView({
+                map: this.map,
+                model: geometry,
+                ordinatesSize: this.ordinatesSize
+            });
         },
 
-        addToolTip: function(event) {
+        addToolTip: function (event) {
             this.clearDotMarker();
             if (event.latlng) {
                 this.bullseyeLabel = L.marker(event.latlng, {icon: this.toolTipCssIcon}).addTo(this.map);
             }
+        },
+
+        addPoint: function (event) {
+            var _this = this;
+            var coordinates, newLineString, lineStrings;
+            var geometry = this.model.get('geometry');
+            // Clear tooltip after first click.
+            if (geometry.get('coordinates').length === 0) {
+                this.map.off('mousemove');
+                this.map.off('mouseout');
+                this.clearDotMarker();
+            }
+
+            if (geometry.get('type') === 'MultiLineString') {
+                // Array of linestrings
+                // which are arrays of points
+                // which are arrays of ordinates
+                lineStrings = geometry.get('coordinates'); // Array of line strings
+
+                // Get the last point of the last line.
+                var lineString = lineStrings[lineStrings.length - 1]; // get last line of line strings
+                var lastPoint = lineString[lineString.length - 1]; // last point of the list line
+                newLineString = [lastPoint, this.getEventPoint(event)]; // Previous point + new point
+                lineStrings.push(newLineString);
+                // Reset the coordinates to trigger coordinates change event.
+                geometry.set({'type': 'MultiLineString', 'coordinates': lineStrings});
+
+            } else {
+                // Store the first click as a 'Point'
+                if (geometry.get('coordinates').length == 0) {
+                    geometry.set({'type': 'Point', 'coordinates': this.getEventPoint(event)});
+                } else {
+                    // Convert to 'MultiLineString' on second click.
+                    var firstPoint = geometry.get('coordinates');
+                    newLineString = [firstPoint, this.getEventPoint(event)]; // Array of points in a line string.
+                    geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString], 'bullshit' : 1});
+                }
+            }
+        },
+
+        getEventPoint: function (event) {
+            return [event.latlng.lng, event.latlng.lat, 0, 0];
         },
 
         sizeMaps: function () {
@@ -139,16 +183,16 @@ define([
 
                 // Create three markers and set their icons to cssIcon
                 var json = {
-                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100)/100,
+                    distance: Math.round(measurement.get('distanceMeters') * this.metersToMiles * 100) / 100,
                     pace: this.fromMpsToPace(measurement.get('metersPerSecond')),
-                    heartRate:  measurement.get('heartRate')
+                    heartRate: measurement.get('heartRate')
                 };
                 var cssIcon = L.divIcon({
-                  // Specify a class name we can refer to in CSS.
-                  className: 'css-icon',
-                  // Set marker width and height
+                    // Specify a class name we can refer to in CSS.
+                    className: 'css-icon',
+                    // Set marker width and height
                     iconAnchor: [150, 30],
-                  iconSize: [130, 60],
+                    iconSize: [130, 60],
                     html: this.infoTemplate(json)
                 });
                 this.bullseyeLabel = L.marker(latLng, {icon: cssIcon}).addTo(this.map);
@@ -219,35 +263,35 @@ define([
                 return;
             }
 
-             // Throw out things that don't belong in a keyword search.
-             location = this.scrubInput(location);
+            // Throw out things that don't belong in a keyword search.
+            location = this.scrubInput(location);
 
-             var geoCoder = new GoogleGeoCoder();
+            var geoCoder = new GoogleGeoCoder();
 
-             // Clear the previous search results
-             geoCoder.clear({silent: true});
+            // Clear the previous search results
+            geoCoder.clear({silent: true});
 
-             // Execute the search. If the query is successful the MapView will be notified
-             // because it is bound to the Location model sync event.
-             geoCoder.set('query', location);
-             var _self = this;
-             geoCoder.fetch({
-                 success: function () {
-                     _self.location.set(geoCoder.toJSON());
-                     _self.location.trigger('sync');
-                 },
-                 complete: function () {
-                     $('.location').val('');
-                 },
-                 error: function (object, xhr, options) {
-                     if (console.log && xhr && xhr.responseText) {
-                         console.log(xhr.status + " " + xhr.responseText);
-                     }
-                 }
-             });
-         },
+            // Execute the search. If the query is successful the MapView will be notified
+            // because it is bound to the Location model sync event.
+            geoCoder.set('query', location);
+            var _self = this;
+            geoCoder.fetch({
+                success: function () {
+                    _self.location.set(geoCoder.toJSON());
+                    _self.location.trigger('sync');
+                },
+                complete: function () {
+                    $('.location').val('');
+                },
+                error: function (object, xhr, options) {
+                    if (console.log && xhr && xhr.responseText) {
+                        console.log(xhr.status + " " + xhr.responseText);
+                    }
+                }
+            });
+        },
 
-        syncMapLocation: function() {
+        syncMapLocation: function () {
             if (this.location != null) {
                 var lat = this.location.get('lat');
                 var lon = this.location.get('lon');
