@@ -8,7 +8,6 @@ define([
 
         initialize: function (args) {
             this.map = args.map;
-            this.ordinatesSize = args.ordinatesSize;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [33, 50],

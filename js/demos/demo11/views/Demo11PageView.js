@@ -10,8 +10,9 @@ define([
     'models/Feature',
     'demos/demo11/views/ElevationChartView',
     'demos/demo11/views/RouteTerminusView',
+    'demos/demo11/views/RouteLinesView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, RouteTerminusView, templateHtml) {
+], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
 
         events: {
@@ -86,8 +87,11 @@ define([
             }
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
-                model: geometry,
-                ordinatesSize: this.ordinatesSize
+                model: geometry
+            });
+            this.RouteLinesView = new RouteLinesView({
+                map: this.map,
+                model: geometry
             });
         },
 
