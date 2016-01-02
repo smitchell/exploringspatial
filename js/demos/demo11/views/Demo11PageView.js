@@ -121,7 +121,9 @@ define([
                 newLineString = [lastPoint, this.getEventPoint(event)]; // Previous point + new point
                 lineStrings.push(newLineString);
                 // Reset the coordinates to trigger coordinates change event.
-                geometry.set({'type': 'MultiLineString', 'coordinates': lineStrings});
+                geometry.set({'coordinates': lineStrings});
+                // TODO - Find out why this was necessary
+                geometry.trigger('change:coordinates');
 
             } else {
                 // Store the first click as a 'Point'
@@ -131,7 +133,7 @@ define([
                     // Convert to 'MultiLineString' on second click.
                     var firstPoint = geometry.get('coordinates');
                     newLineString = [firstPoint, this.getEventPoint(event)]; // Array of points in a line string.
-                    geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString], 'bullshit' : 1});
+                    geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
                 }
             }
         },

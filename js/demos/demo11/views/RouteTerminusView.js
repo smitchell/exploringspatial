@@ -17,7 +17,7 @@ define([
             });
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
-            this.model.on('change', this.render, this);
+            this.listenTo(this.model, 'change:coordinates', this.render);
         },
 
 
