@@ -41,6 +41,7 @@ define([
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
+            this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
             // listen for location changes from the map search view.
             this.location.on('sync', this.syncMapLocation, this);
             this.model = new Feature();
@@ -87,6 +88,9 @@ define([
             var _this = this;
             this.map.on('click', _this.handleAddPoint, this);
             this.map.on('mouseout', _this.handleMouseout, this);
+            this.map.on('mouseover', _this.logEvent, this);
+            this.map.on('focus', _this.logEvent, this);
+            this.map.on('blur', _this.logEvent, this);
             var geometry = this.model.get('geometry');
             var $mapContainer = $('#map_container');
             $mapContainer.css('cursor', 'crosshair');
@@ -148,28 +152,18 @@ define([
 
         addTooltip: function() {
             this.map.on('mousemove', this.addToolTip, this);
-            this.map.on('mouseout', this.clearDotMarker, this);
         },
 
 
         removeTooltip: function() {
             this.map.off('mousemove');
-            this.map.off('mouseout');
             this.clearDotMarker();
         },
 
         handleAddPoint: function (event) {
             this. logEvent(event);
-            /*
-             * Dragging fires the following events: dragstart, drag (repeadtedly), dragend, click, where click is the final location.
-             * The lat lon of click will not necessarily match the lat lon of the drag end, and the no correlation ids exist in the
-             * click event indicating it was initiated as a drag. If the mouse is moved off the map, then there is no click event.
-             *
-             * In order distinguish between a click (add marker) and dragend click (move marker), the dragstart flag is added to signify that
-             * a drag operation is underway. Either map mouseout or click event will clear the dragstart flag.
-             */
+
             if (this.dragStartEvent) {
-                this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
                 this.handleMoveMarker(event);
             } else {
                 var _this = this;
@@ -186,36 +180,68 @@ define([
             }
         },
 
+        onDragEnd: function(event) {
+            if (this.dragStartEvent) {
+                /*
+                 * onDragEnd should be ignored if the event is on the map, because the final locations comes in a
+                 * subsequet click event. If the dragend happens off the map, then the click event never occurs.
+                 * If that case, we need to call handleMoveMarker to complete the move using the drag end location.
+                 */
+                if (!this.map.getBounds().contains(event.target._latlng)) {
+                    this.handleMoveMarker(event);
+                }
+            }
+        },
+
+        /**
+         * Dragging fires the following events: dragstart, drag (repeadtedly), dragend, click, where click is the final location.
+         * The lat lon of click will not necessarily match the lat lon of the drag end, and the no correlation ids exist in the
+         * click event indicating it was initiated as a drag. If the mouse is moved off the map, then there is no click event.
+         *
+         * In order distinguish between a click (add marker) and dragend click (move marker), the ignoreClick flag is added to signify that
+         * a drag operation just finished and the next click should be ignored.
+         * @param event
+         */
         handleMoveMarker: function(event) {
+            if (this.dragStartEvent) {
+                var latLng;
+                if (event.originalEvent) {
+                    // Handle click event following drag end (when drag end occurs within map bounds)
 
-            // Adjust x and y for offset of cursor relative to icon anchor.
-            var x = event.originalEvent.layerX - event.originalEvent.offsetX;
-            var y = event.originalEvent.layerY - event.originalEvent.offsetY;
-            var latLng = this.map.containerPointToLatLng(L.point(x, y));
+                    // Adjust x and y for offset of cursor relative to icon anchor.
+                    var x = event.originalEvent.layerX - event.originalEvent.offsetX;
+                    var y = event.originalEvent.layerY - event.originalEvent.offsetY;
+                    latLng = this.map.containerPointToLatLng(L.point(x, y));
+                } else {
+                    // Handle drag end event that happens outside of the map bounds
+                    // No icon offset is available for dragend events.
+                    latLng = event.target._latlng;
+                }
 
-            var command = new Command();
-            var lineIndex = this.dragStartEvent.lineIndex;
-            var pointIndex = this.dragStartEvent.pointIndex;
-            var dragStartLatLng = this.dragStartEvent.latLng;
-            var _this = this;
-            command.do = function () {
-                _this.moveMarker( {
-                                lineIndex: lineIndex,
-                                pointIndex: pointIndex,
-                                latLng: latLng
-                            });
-            };
-            command.undo = function () {
-                _this.moveMarker( {
-                                lineIndex: lineIndex,
-                                pointIndex: pointIndex,
-                                latLng: dragStartLatLng
-                            });
-            };
-            command.do();
-            this.commands.add(command);
-            this.commands.trigger('change');
-            delete this.dragStartEvent;
+                var command = new Command();
+                var lineIndex = this.dragStartEvent.lineIndex;
+                var pointIndex = this.dragStartEvent.pointIndex;
+                var dragStartLatLng = this.dragStartEvent.latLng;
+                var _this = this;
+                command.do = function () {
+                    _this.moveMarker({
+                        lineIndex: lineIndex,
+                        pointIndex: pointIndex,
+                        latLng: latLng
+                    });
+                };
+                command.undo = function () {
+                    _this.moveMarker({
+                        lineIndex: lineIndex,
+                        pointIndex: pointIndex,
+                        latLng: dragStartLatLng
+                    });
+                };
+                command.do();
+                this.commands.add(command);
+                this.commands.trigger('change');
+                delete this.dragStartEvent;
+            }
         },
 
         moveMarker: function(event) {
@@ -245,7 +271,8 @@ define([
 
         handleMouseout: function(event) {
             this.logEvent(event);
-            delete this.dragStartEvent;
+            this.clearDotMarker();
+            this.routeTerminusView.handleMouseout();
         },
 
         logEvent: function(event) {

@@ -20,11 +20,13 @@ define([
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.listenTo(this.model, 'change:coordinates', this.render);
+            var _this = this;
         },
 
 
         render: function () {
             this.clearMarkers();
+            this.clearRubberBands();
             var point, lineString;
 
             if (this.model.get('type') === 'Point') {
@@ -61,6 +63,23 @@ define([
             this.startPoint.on('drag', function (event) {
                 _this.onDragging(event);
             });
+            this.startPoint.on('dragend', function (event) {
+                _this.onDragEnd(event);
+            });
+        },
+
+        addEndingPoint: function (latLng) {
+            this.endPoint = L.marker(latLng, {icon: this.endIcon, draggable: true}).addTo(this.markerGroup);
+            var _this = this;
+            this.endPoint.on('dragstart', function (event) {
+                _this.onDragStart(event);
+            });
+            this.endPoint.on('drag', function (event) {
+                _this.onDragging(event);
+            });
+            this.endPoint.on('dragend', function (event) {
+                _this.onDragEnd(event);
+            });
         },
 
         onDragStart: function (event) {
@@ -84,7 +103,13 @@ define([
             });
         },
 
+        onDragEnd: function (event) {
+            this.logEvent(event);
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
+        },
+
         onDragging: function (event) {
+            this.clearRubberBands();
             if (this.model.get('type') === 'MultiLineString') {
                 var lineStrings = this.model.get('coordinates');
                 var lineString, adjacentPoint;
@@ -97,7 +122,6 @@ define([
                     adjacentPoint = lineString[lineString.length - 2];
                 }
                 if (this.rubberBandLayer) {
-                    this.rubberBandLayer.clearLayers();
                     L.polyline([latLng, L.latLng(adjacentPoint[1], adjacentPoint[0])], {
                         color: '#808080',
                         weight: '2',
@@ -114,22 +138,21 @@ define([
             }
         },
 
+        handleMouseout: function (event) {
+            this.clearRubberBands();
+        },
+
+        clearRubberBands: function () {
+            if (this.rubberBandLayer) {
+                this.rubberBandLayer.clearLayers();
+            }
+        },
+
         logEvent: function (event) {
             if (event && console.log) {
                 var latLng = event.target._latlng;
                 console.log(event.type + " " + event.target._leaflet_id + " " + latLng.lat + " " + latLng.lng);
             }
-        },
-
-        addEndingPoint: function (latLng) {
-            this.endPoint = L.marker(latLng, {icon: this.endIcon, draggable: true}).addTo(this.markerGroup);
-            var _this = this;
-            this.endPoint.on('dragstart', function (event) {
-                _this.onDragStart(event);
-            });
-            this.endPoint.on('drag', function (event) {
-                _this.onDragging(event);
-            });
         },
 
         clearMarkers: function () {
