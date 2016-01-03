@@ -239,6 +239,7 @@ define([
                     }
                     geometry.set('coordinates', lineStrings);
                 }
+                geometry.trigger('change:coordinates');
             }
         },
 

@@ -90,6 +90,10 @@ define([
 
         addEndingPoint: function (latLng) {
             this.endPoint = L.marker(latLng, {icon: this.endIcon, draggable: true}).addTo(this.markerGroup);
+            var _this = this;
+            this.endPoint.on('dragstart', function(event) {
+                _this.onDragStart(event);
+            });
         },
 
         clearMarkers: function () {
