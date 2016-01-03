@@ -55,8 +55,11 @@ define([
             // dragstart, predrag, drag, dragend
             console.log('Start marker ' + this.startPoint._leaflet_id);
             var _this = this;
-            this.startPoint.on('dragstart', function(event) {
+            this.startPoint.on('dragstart', function (event) {
                 _this.onDragStart(event);
+            });
+            this.startPoint.on('drag', function (event) {
+                _this.onDragging(event);
             });
         },
 
@@ -81,6 +84,36 @@ define([
             });
         },
 
+        onDragging: function (event) {
+            if (this.model.get('type') === 'MultiLineString') {
+                var lineStrings = this.model.get('coordinates');
+                var lineString, adjacentPoint;
+                var latLng = event.target._latlng;
+                if (event.target._leaflet_id === this.startPoint._leaflet_id) {
+                    lineString = lineStrings[0];
+                    adjacentPoint = lineString[1];
+                } else {
+                    lineString = lineStrings[lineStrings.length - 1];
+                    adjacentPoint = lineString[lineString.length - 2];
+                }
+                if (this.rubberBandLayer) {
+                    this.rubberBandLayer.clearLayers();
+                    L.polyline([latLng, L.latLng(adjacentPoint[1], adjacentPoint[0])], {
+                        color: '#808080',
+                        weight: '2',
+                        dashArray: "1, 5"
+                    }).addTo(this.rubberBandLayer);
+                } else {
+                    var polyline = L.polyline([latLng, L.latLng(adjacentPoint[1], adjacentPoint[0])], {
+                        color: '#808080',
+                        weight: '2',
+                        dashArray: "1, 5"
+                    });
+                    this.rubberBandLayer = L.layerGroup([polyline]).addTo(this.map);
+                }
+            }
+        },
+
         logEvent: function (event) {
             if (event && console.log) {
                 var latLng = event.target._latlng;
@@ -91,8 +124,11 @@ define([
         addEndingPoint: function (latLng) {
             this.endPoint = L.marker(latLng, {icon: this.endIcon, draggable: true}).addTo(this.markerGroup);
             var _this = this;
-            this.endPoint.on('dragstart', function(event) {
+            this.endPoint.on('dragstart', function (event) {
                 _this.onDragStart(event);
+            });
+            this.endPoint.on('drag', function (event) {
+                _this.onDragging(event);
             });
         },
 
