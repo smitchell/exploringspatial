@@ -21,7 +21,9 @@ define([
             'click .location a': 'changeLocation',
             'keypress #location': 'searchOnEnter',
             'click .undo a' : 'handleUndo',
-            'keypress .undo a' : 'handleUndo'
+            'keypress .undo a' : 'handleUndo',
+            'click .reset a' : 'handleReset',
+            'keypress .reset a' : 'handleReset'
         },
 
         initialize: function () {
@@ -38,10 +40,12 @@ define([
             this.dispatcher = MapEventDispatcher;
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
+            this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             // listen for location changes from the map search view.
             this.location.on('sync', this.syncMapLocation, this);
             this.model = new Feature();
             this.model.get('properties').set('name', '');
+            this.model.get('properties').set('meters', 0);
             this.smallIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
@@ -61,7 +65,9 @@ define([
         },
 
         render: function () {
-            this.$el.html(this.template({model: this.model.get('properties').toJSON()}));
+            var properties = this.model.get('properties').toJSON();
+            properties.distance = properties.meters * this.metersToMiles;
+            this.$el.html(this.template({model: properties}));
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
@@ -80,6 +86,7 @@ define([
 
             var _this = this;
             this.map.on('click', _this.handleAddPoint, this);
+            this.map.on('mouseout', _this.handleMouseout, this);
             var geometry = this.model.get('geometry');
             var $mapContainer = $('#map_container');
             $mapContainer.css('cursor', 'crosshair');
@@ -92,11 +99,13 @@ define([
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
                 model: geometry,
+                dispatcher: this.dispatcher,
                 commands: this.commands
             });
-            this.RouteLinesView = new RouteLinesView({
+            this.routeLinesView = new RouteLinesView({
                 map: this.map,
                 model: geometry,
+                dispatcher: this.dispatcher,
                 commands: this.commands
             });
         },
@@ -150,17 +159,107 @@ define([
         },
 
         handleAddPoint: function (event) {
-            var _this = this;
+            this. logEvent(event);
+            /*
+             * Dragging fires the following events: dragstart, drag (repeadtedly), dragend, click, where click is the final location.
+             * The lat lon of click will not necessarily match the lat lon of the drag end, and the no correlation ids exist in the
+             * click event indicating it was initiated as a drag. If the mouse is moved off the map, then there is no click event.
+             *
+             * In order distinguish between a click (add marker) and dragend click (move marker), the dragstart flag is added to signify that
+             * a drag operation is underway. Either map mouseout or click event will clear the dragstart flag.
+             */
+            if (this.dragStartEvent) {
+                this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
+                this.handleMoveMarker(event);
+            } else {
+                var _this = this;
+                var command = new Command();
+                command.do = function () {
+                    _this.addPoint(event);
+                };
+                command.undo = function () {
+                    _this.removeLastPoint();
+                };
+                command.do();
+                this.commands.add(command);
+                this.commands.trigger('change');
+            }
+        },
+
+        handleMoveMarker: function(event) {
+
+            // Adjust x and y for offset of cursor relative to icon anchor.
+            var x = event.originalEvent.layerX - event.originalEvent.offsetX;
+            var y = event.originalEvent.layerY - event.originalEvent.offsetY;
+            var latLng = this.map.containerPointToLatLng(L.point(x, y));
+
             var command = new Command();
+            var lineIndex = this.dragStartEvent.lineIndex;
+            var pointIndex = this.dragStartEvent.pointIndex;
+            var dragStartLatLng = this.dragStartEvent.latLng;
+            var _this = this;
             command.do = function () {
-                _this.addPoint(event);
+                _this.moveMarker( {
+                                lineIndex: lineIndex,
+                                pointIndex: pointIndex,
+                                latLng: latLng
+                            });
             };
             command.undo = function () {
-                _this.removeLastPoint();
+                _this.moveMarker( {
+                                lineIndex: lineIndex,
+                                pointIndex: pointIndex,
+                                latLng: dragStartLatLng
+                            });
             };
             command.do();
             this.commands.add(command);
             this.commands.trigger('change');
+            delete this.dragStartEvent;
+        },
+
+        moveMarker: function(event) {
+            var lineString;
+            var geometry = this.model.get('geometry');
+            if (geometry.get('type') === 'Point') {
+                geometry.set('coordinates', this.toPointFromLatLng(event.latLng));
+            } else if (geometry.get('type') === 'MultiLineString') {
+                var lineStrings = geometry.get('coordinates');
+                if (lineStrings.length > 0) {
+                    lineString = lineStrings[event.lineIndex];
+                    lineString[event.pointIndex] = this.toPointFromLatLng(event.latLng);
+
+                    // Adjust adjacent lines
+                    if (event.pointIndex === 0 && event.lineIndex > 0) {
+                        var previousLine = lineStrings[event.lineIndex - 1];
+                        previousLine[previousLine.length - 1] = lineString[event.pointIndex];
+                    } else if (event.pointIndex === lineString.length - 1 && event.lineIndex < lineStrings.length - 1) {
+                        var nextLine = lineStrings[event.lineIndex + 1];
+                        nextLine[0] = lineString[event.pointIndex];
+                    }
+                    geometry.set('coordinates', lineStrings);
+                }
+            }
+        },
+
+        handleMouseout: function(event) {
+            this.logEvent(event);
+            delete this.dragStartEvent;
+        },
+
+        logEvent: function(event) {
+            if(event && console.log) {
+                console.log(event.type);
+            }
+        },
+
+        handleReset: function(){
+            if (confirm('Are you sure that you want remove everything from the map?')) {
+                this.commands.reset([]);
+                var geometry = this.model.get('geometry');
+                geometry.set({type: '', coordinates: []});
+                this.commands.trigger('change');
+            }
         },
 
         handleUndo: function() {
@@ -188,28 +287,39 @@ define([
                 // Get the last point of the last line.
                 var lineString = lineStrings[lineStrings.length - 1]; // get last line of line strings
                 var lastPoint = lineString[lineString.length - 1]; // last point of the list line
-                newLineString = [lastPoint, this.getEventPoint(event)]; // Previous point + new point
+                newLineString = [lastPoint, this.toPointFromEvent(event)]; // Previous point + new point
                 lineStrings.push(newLineString);
                 // Reset the coordinates to trigger coordinates change event.
                 geometry.set({'coordinates': lineStrings});
-                // TODO - Find out why this was necessary
                 geometry.trigger('change:coordinates');
 
             } else {
                 // Store the first click as a 'Point'
                 if (geometry.get('coordinates').length == 0) {
-                    geometry.set({'type': 'Point', 'coordinates': this.getEventPoint(event)});
+                    geometry.set({'type': 'Point', 'coordinates': this.toPointFromEvent(event)});
                 } else {
                     // Convert to 'MultiLineString' on second click.
                     var firstPoint = geometry.get('coordinates');
-                    newLineString = [firstPoint, this.getEventPoint(event)]; // Array of points in a line string.
+                    newLineString = [firstPoint, this.toPointFromEvent(event)]; // Array of points in a line string.
                     geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
                 }
             }
         },
 
-        getEventPoint: function (event) {
-            return [event.latlng.lng, event.latlng.lat, 0, 0];
+        toPointFromEvent: function (event) {
+            var latlng;
+            if (event.latlng) {
+                latlng = event.latlng;
+            } else if (event.target && event.target.latlng) {
+                latlng = event.target.latlng;
+            } else {
+                throw new Error("toPointFromEvent: latlng not found in event." + event);
+            }
+            return [latlng.lng, latlng.lat, 0, 0];
+        },
+
+        toPointFromLatLng: function (latLng) {
+            return [latLng.lng, latLng.lat, 0, 0];
         },
 
         sizeMaps: function () {
@@ -239,6 +349,10 @@ define([
                 seconds = "0" + seconds;
             }
             return minutes + ":" + seconds;
+        },
+
+        onDragStart: function(event) {
+            this.dragStartEvent = event;
         },
 
 
@@ -400,8 +514,10 @@ define([
         commandChanged: function () {
             if (this.commands.length > 0) {
                 this.$('.undo').show();
+                this.$('.reset').show();
             } else {
                 this.$('.undo').hide();
+                this.$('.reset').hide();
                 this.addTooltip();
             }
         },

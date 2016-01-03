@@ -16,8 +16,14 @@
             <input id="name" type="text" title="Route name." style="margin-left: 20px; width: 190px" value="<%= model.name %>"/>
         </label>
         <br/>
+        <label>
+            <span class="fieldLabel"  style="margin-right: 5px;">Distance:</span>
+            <%= model.distance %> mi.
+        </label>
+        <br/>
     </aside>
     <ul class="buttons" style="">
+        <li class="reset" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Reset</a></li>
         <li class="undo" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Undo</a></li>
         <li class="save" style="display: none;" ><a style="width: 60px;" href="javascript:alert('Not yet implemented.')">Save</a></li>
     </ul>

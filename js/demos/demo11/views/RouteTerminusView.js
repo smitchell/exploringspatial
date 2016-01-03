@@ -10,6 +10,7 @@ define([
         initialize: function (args) {
             this.map = args.map;
             this.commands = args.commands;
+            this.dispatcher = args.dispatcher;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [33, 50],
@@ -46,15 +47,49 @@ define([
 
         addStartingPoint: function (latLng) {
             if (this.markerGroup) {
-                this.startPoint = L.marker(latLng, {icon: this.startIcon}).addTo(this.markerGroup);
+                this.startPoint = L.marker(latLng, {icon: this.startIcon, draggable: true}).addTo(this.markerGroup);
             } else {
-                this.startPoint = L.marker(latLng, {icon: this.startIcon});
+                this.startPoint = L.marker(latLng, {icon: this.startIcon, draggable: true});
                 this.markerGroup = L.layerGroup([this.startPoint]).addTo(this.map);
+            }
+            // dragstart, predrag, drag, dragend
+            console.log('Start marker ' + this.startPoint._leaflet_id);
+            var _this = this;
+            this.startPoint.on('dragstart', function(event) {
+                _this.onDragStart(event);
+            });
+        },
+
+        onDragStart: function (event) {
+            this.logEvent(event);
+            var lineIndex, pointIndex;
+            if (event.target._leaflet_id === this.startPoint._leaflet_id) {
+                lineIndex = 0;
+                pointIndex = 0;
+            } else {
+                // Get the last point of the last line.
+                var lineStrings = this.model.get('coordinates');
+                var lineString = lineStrings[lineStrings.length - 1];
+                lineIndex = lineStrings.length - 1;
+                pointIndex = lineString.length - 1;
+            }
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
+                lineIndex: lineIndex,
+                pointIndex: pointIndex,
+                latLng: event.target._latlng,
+                originalEvent: event
+            });
+        },
+
+        logEvent: function (event) {
+            if (event && console.log) {
+                var latLng = event.target._latlng;
+                console.log(event.type + " " + event.target._leaflet_id + " " + latLng.lat + " " + latLng.lng);
             }
         },
 
         addEndingPoint: function (latLng) {
-            this.endPoint = L.marker(latLng, {icon: this.endIcon}).addTo(this.markerGroup);
+            this.endPoint = L.marker(latLng, {icon: this.endIcon, draggable: true}).addTo(this.markerGroup);
         },
 
         clearMarkers: function () {

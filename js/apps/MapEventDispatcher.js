@@ -28,7 +28,11 @@ define([
         // Demo 10
         CHART_MOUSEOVER:    'CHART_MOUSEOVER',
         CHART_MOUSEOUT:     'CHART_MOUSEOUT',
-        CHANGE_STYLE:       'CHANGE_STYLE'
+        CHANGE_STYLE:       'CHANGE_STYLE',
+
+        // Demo 11
+        DRAG_START:         'DRAG_START',
+        DRAG_END:           'DRAG_END'
     };
 
     var MapEventDispatcher = _.extend({}, Backbone.Events);
