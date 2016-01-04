@@ -4,29 +4,12 @@
     }
 </style>
 <div id="demo_sidepanel">
-    <aside>
-        <label class="location">
-            <span class="fieldLabel">Location:</span>
-            <input id="location" type="text" title="Location keywords" /><a href="javascript:void(0);"></a>
-            <br/>
-        </label>
-        <br/>
-        <label>
-            <span class="fieldLabel">Name:</span>
-            <input id="name" type="text" title="Route name." style="margin-left: 20px; width: 190px" value="<%= model.name %>"/>
-        </label>
-        <br/>
-        <label>
-            <span class="fieldLabel">Snap to Roads:</span>
-            <input id="snapToRoads" type="checkbox" style="height: 10px !important;" name="snapToRoads" <%= model.snapToRoads %> />
-        </label>
-        <br/>
-        <label>
-            <span class="fieldLabel"  style="margin-right: 5px;">Distance:</span>
-            <%= model.distance %> mi.
-        </label>
-        <br/>
-    </aside>
+    <div id="locationContainer"></div>
+    <div id="propertiesContainer" style="clear:both"></div>
+    <label>
+        <span class="fieldLabel">Snap to Roads:</span>
+        <input id="snapToRoads" type="checkbox" style="height: 10px !important;" name="snapToRoads" <%= model.snapToRoads %> />
+    </label>
     <ul class="buttons" style="">
         <li class="reset" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Reset</a></li>
         <li class="undo" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Undo</a></li>

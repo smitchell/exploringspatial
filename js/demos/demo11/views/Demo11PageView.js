@@ -10,16 +10,16 @@ define([
     'models/Feature',
     'models/Command',
     'collections/Commands',
+    'demos/demo11/views/MapLocationControlView',
+    'demos/demo11/views/RoutePropertiesView',
     'demos/demo11/views/ElevationChartView',
     'demos/demo11/views/RouteTerminusView',
     'demos/demo11/views/RouteLinesView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
+], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, MapLocationControlView, RoutePropertiesView, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
 
         events: {
-            'click .location a': 'changeLocation',
-            'keypress #location': 'searchOnEnter',
             'click .undo a': 'handleUndo',
             'keypress .undo a': 'handleUndo',
             'click .reset a': 'handleReset',
@@ -29,7 +29,6 @@ define([
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            this.location = new Location();
             this.smallIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
@@ -43,8 +42,6 @@ define([
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
-            // listen for location changes from the map search view.
-            this.location.on('sync', this.syncMapLocation, this);
             this.model = new Feature();
             this.model.get('properties').set('name', '');
             this.model.get('properties').set('meters', 0);
@@ -69,15 +66,21 @@ define([
 
         render: function () {
             var properties = this.model.get('properties').toJSON();
-            properties.distance = properties.meters * this.metersToMiles;
             properties.snapToRoads = this.snapToRoads ? 'checked' : '';
             this.$el.html(this.template({model: properties}));
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
-            this.location.set({lat: 38.974974, lon: -94.657152, zoom: 16}, {silent: true});
-            this.geoJsonLayer = L.geoJson().addTo(this.map);
-            this.syncMapLocation(); // Uses this.location to pan/zoom the map.
+            this.map.setView({lat: 38.974974, lng: -94.657152}, 16);
+            this.mapLocationControl = new MapLocationControlView({
+                map: this.map,
+                model: this.model,
+                el: this.$('#locationContainer')
+            });
+            this.routePropertiesView = new RoutePropertiesView({
+                model: this.model.get('properties'),
+                el: this.$('#propertiesContainer')
+            });
             if (this.elevationChartView) {
                 this.elevationChartView.render();
             } else {
@@ -110,7 +113,7 @@ define([
             });
             this.routeLinesView = new RouteLinesView({
                 map: this.map,
-                model: geometry,
+                model: this.model,
                 dispatcher: this.dispatcher,
                 snapToRoads: this.snapToRoads
             });
@@ -125,7 +128,7 @@ define([
 
         removeLastPoint: function (event) {
             var geometry = this.model.get('geometry');
-            var coordinates, newLineString, lineStrings;
+            var coordinates, lineStrings;
             if (geometry.get('type') === 'MultiLineString') {
                 lineStrings = geometry.get('coordinates'); // Array of line strings
 
@@ -257,7 +260,7 @@ define([
                     lineString = lineStrings[event.lineIndex];
                     lineString[event.pointIndex] = this.toPointFromLatLng(event.latLng);
                     // clear intermediate points to force directions to be refetch.
-                    lineStrings[event.lineIndex] = [lineString[0], lineString[lineString.length-1]];
+                    lineStrings[event.lineIndex] = [lineString[0], lineString[lineString.length - 1]];
                     // Adjust adjacent lines
                     if (event.pointIndex === 0 && event.lineIndex > 0) {
                         var previousLine = lineStrings[event.lineIndex - 1];
@@ -302,7 +305,7 @@ define([
         },
 
         addPoint: function (event) {
-            var coordinates, newLineString, lineStrings;
+            var coordinates, newLineString, lineStrings, newPoint;
             var geometry = this.model.get('geometry');
             // Clear tooltip after first click.
             if (geometry.get('coordinates').length === 0) {
@@ -317,8 +320,9 @@ define([
 
                 // Get the last point of the last line.
                 var lineString = lineStrings[lineStrings.length - 1]; // get last line of line strings
-                var lastPoint = lineString[lineString.length - 1]; // last point of the list line
-                newLineString = [lastPoint, this.toPointFromEvent(event)]; // Previous point + new point
+                var lastPoint = lineString[lineString.length - 1]; // last point of the last line
+                newPoint = this.toPointFromEvent(event);
+                newLineString = [lastPoint, newPoint]; // Previous point + new point
                 lineStrings.push(newLineString);
                 // Reset the coordinates to trigger coordinates change event.
                 geometry.set({'coordinates': lineStrings});
@@ -331,7 +335,8 @@ define([
                 } else {
                     // Convert to 'MultiLineString' on second click.
                     var firstPoint = geometry.get('coordinates');
-                    newLineString = [firstPoint, this.toPointFromEvent(event)]; // Array of points in a line string.
+                    newPoint = this.toPointFromEvent(event);
+                    newLineString = [firstPoint, newPoint]; // Array of points in a line string.
                     geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
                 }
             }
@@ -346,10 +351,12 @@ define([
             } else {
                 throw new Error("toPointFromEvent: latlng not found in event." + event);
             }
+            // lng, lat, distance meters, elevation meters
             return [latlng.lng, latlng.lat, 0, 0];
         },
 
         toPointFromLatLng: function (latLng) {
+            // lng, lat, distance meters, elevation meters
             return [latLng.lng, latLng.lat, 0, 0];
         },
 
@@ -474,62 +481,6 @@ define([
             return prev;
         },
 
-        changeLocation: function () {
-            var location = this.$('#location').val().trim();
-            if (location.length < 3) {
-                return;
-            }
-
-            // Throw out things that don't belong in a keyword search.
-            location = this.scrubInput(location);
-
-            var geoCoder = new GoogleGeoCoder();
-
-            // Clear the previous search results
-            geoCoder.clear({silent: true});
-
-            // Execute the search. If the query is successful the MapView will be notified
-            // because it is bound to the Location model sync event.
-            geoCoder.set('query', location);
-            var _self = this;
-            geoCoder.fetch({
-                success: function () {
-                    _self.location.set(geoCoder.toJSON());
-                    _self.location.trigger('sync');
-                },
-                complete: function () {
-                    $('.location').val('');
-                },
-                error: function (object, xhr, options) {
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
-                    }
-                }
-            });
-        },
-
-        syncMapLocation: function () {
-            if (this.location != null) {
-                var lat = this.location.get('lat');
-                var lon = this.location.get('lon');
-                var zoom = 10;
-                if (this.location.get('zoom') != null) {
-                    zoom = this.location.get('zoom');
-                }
-                if (lat != null && lon != null) {
-                    var center = L.latLng(lat, lon);
-                    this.map.setView(center, zoom);
-                }
-            }
-        },
-
-        searchOnEnter: function (e) {
-            if (e.keyCode != 13) {
-                return;
-            }
-            this.changeLocation();
-        },
-
         scrubInput: function (value) {
             var scrubbed = '';
             if (typeof value != 'undefined' && value != null) {
@@ -562,8 +513,20 @@ define([
 
 
         destroy: function () {
+            if (this.routePropertiesView) {
+                this.routePropertiesView.destroy();
+            }
             if (this.elevationChartView) {
                 this.elevationChartView.destroy();
+            }
+            if (this.mapLocationControl) {
+                this.mapLocationControl.destroy();
+            }
+            if (this.routeTerminusView) {
+                this.routeTerminusView.destroy();
+            }
+            if (this.routeLinesView) {
+                this.routeLinesView.destroy();
             }
             // Remove view from DOM
             this.remove();
