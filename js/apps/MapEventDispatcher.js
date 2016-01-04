@@ -32,7 +32,8 @@ define([
 
         // Demo 11
         DRAG_START:         'DRAG_START',
-        DRAG_END:           'DRAG_END'
+        DRAG_END:           'DRAG_END',
+        CHANGE_SNAP_TO_ROAD:'CHANGE_SNAP_TO_ROAD'
     };
 
     var MapEventDispatcher = _.extend({}, Backbone.Events);

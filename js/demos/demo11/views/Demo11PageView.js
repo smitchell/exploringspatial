@@ -20,10 +20,11 @@ define([
         events: {
             'click .location a': 'changeLocation',
             'keypress #location': 'searchOnEnter',
-            'click .undo a' : 'handleUndo',
-            'keypress .undo a' : 'handleUndo',
-            'click .reset a' : 'handleReset',
-            'keypress .reset a' : 'handleReset'
+            'click .undo a': 'handleUndo',
+            'keypress .undo a': 'handleUndo',
+            'click .reset a': 'handleReset',
+            'keypress .reset a': 'handleReset',
+            'change #snapToRoads': 'toggleSnapToRoads'
         },
 
         initialize: function () {
@@ -62,12 +63,14 @@ define([
             });
             this.commands = new Commands();
             this.commands.on('change', this.commandChanged, this);
+            this.snapToRoads = true;
             this.render();
         },
 
         render: function () {
             var properties = this.model.get('properties').toJSON();
             properties.distance = properties.meters * this.metersToMiles;
+            properties.snapToRoads = this.snapToRoads ? 'checked' : '';
             this.$el.html(this.template({model: properties}));
             // Render map
             this.sizeMaps();
@@ -150,12 +153,12 @@ define([
 
         },
 
-        addTooltip: function() {
+        addTooltip: function () {
             this.map.on('mousemove', this.addToolTip, this);
         },
 
 
-        removeTooltip: function() {
+        removeTooltip: function () {
             this.map.off('mousemove');
             this.clearDotMarker();
         },
@@ -180,7 +183,7 @@ define([
             }
         },
 
-        onDragEnd: function(event) {
+        onDragEnd: function (event) {
             if (this.dragStartEvent) {
                 /*
                  * onDragEnd should be ignored if the event is on the map, because the final locations comes in a
@@ -202,7 +205,7 @@ define([
          * a drag operation just finished and the next click should be ignored.
          * @param event
          */
-        handleMoveMarker: function(event) {
+        handleMoveMarker: function (event) {
             if (this.dragStartEvent) {
                 var latLng;
                 if (event.originalEvent) {
@@ -244,7 +247,7 @@ define([
             }
         },
 
-        moveMarker: function(event) {
+        moveMarker: function (event) {
             var lineString;
             var geometry = this.model.get('geometry');
             if (geometry.get('type') === 'Point') {
@@ -269,19 +272,19 @@ define([
             }
         },
 
-        handleMouseout: function(event) {
+        handleMouseout: function (event) {
             this.logEvent(event);
             this.clearDotMarker();
             this.routeTerminusView.handleMouseout();
         },
 
-        logEvent: function(event) {
-            if(event && console.log) {
+        logEvent: function (event) {
+            if (event && console.log) {
                 console.log(event.type);
             }
         },
 
-        handleReset: function(){
+        handleReset: function () {
             if (confirm('Are you sure that you want remove everything from the map?')) {
                 this.commands.reset([]);
                 var geometry = this.model.get('geometry');
@@ -290,7 +293,7 @@ define([
             }
         },
 
-        handleUndo: function() {
+        handleUndo: function () {
             var command = this.commands.pop();
             if (command) {
                 command.undo();
@@ -379,7 +382,7 @@ define([
             return minutes + ":" + seconds;
         },
 
-        onDragStart: function(event) {
+        onDragStart: function (event) {
             this.dragStartEvent = event;
         },
 
@@ -548,6 +551,13 @@ define([
                 this.$('.reset').hide();
                 this.addTooltip();
             }
+        },
+
+        toggleSnapToRoads: function () {
+            this.snapToRoads = $('#snapToRoads').is(':checked');
+            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, {
+                snapToRoads: this.snapToRoads
+            });
         },
 
 
