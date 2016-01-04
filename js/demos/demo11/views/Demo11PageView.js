@@ -12,20 +12,13 @@ define([
     'collections/Commands',
     'demos/demo11/views/MapLocationControlView',
     'demos/demo11/views/RoutePropertiesView',
+    'demos/demo11/views/RouteControlsView',
     'demos/demo11/views/ElevationChartView',
     'demos/demo11/views/RouteTerminusView',
     'demos/demo11/views/RouteLinesView',
     'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, MapLocationControlView, RoutePropertiesView, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
+], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, MapLocationControlView, RoutePropertiesView, RouteControlsView, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
     var Demo11PageView = Backbone.View.extend({
-
-        events: {
-            'click .undo a': 'handleUndo',
-            'keypress .undo a': 'handleUndo',
-            'click .reset a': 'handleReset',
-            'keypress .reset a': 'handleReset',
-            'change #snapToRoads': 'toggleSnapToRoads'
-        },
 
         initialize: function () {
             this.template = _.template(templateHtml);
@@ -59,20 +52,17 @@ define([
                 html: 'Click the map to add your first point.'
             });
             this.commands = new Commands();
-            this.commands.on('change', this.commandChanged, this);
             this.snapToRoads = true;
             this.render();
         },
 
         render: function () {
-            var properties = this.model.get('properties').toJSON();
-            properties.snapToRoads = this.snapToRoads ? 'checked' : '';
-            this.$el.html(this.template({model: properties}));
+            this.$el.html(this.template({model: this.model.get('properties').toJSON()}));
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
             this.map.setView({lat: 38.974974, lng: -94.657152}, 16);
-            this.mapLocationControl = new MapLocationControlView({
+            this.MapLocationControlView = new MapLocationControlView({
                 map: this.map,
                 model: this.model,
                 el: this.$('#locationContainer')
@@ -80,6 +70,13 @@ define([
             this.routePropertiesView = new RoutePropertiesView({
                 model: this.model.get('properties'),
                 el: this.$('#propertiesContainer')
+            });
+            this.routeControlsView = new RouteControlsView({
+                model: this.model,
+                commands: this.commands,
+                dispatcher: this.dispatcher,
+                snapToRoads: this.snapToRoads,
+                el: this.$('#controlsContainer')
             });
             if (this.elevationChartView) {
                 this.elevationChartView.render();
@@ -126,7 +123,7 @@ define([
             }
         },
 
-        removeLastPoint: function (event) {
+        removeLastLine: function (event) {
             var geometry = this.model.get('geometry');
             var coordinates, lineStrings;
             if (geometry.get('type') === 'MultiLineString') {
@@ -134,10 +131,6 @@ define([
 
                 // Get the last point of the last line.
                 var lineString = lineStrings.pop(); // get last line of line strings
-                lineString.pop(); // remove the last point
-                if (lineString.length > 1) {
-                    lineStrings.push(lineString);
-                }
                 if (lineStrings.length > 0) {
                     geometry.set({'coordinates': lineStrings});
                 } else if (lineString.length > 0) {
@@ -146,7 +139,6 @@ define([
                     geometry.set({type: '', coordinates: []});
                     this.addToolTip();
                 }
-                // TODO - Find out why this was necessary
                 geometry.trigger('change:coordinates');
 
             } else {
@@ -177,7 +169,7 @@ define([
                     _this.addPoint(event);
                 };
                 command.undo = function () {
-                    _this.removeLastPoint();
+                    _this.removeLastLine();
                 };
                 command.do();
                 this.commands.add(command);
@@ -285,23 +277,6 @@ define([
             if (event && console.log) {
                 console.log(event.type);
             }
-        },
-
-        handleReset: function () {
-            if (confirm('Are you sure that you want remove everything from the map?')) {
-                this.commands.reset([]);
-                var geometry = this.model.get('geometry');
-                geometry.set({type: '', coordinates: []});
-                this.commands.trigger('change');
-            }
-        },
-
-        handleUndo: function () {
-            var command = this.commands.pop();
-            if (command) {
-                command.undo();
-            }
-            this.commands.trigger('change');
         },
 
         addPoint: function (event) {
@@ -493,40 +468,30 @@ define([
             return scrubbed;
         },
 
-        commandChanged: function () {
-            if (this.commands.length > 0) {
-                this.$('.undo').show();
-                this.$('.reset').show();
-            } else {
-                this.$('.undo').hide();
-                this.$('.reset').hide();
-                this.addTooltip();
-            }
-        },
-
-        toggleSnapToRoads: function () {
-            this.snapToRoads = $('#snapToRoads').is(':checked');
-            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, {
-                snapToRoads: this.snapToRoads
-            });
-        },
-
-
         destroy: function () {
             if (this.routePropertiesView) {
                 this.routePropertiesView.destroy();
+                delete this.routePropertiesView;
+            }
+            if (this.RouteControlsView) {
+                this.RouteControlsView.destroy();
+                delete this.RouteControlsView;
             }
             if (this.elevationChartView) {
                 this.elevationChartView.destroy();
+                delete this.elevationChartView;
             }
-            if (this.mapLocationControl) {
-                this.mapLocationControl.destroy();
+            if (this.MapLocationControlView) {
+                this.MapLocationControlView.destroy();
+                delete this.MapLocationControlView;
             }
             if (this.routeTerminusView) {
                 this.routeTerminusView.destroy();
+                delete this.routeTerminusView;
             }
             if (this.routeLinesView) {
                 this.routeLinesView.destroy();
+                delete this.routeLinesView;
             }
             // Remove view from DOM
             this.remove();

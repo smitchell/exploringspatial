@@ -6,15 +6,7 @@
 <div id="demo_sidepanel">
     <div id="locationContainer"></div>
     <div id="propertiesContainer" style="clear:both"></div>
-    <label>
-        <span class="fieldLabel">Snap to Roads:</span>
-        <input id="snapToRoads" type="checkbox" style="height: 10px !important;" name="snapToRoads" <%= model.snapToRoads %> />
-    </label>
-    <ul class="buttons" style="">
-        <li class="reset" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Reset</a></li>
-        <li class="undo" style="display: none;" ><a style="width: 60px;" href="javascript:void(0)">Undo</a></li>
-        <li class="save" style="display: none;" ><a style="width: 60px;" href="javascript:alert('Not yet implemented.')">Save</a></li>
-    </ul>
+    <div id="controlsContainer" style="clear:both"></div>
 </div>
 <div id="detailsMapBox" class="detailsMapBox" style="top: 0; bottom: 0">
     <div id="map_container" class="detailMap" style="position: absolute; right: 0; top: 0"></div>
