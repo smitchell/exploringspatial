@@ -256,7 +256,8 @@ define([
                 if (lineStrings.length > 0) {
                     lineString = lineStrings[event.lineIndex];
                     lineString[event.pointIndex] = this.toPointFromLatLng(event.latLng);
-
+                    // clear intermediate points to force directions to be refetch.
+                    lineStrings[event.lineIndex] = [lineString[0], lineString[lineString.length-1]];
                     // Adjust adjacent lines
                     if (event.pointIndex === 0 && event.lineIndex > 0) {
                         var previousLine = lineStrings[event.lineIndex - 1];
