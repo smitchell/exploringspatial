@@ -20,22 +20,21 @@ define([
             }
         },
 
-        fetchData: function() {
+        fetchData: function () {
             var line = this.model.get('lineString');
             var _this = this;
             var start = line[0];
-            var finish = line[line.length-1];
+            var finish = line[line.length - 1];
             // Temporary "loading" line
             this.lineLayer = L.polyline([L.latLng(start[1], start[0]), L.latLng(finish[1], finish[0])], {
-                                    color: '#808080',
-                                    weight: '2',
-                                    dashArray: "1, 5"
-                                }).addTo(this.linesGroup);
+                color: '#808080',
+                weight: '2',
+                dashArray: "1, 5"
+            }).addTo(this.linesGroup);
             this.googleDirections.set({origin: start, destination: finish});
             this.googleDirections.fetch({
                 success: function () {
-                    _this.model.set({'lineString': _this.googleDirections.get('polyline')});
-                    _this.render();
+                    _this.onSuccess();
                 },
                 error: function (object, xhr) {
                     _this.loading -= 1;
@@ -44,6 +43,14 @@ define([
                     }
                 }
             });
+        },
+
+        onSuccess: function () {
+            this.model.set({'lineString': this.googleDirections.get('polyline')});
+            this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGED, {
+                line: this.model
+            });
+            this.render();
         },
 
         render: function () {
