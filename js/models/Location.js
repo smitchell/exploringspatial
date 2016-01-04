@@ -3,9 +3,9 @@
  *
  */
 define([
-    'underscore',
+    'jquery',
     'backbone'
-], function (_, Backbone) {
+], function ($, Backbone) {
     var Location = Backbone.Model.extend({
         defaults: {
             lat: 38.35888,

@@ -9,7 +9,6 @@ define([
 
         initialize: function (args) {
             this.map = args.map;
-            this.commands = args.commands;
             this.dispatcher = args.dispatcher;
             var CustomIcon = L.Icon.extend({
                 options: {

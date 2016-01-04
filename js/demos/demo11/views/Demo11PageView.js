@@ -75,7 +75,7 @@ define([
             // Render map
             this.sizeMaps();
             this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
-            this.location.set({lat: 39.097836, lon: -94.581642, zoom: 16}, {silent: true});
+            this.location.set({lat: 38.974974, lon: -94.657152, zoom: 16}, {silent: true});
             this.geoJsonLayer = L.geoJson().addTo(this.map);
             this.syncMapLocation(); // Uses this.location to pan/zoom the map.
             if (this.elevationChartView) {
@@ -106,14 +106,13 @@ define([
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
                 model: geometry,
-                dispatcher: this.dispatcher,
-                commands: this.commands
+                dispatcher: this.dispatcher
             });
             this.routeLinesView = new RouteLinesView({
                 map: this.map,
                 model: geometry,
                 dispatcher: this.dispatcher,
-                commands: this.commands
+                snapToRoads: this.snapToRoads
             });
         },
 

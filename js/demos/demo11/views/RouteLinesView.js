@@ -33,7 +33,10 @@ define([
                            lineString: lineString
                        }),
                        linesGroup: _this.linesGroup,
-                       snapToRoads: _this.snapToRoads,
+                       // Magic number... if length is two "presumes" directions have not been fetched yet.
+                       // (we don't want to call directions for every line segement each time the route gets extended.
+                       // The line must be set back to two points to force directions to be called again.
+                       snapToRoads: _this.snapToRoads && lineString.length === 2,
                        dispatcher: _this.dispatcher
                    });
                });
