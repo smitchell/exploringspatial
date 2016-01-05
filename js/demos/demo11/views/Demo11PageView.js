@@ -318,42 +318,42 @@ define([
         },
 
         addPoint: function (event) {
-            var newLineString, lineStrings, newPoint;
-            var geometry = this.model.get('geometry');
-            var coordinates = geometry.get('coordinates');
-            // Clear tooltip after first click.
-            if (coordinates.length == 0) {
-                this.removeTooltip();
-            }
-
-            if (geometry.get('type') === 'MultiLineString') {
-                // Array of linestrings
-                // which are arrays of points
-                // which are arrays of ordinates
-                lineStrings = geometry.get('coordinates'); // Array of line strings
-
-                // Get the last point of the last line.
-                var lineString = lineStrings[lineStrings.length - 1]; // get last line of line strings
-                var lastPoint = lineString[lineString.length - 1]; // last point of the last line
-                newPoint = this.toPointFromEvent(event);
-                newLineString = [lastPoint, newPoint]; // Previous point + new point
-                lineStrings.push(newLineString);
-                // Reset the coordinates to trigger coordinates change event.
-                geometry.set({'coordinates': lineStrings});
-                geometry.trigger('change:coordinates');
-
-            } else {
-                // Store the first click as a 'Point'
+                var newLineString, lineStrings, newPoint;
+                var geometry = this.model.get('geometry');
+                var coordinates = geometry.get('coordinates');
+                // Clear tooltip after first click.
                 if (coordinates.length == 0) {
-                    geometry.set({'type': 'Point', 'coordinates': this.toPointFromEvent(event)});
-                } else {
-                    // Convert to 'MultiLineString' on second click.
-                    var firstPoint = coordinates;
-                    newPoint = this.toPointFromEvent(event);
-                    newLineString = [firstPoint, newPoint]; // Array of points in a line string.
-                    geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
+                    this.removeTooltip();
                 }
-            }
+
+                if (geometry.get('type') === 'MultiLineString') {
+                    // Array of linestrings
+                    // which are arrays of points
+                    // which are arrays of ordinates
+                    lineStrings = geometry.get('coordinates'); // Array of line strings
+
+                    // Get the last point of the last line.
+                    var lineString = lineStrings[lineStrings.length - 1]; // get last line of line strings
+                    var lastPoint = lineString[lineString.length - 1]; // last point of the last line
+                    newPoint = this.toPointFromEvent(event);
+                    newLineString = [lastPoint, newPoint]; // Previous point + new point
+                    lineStrings.push(newLineString);
+                    // Reset the coordinates to trigger coordinates change event.
+                    geometry.set({'coordinates': lineStrings});
+                    geometry.trigger('change:coordinates');
+
+                } else {
+                    // Store the first click as a 'Point'
+                    if (coordinates.length == 0) {
+                        geometry.set({'type': 'Point', 'coordinates': this.toPointFromEvent(event)});
+                    } else {
+                        // Convert to 'MultiLineString' on second click.
+                        var firstPoint = coordinates;
+                        newPoint = this.toPointFromEvent(event);
+                        newLineString = [firstPoint, newPoint]; // Array of points in a line string.
+                        geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
+                    }
+                }
         },
 
         toPointFromEvent: function (event) {

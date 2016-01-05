@@ -173,23 +173,23 @@ define([
             this.clearRubberBands();
             if (this.model.get('type') === 'MultiLineString') {
                 var lineStrings = this.model.get('coordinates');
-                var lineString, adjacentPoint;
+                var lineString, oppositePoint;
                 var latLng = event.target._latlng;
                 if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
                     lineString = lineStrings[0];
-                    adjacentPoint = lineString[1];
+                    oppositePoint = lineString[lineString.length - 1];
                 } else {
                     lineString = lineStrings[lineStrings.length - 1];
-                    adjacentPoint = lineString[lineString.length - 2];
+                    oppositePoint = lineString[0];
                 }
                 if (this.rubberBandLayer) {
-                    L.polyline([latLng, L.latLng(adjacentPoint[1], adjacentPoint[0])], {
+                    L.polyline([latLng, L.latLng(oppositePoint[1], oppositePoint[0])], {
                         color: '#808080',
                         weight: '2',
                         dashArray: "1, 5"
                     }).addTo(this.rubberBandLayer);
                 } else {
-                    var polyline = L.polyline([latLng, L.latLng(adjacentPoint[1], adjacentPoint[0])], {
+                    var polyline = L.polyline([latLng, L.latLng(oppositePoint[1], oppositePoint[0])], {
                         color: '#808080',
                         weight: '2',
                         dashArray: "1, 5"
