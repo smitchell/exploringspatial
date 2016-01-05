@@ -109,6 +109,7 @@ define([
         },
 
         onChangeSnapToRoads: function (args) {
+            this.snapToRoads = args.snapToRoads;
             $.each(this.lineViews, function (i, lineView) {
                 lineView.snapToRoads = args.snapToRoads;
             });
