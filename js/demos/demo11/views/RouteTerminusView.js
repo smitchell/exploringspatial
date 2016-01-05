@@ -32,20 +32,20 @@ define([
 
             if (this.model.get('type') === 'Point') {
                 point = this.model.get('coordinates');
-                popup = this.createPopup(point, 0, 0);
+                popup = this.createPopup(point, 0, 0, 'startPoint');
                 this.addStartingPoint(point, popup);
             } else if (this.model.get('type') === 'MultiLineString') {
                 var lineStrings = this.model.get('coordinates');
                 if (lineStrings.length > 0) {
                     lineString = lineStrings[0];
                     point = lineString[0];
-                    popup = this.createPopup(point, 0, 0);
+                    popup = this.createPopup(point, 0, 0, 'startPoint');
                     this.addStartingPoint(point, popup);
 
                     // Get the last point of the last line.
                     lineString = lineStrings[lineStrings.length - 1];
                     point = lineString[lineString.length - 1];
-                    popup = this.createPopup(point, lineStrings.length - 1, 9999999999);
+                    popup = this.createPopup(point, lineStrings.length - 1, 9999999999, 'endPoint');
                     this.addEndingPoint(point, popup);
                 }
             }
@@ -99,13 +99,12 @@ define([
             });
         },
 
-        createPopup: function (point, lineIndex, pointIndex) {
+        createPopup: function (point, lineIndex, pointIndex, triggerId) {
             return L.popup({offset: L.point(0, -35)}).setContent(this.template({
                 latitude: Math.round(point[1] * 100000) / 100000,
                 longitude: Math.round(point[0] * 100000) / 100000,
                 distance: Math.round(point[2] * this.metersToMiles * 100) / 100,
-                dispatchArgs: '{"lineIndex":' + lineIndex + ',"pointIndex":' + pointIndex + "}",
-                dispatcher: this.dispatcher
+                triggerId: triggerId
             }));
         },
 
@@ -147,7 +146,7 @@ define([
         onDeleteClick: function (event) {
             this.logEvent(event);
             var lineIndex, pointIndex, point;
-            if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
+            if (event.target.id == 'startPoint') {
                 lineIndex = 0;
                 pointIndex = 0;
                 point = this.startingPoint;

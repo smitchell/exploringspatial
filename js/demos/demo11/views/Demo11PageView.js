@@ -142,11 +142,9 @@ define([
                     if (i == args.lineIndex) {
                         // Delete point from linestring
                         if (pointIndex == 0) {
-                            if (lineString.length == 2) {
-                                lineString = [lineString[1]];
-                            } else if (lineString > 2){
-                                lineString = lineString.slice(1, lineString.length - 1);
-                            }
+                            // Deleting the first point is the same as deleting the whole line.
+                            // The intermediate points were just added by the Directions service
+                            lineString = [lineString[lineString.length - 1]];
                         } else if (pointIndex == lineString.length - 1) {
                             // Deleting the last point is the same as deleting the whole line.
                             // The intermediate points were just added by the Directions service
