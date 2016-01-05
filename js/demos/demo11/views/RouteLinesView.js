@@ -16,7 +16,7 @@ define([
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
             this.dispatcher.on(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, this.onChangeSnapToRoads, this);
-            this.dispatcher.on(this.dispatcher.Events.LINE_CHANGED, this.onLineChanged, this);
+            this.dispatcher.on(this.dispatcher.Events.LINE_CHANGE, this.onLineChanged, this);
             this.linesGroup = L.featureGroup().addTo(this.map);
         },
 

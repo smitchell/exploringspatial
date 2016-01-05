@@ -35,6 +35,7 @@ define([
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
+            this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.onMarkerDelete, this);
             this.model = new Feature();
             this.model.get('properties').set('name', '');
             this.model.get('properties').set('meters', 0);
@@ -123,28 +124,69 @@ define([
             }
         },
 
-        removeLastLine: function (event) {
+        onMarkerDelete: function(args) {
             var geometry = this.model.get('geometry');
             var coordinates, lineStrings;
             if (geometry.get('type') === 'MultiLineString') {
+                var type = 'MultiLineString';
                 lineStrings = geometry.get('coordinates'); // Array of line strings
+                var newLineStrings = [];
+                var pointIndex = args.pointIndex;
+                $.each(lineStrings, function(i, lineString) {
+                    /* The points in the polyline change when Direction service is called.
+                     * Setting a large value then and adjusting it here solves that problem.
+                     */
+                    if (args.pointIndex > lineString.length - 1) {
+                        pointIndex = lineString.length - 1;
+                    }
+                    if (i == args.lineIndex) {
+                        // Delete point from linestring
+                        if (pointIndex == 0) {
+                            if (lineString.length == 2) {
+                                lineString = [lineString[1]];
+                            } else if (lineString > 2){
+                                lineString = lineString.slice(1, lineString.length - 1);
+                            }
+                        } else if (pointIndex == lineString.length - 1) {
+                            // Deleting the last point is the same as deleting the whole line.
+                            // The intermediate points were just added by the Directions service
+                            lineString = [lineString[0]];
+                        }
 
-                // Get the last point of the last line.
-                var lineString = lineStrings.pop(); // get last line of line strings
-                if (lineStrings.length > 0) {
-                    geometry.set({'coordinates': lineStrings});
-                } else if (lineString.length > 0) {
-                    geometry.set({type: 'Point', coordinates: lineString[0]});
-                } else {
-                    geometry.set({type: '', coordinates: []});
-                    this.addToolTip();
-                }
+                        // Determine disposition of remaining points in this line based on context
+                        if (lineString.length == 0) {
+                            if (lineStrings.length > 1) {
+                                geometry.set({type: '', coordinates: []});
+                                this.addToolTip()
+                            } else if (i > 0 && i < lineStrings.length - 1) {
+                                // combine the adjacent lines
+                                // Remove the previous line from newLineStrings.
+                                var previousLine = newLineStrings.pop();
+
+                                // Replace the points of the next line with starting point of the
+                                // previous line and the last point of the next line. This will
+                                // trigger directions to be called if snap-to-roads is enabled.
+                                var nextLine = lineStrings[i + 1];
+                                lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
+                            }
+                        } else if (lineString.length == 1) {
+                            if (lineStrings.length == 1) {
+                                type = 'Point';
+                                newLineStrings = lineString[0];
+                            }
+                        } else {
+                            newLineStrings.push(lineString)
+                        }
+                    } else {
+                        newLineStrings.push(lineString)
+                    }
+                });
+                geometry.set({'type': type, 'coordinates': newLineStrings});
                 geometry.trigger('change:coordinates');
 
             } else {
                 geometry.set({'type': '', 'coordinates': []});
             }
-
         },
 
         addTooltip: function () {
@@ -159,34 +201,31 @@ define([
 
         handleAddPoint: function (event) {
             this. logEvent(event);
-
-            if (this.dragStartEvent) {
-                this.handleMoveMarker(event);
-            } else {
-                var _this = this;
-                var command = new Command();
-                command.do = function () {
-                    _this.addPoint(event);
-                };
-                command.undo = function () {
-                    _this.removeLastLine();
-                };
-                command.do();
-                this.commands.add(command);
-                this.commands.trigger('change');
+            var _this = this;
+            var command = new Command();
+            command.do = function () {
+                _this.addPoint(event);
+            };
+            var geometry = this.model.get('geometry');
+            var coordinates = geometry.get('coordinates');
+            var lineIndex = 0;
+            if (geometry.get('type') === 'MultiLineString') {
+                lineIndex = coordinates.length; // don't subtract one since command.do hasn't executed
             }
+            command.undo = function () {
+                /* The points in the polyline change when Direction service is called. Setting
+                 * a large value then and adjusting it in onMarkerDelete solves that problem.
+                 */
+                _this.onMarkerDelete({lineIndex: lineIndex, pointIndex: 9999999999});
+            };
+            command.do();
+            this.commands.add(command);
+            this.commands.trigger('change');
         },
 
         onDragEnd: function (event) {
             if (this.dragStartEvent) {
-                /*
-                 * onDragEnd should be ignored if the event is on the map, because the final locations comes in a
-                 * subsequet click event. If the dragend happens off the map, then the click event never occurs.
-                 * If that case, we need to call handleMoveMarker to complete the move using the drag end location.
-                 */
-                if (!this.map.getBounds().contains(event.target._latlng)) {
-                    this.handleMoveMarker(event);
-                }
+                this.handleMoveMarker(event);
             }
         },
 
@@ -235,9 +274,10 @@ define([
                     });
                 };
                 command.do();
+                delete this.dragStartEvent;
                 this.commands.add(command);
                 this.commands.trigger('change');
-                delete this.dragStartEvent;
+
             }
         },
 
@@ -280,10 +320,11 @@ define([
         },
 
         addPoint: function (event) {
-            var coordinates, newLineString, lineStrings, newPoint;
+            var newLineString, lineStrings, newPoint;
             var geometry = this.model.get('geometry');
+            var coordinates = geometry.get('coordinates');
             // Clear tooltip after first click.
-            if (geometry.get('coordinates').length === 0) {
+            if (coordinates.length == 0) {
                 this.removeTooltip();
             }
 
@@ -305,11 +346,11 @@ define([
 
             } else {
                 // Store the first click as a 'Point'
-                if (geometry.get('coordinates').length == 0) {
+                if (coordinates.length == 0) {
                     geometry.set({'type': 'Point', 'coordinates': this.toPointFromEvent(event)});
                 } else {
                     // Convert to 'MultiLineString' on second click.
-                    var firstPoint = geometry.get('coordinates');
+                    var firstPoint = coordinates;
                     newPoint = this.toPointFromEvent(event);
                     newLineString = [firstPoint, newPoint]; // Array of points in a line string.
                     geometry.set({'type': 'MultiLineString', 'coordinates': [newLineString]});
@@ -454,18 +495,6 @@ define([
                 return next;
             }
             return prev;
-        },
-
-        scrubInput: function (value) {
-            var scrubbed = '';
-            if (typeof value != 'undefined' && value != null) {
-                scrubbed = value.trim();
-                if (scrubbed.length > 0) {
-                    scrubbed = scrubbed.split('<').join('');
-                    scrubbed = scrubbed.split('>').join('');
-                }
-            }
-            return scrubbed;
         },
 
         destroy: function () {

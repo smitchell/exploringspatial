@@ -47,7 +47,7 @@ define([
 
         onSuccess: function () {
             this.model.set({'lineString': this.googleDirections.get('polyline')});
-            this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGED, {
+            this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGE, {
                 line: this.model
             });
             this.render();

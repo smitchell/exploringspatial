@@ -16,8 +16,8 @@ define([
         },
 
         render: function() {
-            var miles =  this.model.get('meters') * this.metersToMiles;
             var json = this.model.toJSON();
+            var miles =  this.model.get('meters') * this.metersToMiles;
             json.distance = Math.round(miles*100)/100;
             this.$el.html(this.template({model: json}));
         },

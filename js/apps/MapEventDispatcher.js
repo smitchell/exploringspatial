@@ -34,7 +34,9 @@ define([
         DRAG_START:         'DRAG_START',
         DRAG_END:           'DRAG_END',
         CHANGE_SNAP_TO_ROAD:'CHANGE_SNAP_TO_ROAD',
-        LINE_CHANGED:       'LINE_CHANGED'
+        LINE_CHANGE:        'LINE_CHANGE',
+        MARKER_CLICK:       'MARKER_CLICK',
+        MARKER_DELETE:      'MARKER_DELETE'
     };
 
     var MapEventDispatcher = _.extend({}, Backbone.Events);
