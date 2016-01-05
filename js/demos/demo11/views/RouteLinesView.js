@@ -83,11 +83,13 @@ define([
                 polyline[0][2] = distanceMeters;
                 previousLine[previousLine.length - 1] = polyline[0];
             }
+            var prevPoint;
             if (lineIndex < lineStrings.length - 1) {
                 var nextLine = lineStrings[lineIndex + 1];
                 // set first point of next line to last point of changed line
                 nextLine[0] = polyline[polyline.length - 1];
                 for (var i = lineIndex; i < lineStrings.length; i++) {
+                    prevPoint = null;
                     // Assign distances to points
                     $.each(lineStrings[i], function (i, point) {
                         var latLng = L.latLng(point[1], point[0]);
