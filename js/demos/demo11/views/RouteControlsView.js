@@ -1,10 +1,10 @@
 "use strict";
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'text!demos/demo11/templates/RouteControlsView.html'
-], function ($, _, Backbone, templateHtml) {
+define(function(require) {
+    var $            = require('jquery'),
+        _            = require('underscore'),
+        Backbone     = require('backbone'),
+        templateHtml = require('text!demos/demo11/templates/RouteControlsView.html');
+
     var RouteControlsView = Backbone.View.extend({
 
         events: {
@@ -12,12 +12,14 @@ define([
             'keypress .undo a': 'handleUndo',
             'click .reset a': 'handleReset',
             'keypress .reset a': 'handleReset',
-            'change #snapToRoads': 'toggleSnapToRoads'
+            'change #snapToRoads': 'toggleSnapToRoads',
+            'change #transitMode': 'transitModeChange'
         },
 
         initialize: function (args) {
             this.dispatcher = args.dispatcher;
             this.snapToRoads = args.snapToRoads;
+            this.googleDirections = args.googleDirections;
             this.commands = args.commands;
             this.commands.on('change', this.commandChanged, this);
             this.template = _.template(templateHtml);
@@ -26,7 +28,16 @@ define([
 
         render: function() {
             var snapToRoads = this.snapToRoads ? 'checked' : '';
-            this.$el.html(this.template({snapToRoads: snapToRoads}));
+            var transitMode = this.googleDirections.get('transitMode');
+            var walkingSelected = transitMode == 'Walking' ? 'selected' : '';
+            var runningSelected = transitMode == 'Running' ? 'selected' : '';
+            var bikingSelected = transitMode == 'Bicycling' ? 'selected' : '';
+            this.$el.html(this.template({
+                snapToRoads: snapToRoads,
+                walkingSelected: walkingSelected,
+                runningSelected: runningSelected,
+                bikingSelected: bikingSelected
+            }));
         },
 
         handleUndo: function () {
@@ -52,6 +63,11 @@ define([
             this.dispatcher.trigger(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, {
                 snapToRoads: this.snapToRoads
             });
+        },
+
+        transitModeChange: function() {
+
+            this.googleDirections.set({'transitMode': $( "#transitMode option:selected" ).text()});
         },
 
 

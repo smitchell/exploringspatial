@@ -9,11 +9,12 @@ define([
     var GoogleDirections = Backbone.Model.extend({
 
         defaults: {
-            transitMode: google.maps.TravelMode.WALKING
+            transitMode: 'Walking'
         },
 
-        initialize: function() {
+        initialize: function(args ) {
             this.directionService = new google.maps.DirectionsService();
+            this.dispatcher = args.dispatcher;
         },
 
         fetch: function (options) {
@@ -31,10 +32,14 @@ define([
             console.log(JSON.stringify(start));
             var finish = {lat: destination[1], lng: destination[0]};
             console.log(JSON.stringify(finish));
+            var transitMode = google.maps.TravelMode.WALKING;
+            if(this.get('transitMode') == 'Bicycling') {
+                transitMode = google.maps.TravelMode.BICYCLING;
+            }
             var directionsRequest = {
                         origin: start,
                         destination: finish,
-                        travelMode: this.get('transitMode'),
+                        travelMode: transitMode,
                         provideRouteAlternatives: false,
                         avoidHighways: true,
                         avoidTolls: true

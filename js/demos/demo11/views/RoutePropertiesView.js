@@ -1,10 +1,9 @@
 "use strict";
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'text!demos/demo11/templates/RoutePropertiesView.html'
-], function ($, _, Backbone, templateHtml) {
+define(function(require) {
+    var _            = require('underscore'),
+        Backbone     = require('backbone'),
+        templateHtml = require('text!demos/demo11/templates/RoutePropertiesView.html');
+
     var RoutePropertiesView = Backbone.View.extend({
 
         initialize: function (args) {

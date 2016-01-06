@@ -1,9 +1,8 @@
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'highcharts'
-], function ($, _, Backbone, Highcharts) {
+"use strict";
+define(function(require) {
+    var Backbone   = require('backbone'),
+        Highcharts = require('highcharts');
+
     var ElevationChartView = Backbone.View.extend({
 
         initialize: function (args) {

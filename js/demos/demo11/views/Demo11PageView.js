@@ -1,24 +1,25 @@
 "use strict";
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'leaflet',
-    'apps/MapEventDispatcher',
-    'models/Location',
-    'models/GoogleGeoCoder',
-    'models/Feature',
-    'models/Command',
-    'collections/Commands',
-    'demos/demo11/views/MapLocationControlView',
-    'demos/demo11/views/RoutePropertiesView',
-    'demos/demo11/views/RouteControlsView',
-    'demos/demo11/views/ElevationChartView',
-    'demos/demo11/views/RouteTerminusView',
-    'demos/demo11/views/RouteLinesView',
-    'text!demos/demo11/templates/Demo11PageView.html'
-], function ($, _, Backbone, L, MapEventDispatcher, Location, GoogleGeoCoder, Feature, Command, Commands, MapLocationControlView, RoutePropertiesView, RouteControlsView, ElevationChartView, RouteTerminusView, RouteLinesView, templateHtml) {
-    var Demo11PageView = Backbone.View.extend({
+define(function(require) {
+    var $                      = require('jquery'),
+        _                      = require('underscore'),
+        Backbone               = require('backbone'),
+        L                      = require('leaflet'),
+        MapEventDispatcher     = require('apps/MapEventDispatcher'),
+        Location               = require('models/Location'),
+        GoogleGeoCoder         = require('models/GoogleGeoCoder'),
+        Feature                = require('models/Feature'),
+        Command                = require('models/Command'),
+        GoogleDirections       = require('models/GoogleDirections'),
+        Commands               = require('collections/Commands'),
+        MapLocationControlView = require('demos/demo11/views/MapLocationControlView'),
+        RoutePropertiesView    = require('demos/demo11/views/RoutePropertiesView'),
+        RouteControlsView      = require('demos/demo11/views/RouteControlsView'),
+        ElevationChartView     = require('demos/demo11/views/ElevationChartView'),
+        RouteTerminusView      = require('demos/demo11/views/RouteTerminusView'),
+        RouteLinesView         = require('demos/demo11/views/RouteLinesView'),
+        templateHtml           = require('text!demos/demo11/templates/Demo11PageView.html');
+
+     var Demo11PageView = Backbone.View.extend({
 
         initialize: function () {
             this.template = _.template(templateHtml);
@@ -36,6 +37,7 @@ define([
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
             this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.onMarkerDelete, this);
+            this.googleDirections = new GoogleDirections({dispatcher: this.dispatcher, transitMode: 'Bicycling'});
             this.model = new Feature();
             this.model.get('properties').set('name', '');
             this.model.get('properties').set('meters', 0);
@@ -77,6 +79,7 @@ define([
                 commands: this.commands,
                 dispatcher: this.dispatcher,
                 snapToRoads: this.snapToRoads,
+                googleDirections: this.googleDirections,
                 el: this.$('#controlsContainer')
             });
             if (this.elevationChartView) {
@@ -113,7 +116,8 @@ define([
                 map: this.map,
                 model: this.model,
                 dispatcher: this.dispatcher,
-                snapToRoads: this.snapToRoads
+                snapToRoads: this.snapToRoads,
+                googleDirections: this.googleDirections
             });
         },
 

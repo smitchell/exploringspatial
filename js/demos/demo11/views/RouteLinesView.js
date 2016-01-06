@@ -1,17 +1,18 @@
 "use strict";
-define([
-    'jquery',
-    'backbone',
-    'leaflet',
-    'models/Line',
-    'demos/demo11/views/RouteLineView'
-], function ($, Backbone, L, Line, RouteLineView) {
+define(function(require) {
+    var $             = require('jquery'),
+        Backbone      = require('backbone'),
+        L             = require('leaflet'),
+        Line          = require('models/Line'),
+        RouteLineView = require('demos/demo11/views/RouteLineView');
+
     var RouteLinesView = Backbone.View.extend({
 
         initialize: function (args) {
             this.map = args.map;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
+            this.googleDirections = args.googleDirections;
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
@@ -45,6 +46,7 @@ define([
                     });
                     _this.lineViews[i] = new RouteLineView({
                         map: _this.map,
+                        googleDirections: _this.googleDirections,
                         model: new Line({
                             lineIndex: i,
                             lineString: lineString,

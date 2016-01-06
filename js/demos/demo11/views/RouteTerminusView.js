@@ -1,10 +1,11 @@
 "use strict";
-define([
-    'jquery',
-    'backbone',
-    'leaflet',
-    'text!demos/demo11/templates/PointControlView.html'
-], function ($, Backbone, L, templateHtml) {
+define(function(require) {
+    var $            = require('jquery'),
+        _            = require('underscore'),
+        Backbone     = require('backbone'),
+        L            = require('leaflet'),
+        templateHtml = require('text!demos/demo11/templates/PointControlView.html');
+
     var RouteTerminusView = Backbone.View.extend({
 
         initialize: function (args) {

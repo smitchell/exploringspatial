@@ -1,10 +1,9 @@
 "use strict";
-define([
-    'jquery',
-    'backbone',
-    'leaflet',
-    'models/GoogleDirections'
-], function ($, Backbone, L, GoogleDirections) {
+define(function(require) {
+    var $            = require('jquery'),
+        Backbone     = require('backbone'),
+        L            = require('leaflet');
+
     var RouteLineView = Backbone.View.extend({
 
         initialize: function (args) {
@@ -12,7 +11,7 @@ define([
             this.linesGroup = args.linesGroup;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
-            this.googleDirections = new GoogleDirections();
+            this.googleDirections = args.googleDirections;
             if (this.snapToRoads) {
                 this.fetchData();
             } else {

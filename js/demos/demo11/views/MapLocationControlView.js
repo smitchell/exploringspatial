@@ -1,12 +1,12 @@
 "use strict";
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'models/Location',
-    'models/GoogleGeoCoder',
-    'text!demos/demo11/templates/MapLocationControlView.html'
-], function ($, _, Backbone, Location, GoogleGeoCoder, templateHtml) {
+define(function(require) {
+    var $              = require('jquery'),
+        _              = require('underscore'),
+        Backbone       = require('backbone'),
+        Location       = require('models/Location'),
+        GoogleGeoCoder = require('models/GoogleGeoCoder'),
+        templateHtml   = require('text!demos/demo11/templates/MapLocationControlView.html');
+
     var MapLocationControlView = Backbone.View.extend({
 
         events: {
