@@ -36,7 +36,7 @@ define(function(require) {
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
-            this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.onMarkerDelete, this);
+            this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.handleMarkerDelete, this);
             this.googleDirections = new GoogleDirections({dispatcher: this.dispatcher, transitMode: 'Bicycling'});
             this.model = new Feature();
             this.model.get('properties').set('name', '');
@@ -128,6 +128,44 @@ define(function(require) {
             }
         },
 
+         handleMarkerDelete: function(args) {
+             this. logEvent(event);
+             var _this = this;
+             var command = new Command();
+             var geometry = this.model.get('geometry');
+             var coordinates = geometry.get('coordinates');
+             var lineIndex = args.lineIndex;
+             var pointIndex = args.pointIndex;
+             var point;
+             if (geometry.get('type') === 'MultiLineString') {
+                 var line =  coordinates[lineIndex];
+                 if (pointIndex == 0) {
+                     point = line[pointIndex];
+                 } else {
+                     point = line[line.length - 1];
+                 }
+             } else {
+                 point = coordinates;
+             }
+             command.do = function () {
+                 _this.onMarkerDelete({lineIndex: lineIndex, pointIndex:pointIndex});
+             };
+
+             command.undo = function () {
+                 if (lineIndex == 0 && pointIndex == 0 && geometry.get('type') === 'MultiLineString') {
+                     var firstLine = coordinates[0];
+                     coordinates.unshift([point, firstLine[0]]);
+                     geometry.set({'coordinates': coordinates});
+                     geometry.trigger('change:coordinates');
+                 } else {
+                     _this.addPoint({latlng: {lat: point[1], lng: point[0]}});
+                 }
+             };
+             command.do();
+             this.commands.add(command);
+             this.commands.trigger('change');
+         },
+
         onMarkerDelete: function(args) {
             var geometry = this.model.get('geometry');
             var coordinates, lineStrings;
@@ -184,11 +222,12 @@ define(function(require) {
                     }
                 });
                 geometry.set({'type': type, 'coordinates': newLineStrings});
-                geometry.trigger('change:coordinates');
+
 
             } else {
                 geometry.set({'type': '', 'coordinates': []});
             }
+            geometry.trigger('change:coordinates');
         },
 
         addTooltip: function () {

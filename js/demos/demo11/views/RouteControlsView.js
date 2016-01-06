@@ -54,20 +54,26 @@ define(function(require) {
                 this.commands.reset([]);
                 var geometry = this.model.get('geometry');
                 geometry.set({type: '', coordinates: []});
+                this.model.get('properties').set({'meters':0});
                 this.commands.trigger('change');
             }
         },
 
         toggleSnapToRoads: function () {
-            this.snapToRoads = $('#snapToRoads').is(':checked');
+            this.snapToRoads = this.$('#snapToRoads').is(':checked');
             this.dispatcher.trigger(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, {
                 snapToRoads: this.snapToRoads
             });
+            if(this.snapToRoads) {
+                this.$('.transitSelect').show();
+            } else {
+                this.$('.transitSelect').hide();
+            }
         },
 
         transitModeChange: function() {
 
-            this.googleDirections.set({'transitMode': $( "#transitMode option:selected" ).text()});
+            this.googleDirections.set({'transitMode': this.$( "#transitMode option:selected" ).text()});
         },
 
 

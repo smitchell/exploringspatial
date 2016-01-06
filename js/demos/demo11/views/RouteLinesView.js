@@ -24,6 +24,8 @@ define(function(require) {
 
         render: function () {
             this.clearLines();
+            var properties = this.model.get('properties');
+            properties.set('meters', 0);
             var geometry = this.model.get('geometry');
             if (geometry.get('type') === 'MultiLineString') {
                 var lineStrings = geometry.get('coordinates');
@@ -60,11 +62,11 @@ define(function(require) {
                         dispatcher: _this.dispatcher
                     });
                 });
-                var properties = this.model.get('properties');
+
                 var d = properties.get('meters');
                 if (d != distanceMeters) {
                     properties.set('meters', distanceMeters);
-                };
+                }
             }
         },
 
@@ -121,6 +123,12 @@ define(function(require) {
         clearLines: function () {
             if (this.linesGroup) {
                 this.linesGroup.clearLayers();
+            }
+            if (this.lineViews) {
+                $.each(this.lineViews, function(i, lineView){
+                    lineView.destroy();
+                });
+                this.lineViews = [];
             }
         },
 
