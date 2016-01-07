@@ -50,6 +50,7 @@ define(function(require) {
                         map: _this.map,
                         googleDirections: _this.googleDirections,
                         model: new Line({
+                            lineCount: lineStrings.length,
                             lineIndex: i,
                             lineString: lineString,
                             meters: distanceMeters

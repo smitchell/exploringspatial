@@ -94,10 +94,27 @@ define(function(require) {
             this.clearMarkers();
             var lineString = this.model.get('lineString');
             var point = lineString[0];
-            this.startingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.startIcon, draggable: false});
-            point = lineString[lineString.length - 1];
-            this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false});
-            this.markerGroup = L.layerGroup([this.startingMarker, this.endingMarker]).addTo(this.map);
+            var markerGroup = L.layerGroup();
+            var lineIndex = this.model.get('lineIndex');
+            // Add a starting marker to any line except the first line.
+            if (lineIndex > 0) {
+                this.startingMarker = L.marker({lat: point[1], lng: point[0]}, {
+                    icon: this.startIcon,
+                    draggable: false
+                }).addTo(markerGroup);
+            }
+
+            // Add an ending marker to any line except the last line.
+            if (lineIndex < this.model.get('lineCount') - 1) {
+                point = lineString[lineString.length - 1];
+                this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false}).addTo(markerGroup);
+            }
+            // Only add the feature group if it contains one of the two markers.
+            // If there is only one line on the map, the marker Group will be empty.
+            if (this.startingMarker || this.endingMarker) {
+                markerGroup.addTo(this.map);
+                this.markerGroup = markerGroup;
+            }
         },
 
         onMouseout: function(event) {
