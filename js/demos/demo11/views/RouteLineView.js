@@ -12,6 +12,20 @@ define(function(require) {
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
             this.googleDirections = args.googleDirections;
+            var CustomIcon = L.Icon.extend({
+                options: {
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                }
+            });
+            this.startIcon = new CustomIcon({iconUrl: 'media/green_12x12.png'});
+            this.endIcon = new CustomIcon({iconUrl: 'media/red_12x12.png'});
+            this.style = {
+                weight: 3
+            };
+            this.highlight = {
+                weight: 5
+            };
             if (this.snapToRoads) {
                 this.fetchData();
             } else {
@@ -61,7 +75,53 @@ define(function(require) {
             $.each(line, function (i, point) {
                 latLngs.push(L.latLng(point[1], point[0]));
             });
-            this.lineLayer = L.polyline(latLngs).addTo(this.linesGroup);
+            var _this = this;
+            this.lineLayer = L.polyline(latLngs, this.style ).addTo(this.linesGroup);
+
+            this.lineLayer.on('mouseover', function(event) {
+                _this.onMouseover(event);
+            });
+
+            this.lineLayer.on('mouseout', function(event) {
+                _this.onMouseout(event);
+            });
+
+        },
+
+        onMouseover: function(event) {
+            this.logEvent(event);
+            this.lineLayer.setStyle(this.highlight);
+            this.clearMarkers();
+            var lineString = this.model.get('lineString');
+            var point = lineString[0];
+            this.startingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.startIcon, draggable: false});
+            point = lineString[lineString.length - 1];
+            this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false});
+            this.markerGroup = L.layerGroup([this.startingMarker, this.endingMarker]).addTo(this.map);
+        },
+
+        onMouseout: function(event) {
+            this.logEvent(event);
+            this.lineLayer.setStyle(this.style);
+            this.clearMarkers();
+        },
+
+        clearMarkers: function () {
+            if (this.markerGroup) {
+                this.markerGroup.clearLayers();
+            }
+            if (this.startingMarker) {
+                delete this.startingMarker;
+            }
+            if (this.endingMarker) {
+                delete this.endingMarker;
+            }
+        },
+
+        logEvent: function (event) {
+            if (event && console.log) {
+                console.log(event.type + ' leaflet Id' + event.target._leaflet_id);
+            }
         },
 
         destroy: function () {
