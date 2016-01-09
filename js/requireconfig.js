@@ -16,6 +16,7 @@ var require = {
         leaflet_prunecluster: 'leaflet/plugins/PruneCluster/PruneCluster',
         leaflet_pip: 'leaflet/plugins/leaflet-pip',
         leaflet_hotline: 'leaflet/plugins/leaflet.hotline',
+        leaflet_mapquest: 'http://www.mapquestapi.com/sdk/leaflet/v2.s/mq-map.js?key=E1aPfpcd72j9wfglxliaYXnCeKO4pFD1',
         apps: '../apps',
         collections: '../collections',
         models: '../models',
@@ -46,6 +47,10 @@ var require = {
         },
         'leaflet_google': {
             deps: ['leaflet']
+        },
+        'leaflet_mapquest': {
+            deps: ['leaflet'],
+            exports: 'MQ'
         },
         //'leaflet_bing': {
         //    deps: ['leaflet']

@@ -2,11 +2,13 @@
 define(function(require) {
     var $            = require('jquery'),
         Backbone     = require('backbone'),
-        L            = require('leaflet');
+        L            = require('leaflet'),
+        templateHtml = require('text!demos/demo11/templates/PointControlView.html');
 
     var RouteLineView = Backbone.View.extend({
 
         initialize: function (args) {
+            this.template = _.template(templateHtml);
             this.map = args.map;
             this.linesGroup = args.linesGroup;
             this.snapToRoads = args.snapToRoads;
@@ -26,6 +28,7 @@ define(function(require) {
             this.highlight = {
                 weight: 5
             };
+            this.metersToMiles = 0.000621371;
             if (this.snapToRoads) {
                 this.fetchData();
             } else {
@@ -82,9 +85,9 @@ define(function(require) {
                 _this.onMouseover(event);
             });
 
-            this.lineLayer.on('mouseout', function(event) {
-                _this.onMouseout(event);
-            });
+            //this.lineLayer.on('mouseout', function(event) {
+            //    _this.onMouseout(event);
+            //});
 
         },
 
@@ -94,27 +97,38 @@ define(function(require) {
             this.clearMarkers();
             var lineString = this.model.get('lineString');
             var point = lineString[0];
-            var markerGroup = L.layerGroup();
+            this.markerGroup = L.layerGroup().addTo(this.map);
             var lineIndex = this.model.get('lineIndex');
+            var popup;
             // Add a starting marker to any line except the first line.
             if (lineIndex > 0) {
+                popup = this.createPopup(point, 0, 0, 'startPoint');
                 this.startingMarker = L.marker({lat: point[1], lng: point[0]}, {
                     icon: this.startIcon,
                     draggable: false
-                }).addTo(markerGroup);
+                }).bindPopup(popup).addTo(this.markerGroup);
             }
 
             // Add an ending marker to any line except the last line.
             if (lineIndex < this.model.get('lineCount') - 1) {
                 point = lineString[lineString.length - 1];
-                this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false}).addTo(markerGroup);
+                popup = this.createPopup(point, lineIndex, 9999999999, 'endPoint');
+                this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false}).bindPopup(popup).addTo(this.markerGroup);
             }
             // Only add the feature group if it contains one of the two markers.
             // If there is only one line on the map, the marker Group will be empty.
             if (this.startingMarker || this.endingMarker) {
-                markerGroup.addTo(this.map);
-                this.markerGroup = markerGroup;
+                this.markerGroup.addTo(this.map);
             }
+        },
+
+        createPopup: function (point, lineIndex, pointIndex, triggerId) {
+            return L.popup({offset: L.point(0, -35)}).setContent(this.template({
+                latitude: Math.round(point[1] * 100000) / 100000,
+                longitude: Math.round(point[0] * 100000) / 100000,
+                distance: Math.round(point[2] * this.metersToMiles * 100) / 100,
+                triggerId: triggerId
+            }));
         },
 
         onMouseout: function(event) {
@@ -133,6 +147,32 @@ define(function(require) {
             if (this.endingMarker) {
                 delete this.endingMarker;
             }
+        },
+
+        onDeleteClick: function (event) {
+            this.logEvent(event);
+            var lineIndex, pointIndex, point;
+            if (event.target.id == 'startPoint') {
+                lineIndex = 0;
+                pointIndex = 0;
+                point = this.startingPoint;
+            } else {
+                // Get the last point of the last line.
+                var lineStrings = this.model.get('coordinates');
+                var lineString = lineStrings[lineStrings.length - 1];
+                lineIndex = lineStrings.length - 1;
+                /* The points in the polyline change when Direction service is called.
+                 * Setting a large value then and adjusting it here solves that problem.
+                 */
+                pointIndex = 999999999;
+                point = this.endingPoint;
+            }
+            this.dispatcher.trigger(this.dispatcher.Events.MARKER_DELETE, {
+                lineIndex: lineIndex,
+                pointIndex: pointIndex,
+                point: point,
+                layer: event.target
+            });
         },
 
         logEvent: function (event) {

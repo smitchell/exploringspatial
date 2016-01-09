@@ -1,11 +1,12 @@
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'text!demos/demo1/templates/Demo1PageView.html',
-    'leaflet_google'
-    //'leaflet_bing'
-], function ($, _, Backbone, templateHtml) {
+"use strict";
+define(function(require) {
+    var $            = require('jquery'),
+        _            = require('underscore'),
+        Backbone     = require('backbone'),
+        L            = require('leaflet'),
+        templateHtml = require('text!demos/demo1/templates/Demo1PageView.html');
+        require('leaflet_google');
+        //require('leaflet_bing');
 
     var Demo1PageView = Backbone.View.extend({
 
@@ -27,12 +28,21 @@ define([
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             });
-            var mapQuest = new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg',{
-                attribution:
-                    'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ' +
-            'Map data {attribution.OpenStreetMap}',
-                subdomains: '1234'
-            });
+            var mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+            var mapquestLink = '<a href="http://www.mapquest.com//">MapQuest</a>';
+            var mapquestPic = '<img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
+            var mapQuest = L.tileLayer(
+                'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+                  attribution: '&copy; ' + mapLink + '. Tiles courtesy of ' + mapquestLink + mapquestPic,
+                  maxZoom: 18,
+                  subdomains: '1234'
+                });
+            //var mapQuest = new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg',{
+            //    attribution:
+            //        'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ' +
+            //'Map data {attribution.OpenStreetMap}',
+            //    subdomains: '1234'
+            //});
             var googleLayer = new L.Google('ROADMAP');
             //var bingLayer = new L.BingLayer("AlRrhXJslATe2Aa0C37wvqJcbtMNthKFTaOiYWys3hBhw-4lfMsIUnFRVGLgmfEY");
             var map = L.map('map_container', {

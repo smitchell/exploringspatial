@@ -18,6 +18,7 @@ define(function(require) {
         RouteTerminusView      = require('demos/demo11/views/RouteTerminusView'),
         RouteLinesView         = require('demos/demo11/views/RouteLinesView'),
         templateHtml           = require('text!demos/demo11/templates/Demo11PageView.html');
+        require('leaflet_google');
 
      var Demo11PageView = Backbone.View.extend({
 
@@ -63,7 +64,27 @@ define(function(require) {
             this.$el.html(this.template({model: this.model.get('properties').toJSON()}));
             // Render map
             this.sizeMaps();
-            this.map = L.map('map_container').addLayer(new L.Google('ROADMAP'));
+            var googleLayer = new L.Google('ROADMAP');
+            var osmLayer = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+                attribution:
+                    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+            var mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+            var mapquestLink = '<a href="http://www.mapquest.com//">MapQuest</a>';
+            var mapquestPic = '<img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
+            var mapQuestLayer = L.tileLayer(
+                'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+                  attribution: '&copy; ' + mapLink + '. Tiles courtesy of ' + mapquestLink + mapquestPic,
+                  maxZoom: 18,
+                  subdomains: '1234'
+                });
+            this.map = L.map('map_container').addLayer(googleLayer);
+            var baseLayers = {
+                'Google': googleLayer,
+                'OSM': osmLayer,
+                'MapQuest': mapQuestLayer
+            };
+            L.control.layers(baseLayers).addTo(this.map);
             this.map.setView({lat: 38.974974, lng: -94.657152}, 16);
             this.MapLocationControlView = new MapLocationControlView({
                 map: this.map,
