@@ -4,6 +4,7 @@ define(function(require) {
         Backbone      = require('backbone'),
         L             = require('leaflet'),
         Line          = require('models/Line'),
+        LineRouter    = require('utils/LineRouter'),
         RouteLineView = require('demos/demo11/views/RouteLineView');
 
     var RouteLinesView = Backbone.View.extend({
@@ -12,7 +13,7 @@ define(function(require) {
             this.map = args.map;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
-            this.googleDirections = args.googleDirections;
+            this.lineRouter = new LineRouter({dispatcher: this.dispatcher});
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
@@ -48,7 +49,7 @@ define(function(require) {
                     });
                     _this.lineViews[i] = new RouteLineView({
                         map: _this.map,
-                        googleDirections: _this.googleDirections,
+                        lineRouter: _this.lineRouter,
                         model: new Line({
                             lineCount: lineStrings.length,
                             lineIndex: i,

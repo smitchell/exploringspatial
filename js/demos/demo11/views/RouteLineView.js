@@ -3,6 +3,7 @@ define(function(require) {
     var $            = require('jquery'),
         Backbone     = require('backbone'),
         L            = require('leaflet'),
+
         templateHtml = require('text!demos/demo11/templates/PointControlView.html');
 
     var RouteLineView = Backbone.View.extend({
@@ -10,10 +11,10 @@ define(function(require) {
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.map = args.map;
+            this.lineRouter = lineRouter;
             this.linesGroup = args.linesGroup;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
-            this.googleDirections = args.googleDirections;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [12, 12],
@@ -38,7 +39,6 @@ define(function(require) {
 
         fetchData: function () {
             var line = this.model.get('lineString');
-            var _this = this;
             var start = line[0];
             var finish = line[line.length - 1];
             // Temporary "loading" line
@@ -47,22 +47,12 @@ define(function(require) {
                 weight: '2',
                 dashArray: "1, 5"
             }).addTo(this.linesGroup);
-            this.googleDirections.set({origin: start, destination: finish});
-            this.googleDirections.fetch({
-                success: function () {
-                    _this.onSuccess();
-                },
-                error: function (object, xhr) {
-                    _this.loading -= 1;
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
-                    }
-                }
-            });
+            var _this = this;
+            this.lineRouter.getDirections({line: line, success: function(lineString) {_this.onSuccess(lineString)}});
         },
 
-        onSuccess: function () {
-            this.model.set({'lineString': this.googleDirections.get('polyline')});
+        onSuccess: function (lineString) {
+            this.model.set({'lineString': lineString});
             this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGE, {
                 line: this.model
             });
