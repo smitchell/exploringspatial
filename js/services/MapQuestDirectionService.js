@@ -34,8 +34,8 @@ define(function (require) {
         url.push('&generalize=0');
         url.push('&locale=en_US');
         url.push('&unit=m');
-        url.push('&from=' + this.origin[1] + ',' + this.origin[0]);
-        url.push('&to=' + this.destination[1] + ',' + this.destination[0]);
+        url.push('&from=' + options.origin[1] + ',' + options.origin[0]);
+        url.push('&to=' + options.destination[1] + ',' + options.destination[0]);
         url.push('&drivingStyle=2');
         url.push('&highwayEfficiency=21.0');
 

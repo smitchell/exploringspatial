@@ -1,8 +1,9 @@
 "use strict";
-define(function(require) {
-    var $            = require('jquery'),
-        Backbone     = require('backbone'),
-        L            = require('leaflet'),
+define(function (require) {
+    var $        = require('jquery'),
+        Backbone = require('backbone'),
+        _        = require('underscore'),
+        L = require('leaflet'),
 
         templateHtml = require('text!demos/demo11/templates/PointControlView.html');
 
@@ -50,8 +51,12 @@ define(function(require) {
             var _this = this;
             this.lineRouter.getDirections({
                 line: line,
-                success: function(lineString) {_this.onSuccess(lineString)},
-                error: function(response, xtr) {_this.onError(response, xtr)}
+                success: function (lineString) {
+                    _this.onSuccess(lineString)
+                },
+                error: function (response, xtr) {
+                    _this.onError(response, xtr)
+                }
             });
         },
 
@@ -63,7 +68,7 @@ define(function(require) {
             this.render();
         },
 
-        onError: function (response, status) {
+        onError: function () {
             this.snapToRoads = false;
             this.render();
         },
@@ -78,15 +83,15 @@ define(function(require) {
                 latLngs.push(L.latLng(point[1], point[0]));
             });
             var _this = this;
-            this.lineLayer = L.polyline(latLngs, this.style ).addTo(this.linesGroup);
+            this.lineLayer = L.polyline(latLngs, this.style).addTo(this.linesGroup);
 
-            this.lineLayer.on('mouseover', function(event) {
+            this.lineLayer.on('mouseover', function (event) {
                 _this.onMouseover(event);
             });
 
         },
 
-        onMouseover: function(event) {
+        onMouseover: function (event) {
             this.logEvent(event);
             this.lineLayer.setStyle(this.highlight);
             this.clearMarkers();
@@ -103,10 +108,11 @@ define(function(require) {
                     draggable: false
                 }).addTo(this.markerGroup);
                 // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
-                this.startingMarker.on('click', function() {
+                this.startingMarker.on('click', function () {
                     _this.popupopen = true;
-                    _this.startingMarker.bindPopup( _this.createPopup(startPoint, 0, 0, 'startPoint'));
-                    _this.startingMarker.openPopup();
+                    _this.startingMarker.bindPopup(_this.createPopup(startPoint, 0, 0, 'startPoint'));
+                    _this.startingMarker.openPopup()
+                        .on('popupclose', function (event) {_this.onClosePopup(event);});
                 });
             }
 
@@ -119,10 +125,11 @@ define(function(require) {
                     draggable: false
                 }).addTo(this.markerGroup);
                 // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
-                this.endingMarker.on('click', function() {
+                this.endingMarker.on('click', function () {
                     _this.popupopen = true;
                     _this.endingMarker.bindPopup(_this.createPopup(endPoint, lineIndex, 9999999999, 'endPoint'));
-                    _this.endingMarker.openPopup();
+                    _this.endingMarker.openPopup()
+                        .on('popupclose', function (event) {_this.onClosePopup(event);});
                 });
             }
             // Only add the feature group if it contains one of the two markers.
@@ -135,19 +142,22 @@ define(function(require) {
         },
 
         createPopup: function (point, lineIndex, pointIndex, triggerId) {
-            var _this = this;
             return L.popup({offset: L.point(0, 0)}).setContent(this.template({
                 latitude: Math.round(point[1] * 100000) / 100000,
                 longitude: Math.round(point[0] * 100000) / 100000,
                 distance: Math.round(point[2] * this.metersToMiles * 100) / 100,
                 triggerId: triggerId
-            })).on('popupclose', function() {
-                _this.popupopen = false;
-                _this.onMouseout()
-            });
+            }));
         },
 
-        onMouseout: function() {
+        onClosePopup: function(event) {
+            this.popupopen = false;
+            this.lineLayer.setStyle(this.style);
+            event.target.unbindPopup();
+            this.clearMarkers();
+        },
+
+        onMouseout: function () {
             // Ignore the first mouse out if popup is open so that
             // user can move the mouse to the popup without unhighlighting line.
             if (!this.popupopen) {
@@ -178,7 +188,6 @@ define(function(require) {
             } else {
                 // Get the last point of the last line.
                 var lineStrings = this.model.get('coordinates');
-                var lineString = lineStrings[lineStrings.length - 1];
                 lineIndex = lineStrings.length - 1;
                 /* The points in the polyline change when Direction service is called.
                  * Setting a large value then and adjusting it here solves that problem.
