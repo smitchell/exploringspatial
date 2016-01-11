@@ -25,7 +25,7 @@ define(function (require) {
             this.startIcon = new CustomIcon({iconUrl: 'media/green_16x16.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/red_16x16.png'});
             this.style = {
-                weight: 5
+                weight: 3
             };
             this.highlight = {
                 weight: 8
@@ -93,45 +93,22 @@ define(function (require) {
 
         onMouseover: function (event) {
             this.logEvent(event);
+            var _this = this;
             this.lineLayer.setStyle(this.highlight);
             this.clearMarkers();
             var lineString = this.model.get('lineString');
-            var startPoint = lineString[0];
             this.markerGroup = L.layerGroup().addTo(this.map);
             var lineIndex = this.model.get('lineIndex');
-            var _this = this;
             // Add a starting marker to any line except the first line.
             if (lineIndex > 0) {
-                this.startingMarker = L.marker({lat: startPoint[1], lng: startPoint[0]}, {
-                    icon: this.startIcon,
-                    riseOnHover: true,
-                    draggable: false
-                }).addTo(this.markerGroup);
-                // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
-                this.startingMarker.on('click', function () {
-                    _this.popupopen = true;
-                    _this.startingMarker.bindPopup(_this.createPopup(startPoint, 0, 0, 'startPoint'));
-                    _this.startingMarker.openPopup()
-                        .on('popupclose', function (event) {_this.onClosePopup(event);});
-                });
+                this.startingMarker = this.addStartMarker(lineString[0]);
             }
 
             // Add an ending marker to any line except the last line.
             if (lineIndex < this.model.get('lineCount') - 1) {
-                var endPoint = lineString[lineString.length - 1];
-                this.endingMarker = L.marker({lat: endPoint[1], lng: endPoint[0]}, {
-                    icon: this.endIcon,
-                    riseOnHover: true,
-                    draggable: false
-                }).addTo(this.markerGroup);
-                // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
-                this.endingMarker.on('click', function () {
-                    _this.popupopen = true;
-                    _this.endingMarker.bindPopup(_this.createPopup(endPoint, lineIndex, 9999999999, 'endPoint'));
-                    _this.endingMarker.openPopup()
-                        .on('popupclose', function (event) {_this.onClosePopup(event);});
-                });
+                this.endingMarker = this.addEndMarker(lineString[lineString.length - 1]);
             }
+
             // Only add the feature group if it contains one of the two markers.
             // If there is only one line on the map, the marker Group will be empty.
             if (this.startingMarker || this.endingMarker) {
@@ -141,7 +118,48 @@ define(function (require) {
             this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
         },
 
-        createPopup: function (point, lineIndex, pointIndex, triggerId) {
+        addStartMarker: function (point) {
+            var _this = this;
+            var marker = L.marker({lat: point[1], lng: point[0]}, {
+                icon: this.startIcon,
+                riseOnHover: true,
+                draggable: false
+            }).addTo(this.markerGroup);
+            // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
+            marker.on('click', function () {
+                _this.popupopen = true;
+                var popup = _this.createPopup(point, 0, RouteLineView.START_TRIGGER_ID);
+                marker.bindPopup(popup);
+                marker.openPopup().on('popupclose', function (event) {_this.onClosePopup(event);});
+                // Bind new click event
+                $(popup._container).on('click', '.popupTrigger', function (event) {
+                    _this.onDeleteClick(event, popup);
+                });
+            });
+            return marker;
+        },
+
+        addEndMarker: function(point) {
+            var _this = this;
+            var marker = L.marker({lat: point[1], lng: point[0]}, {
+                icon: this.endIcon,
+                riseOnHover: true,
+                draggable: false
+            }).addTo(this.markerGroup);
+            // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
+            var popup = _this.createPopup(point, 9999999999, RouteLineView.END_TRIGGER_ID);
+            marker.on('click', function () {
+                _this.popupopen = true;
+                marker.bindPopup(popup);
+                marker.openPopup().on('popupclose', function (event) {_this.onClosePopup(event);});
+                $(popup._container).on('click', '.popupTrigger', function (event) {
+                    _this.onDeleteClick(event, popup);
+                });
+            });
+            return marker;
+        },
+
+        createPopup: function (point, pointIndex, triggerId) {
             return L.popup({offset: L.point(0, 0)}).setContent(this.template({
                 latitude: Math.round(point[1] * 100000) / 100000,
                 longitude: Math.round(point[0] * 100000) / 100000,
@@ -151,6 +169,7 @@ define(function (require) {
         },
 
         onClosePopup: function(event) {
+            $(event.popup._container).off('click', '.popupTrigger');
             this.popupopen = false;
             this.lineLayer.setStyle(this.style);
             event.target.unbindPopup();
@@ -167,6 +186,7 @@ define(function (require) {
         },
 
         clearMarkers: function () {
+            $('.popupTrigger').off('click');
             if (this.markerGroup) {
                 this.markerGroup.clearLayers();
             }
@@ -180,15 +200,14 @@ define(function (require) {
 
         onDeleteClick: function (event) {
             this.logEvent(event);
-            var lineIndex, pointIndex, point;
-            if (event.target.id == 'startPoint') {
-                lineIndex = 0;
+            var pointIndex, point;
+            var lineIndex = this.model.get('lineIndex');
+            if (event.target.id === RouteLineView.START_TRIGGER_ID) {
                 pointIndex = 0;
                 point = this.startingPoint;
             } else {
                 // Get the last point of the last line.
                 var lineStrings = this.model.get('coordinates');
-                lineIndex = lineStrings.length - 1;
                 /* The points in the polyline change when Direction service is called.
                  * Setting a large value then and adjusting it here solves that problem.
                  */
@@ -210,10 +229,15 @@ define(function (require) {
         },
 
         destroy: function () {
+
+            this.clearMarkers();
             // Remove view from DOM
             this.remove();
         }
     });
+
+    RouteLineView.START_TRIGGER_ID = 'startPoint';
+    RouteLineView.END_TRIGGER_ID = 'endPoint';
 
     return RouteLineView;
 });

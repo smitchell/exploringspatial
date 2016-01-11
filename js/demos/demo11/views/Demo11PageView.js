@@ -196,6 +196,7 @@ define(function(require) {
                 lineStrings = geometry.get('coordinates'); // Array of line strings
                 var newLineStrings = [];
                 var pointIndex = args.pointIndex;
+                var nextLine, previousLine;
                 $.each(lineStrings, function(i, lineString) {
                     /* The points in the polyline change when Direction service is called.
                      * Setting a large value then and adjusting it here solves that problem.
@@ -217,24 +218,34 @@ define(function(require) {
 
                         // Determine disposition of remaining points in this line based on context
                         if (lineString.length == 0) {
-                            if (lineStrings.length > 1) {
+                            if (lineStrings.length == 1) {
                                 geometry.set({type: '', coordinates: []});
                                 this.addToolTip()
                             } else if (i > 0 && i < lineStrings.length - 1) {
                                 // combine the adjacent lines
                                 // Remove the previous line from newLineStrings.
-                                var previousLine = newLineStrings.pop();
+                                previousLine = newLineStrings.pop();
 
                                 // Replace the points of the next line with starting point of the
                                 // previous line and the last point of the next line. This will
                                 // trigger directions to be called if snap-to-roads is enabled.
-                                var nextLine = lineStrings[i + 1];
+                                nextLine = lineStrings[i + 1];
                                 lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
                             }
                         } else if (lineString.length == 1) {
                             if (lineStrings.length == 1) {
                                 type = 'Point';
                                 newLineStrings = lineString[0];
+                            }  else if (i > 0 && i < lineStrings.length - 1) {
+                                // combine the adjacent lines
+                                // Remove the previous line from newLineStrings.
+                                previousLine = newLineStrings.pop();
+
+                                // Replace the points of the next line with starting point of the
+                                // previous line and the last point of the next line. This will
+                                // trigger directions to be called if snap-to-roads is enabled.
+                                nextLine = lineStrings[i + 1];
+                                lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
                             }
                         } else {
                             newLineStrings.push(lineString)

@@ -112,7 +112,7 @@
     {
       "demoId": 11,
       "created": "12/23/2015",
-      "title": "Route Creation",
+      "title": "Route Drawing with Leaflet Plugins",
       "href": "#demo/11",
       "github": "https://github.com/smitchell/exploringspatial/tree/master/js/demos/demo11",
       "description": "<p>This demo is not yet complete.</p>",

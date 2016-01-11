@@ -33,20 +33,20 @@ define(function(require) {
 
             if (this.model.get('type') === 'Point') {
                 point = this.model.get('coordinates');
-                popup = this.createPopup(point, 0, 0, 'startPoint');
+                popup = this.createPopup(point, 0, 0, RouteTerminusView.START_TRIGGER_ID);
                 this.addStartingPoint(point, popup);
             } else if (this.model.get('type') === 'MultiLineString') {
                 var lineStrings = this.model.get('coordinates');
                 if (lineStrings.length > 0) {
                     lineString = lineStrings[0];
                     point = lineString[0];
-                    popup = this.createPopup(point, 0, 0, 'startPoint');
+                    popup = this.createPopup(point, 0, 'startPoint');
                     this.addStartingPoint(point, popup);
 
                     // Get the last point of the last line.
                     lineString = lineStrings[lineStrings.length - 1];
                     point = lineString[lineString.length - 1];
-                    popup = this.createPopup(point, lineStrings.length - 1, 9999999999, 'endPoint');
+                    popup = this.createPopup(point, 9999999999, RouteTerminusView.END_TRIGGER_ID);
                     this.addEndingPoint(point, popup);
                 }
             }
@@ -100,7 +100,7 @@ define(function(require) {
             });
         },
 
-        createPopup: function (point, lineIndex, pointIndex, triggerId) {
+        createPopup: function (point, pointIndex, triggerId) {
             return L.popup({offset: L.point(0, -35)}).setContent(this.template({
                 latitude: Math.round(point[1] * 100000) / 100000,
                 longitude: Math.round(point[0] * 100000) / 100000,
@@ -147,7 +147,7 @@ define(function(require) {
         onDeleteClick: function (event) {
             this.logEvent(event);
             var lineIndex, pointIndex, point;
-            if (event.target.id == 'startPoint') {
+            if (event.target.id === RouteTerminusView.START_TRIGGER_ID) {
                 lineIndex = 0;
                 pointIndex = 0;
                 point = this.startingPoint;
@@ -248,6 +248,9 @@ define(function(require) {
             this.remove();
         }
     });
+
+    RouteTerminusView.START_TRIGGER_ID = 'startPoint';
+    RouteTerminusView.END_TRIGGER_ID = 'endPoint';
 
     return RouteTerminusView;
 });
