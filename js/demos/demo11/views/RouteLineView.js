@@ -11,23 +11,23 @@ define(function(require) {
         initialize: function (args) {
             this.template = _.template(templateHtml);
             this.map = args.map;
-            this.lineRouter = lineRouter;
+            this.lineRouter = args.lineRouter;
             this.linesGroup = args.linesGroup;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
             var CustomIcon = L.Icon.extend({
                 options: {
-                    iconSize: [12, 12],
-                    iconAnchor: [6, 6]
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
                 }
             });
-            this.startIcon = new CustomIcon({iconUrl: 'media/green_12x12.png'});
-            this.endIcon = new CustomIcon({iconUrl: 'media/red_12x12.png'});
+            this.startIcon = new CustomIcon({iconUrl: 'media/green_16x16.png'});
+            this.endIcon = new CustomIcon({iconUrl: 'media/red_16x16.png'});
             this.style = {
-                weight: 3
+                weight: 5
             };
             this.highlight = {
-                weight: 5
+                weight: 8
             };
             this.metersToMiles = 0.000621371;
             if (this.snapToRoads) {
@@ -48,7 +48,11 @@ define(function(require) {
                 dashArray: "1, 5"
             }).addTo(this.linesGroup);
             var _this = this;
-            this.lineRouter.getDirections({line: line, success: function(lineString) {_this.onSuccess(lineString)}});
+            this.lineRouter.getDirections({
+                line: line,
+                success: function(lineString) {_this.onSuccess(lineString)},
+                error: function(response, xtr) {_this.onError(response, xtr)}
+            });
         },
 
         onSuccess: function (lineString) {
@@ -56,6 +60,11 @@ define(function(require) {
             this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGE, {
                 line: this.model
             });
+            this.render();
+        },
+
+        onError: function (response, status) {
+            this.snapToRoads = false;
             this.render();
         },
 
@@ -75,10 +84,6 @@ define(function(require) {
                 _this.onMouseover(event);
             });
 
-            //this.lineLayer.on('mouseout', function(event) {
-            //    _this.onMouseout(event);
-            //});
-
         },
 
         onMouseover: function(event) {
@@ -86,45 +91,69 @@ define(function(require) {
             this.lineLayer.setStyle(this.highlight);
             this.clearMarkers();
             var lineString = this.model.get('lineString');
-            var point = lineString[0];
+            var startPoint = lineString[0];
             this.markerGroup = L.layerGroup().addTo(this.map);
             var lineIndex = this.model.get('lineIndex');
-            var popup;
+            var _this = this;
             // Add a starting marker to any line except the first line.
             if (lineIndex > 0) {
-                popup = this.createPopup(point, 0, 0, 'startPoint');
-                this.startingMarker = L.marker({lat: point[1], lng: point[0]}, {
+                this.startingMarker = L.marker({lat: startPoint[1], lng: startPoint[0]}, {
                     icon: this.startIcon,
+                    riseOnHover: true,
                     draggable: false
-                }).bindPopup(popup).addTo(this.markerGroup);
+                }).addTo(this.markerGroup);
+                // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
+                this.startingMarker.on('click', function() {
+                    _this.popupopen = true;
+                    _this.startingMarker.bindPopup( _this.createPopup(startPoint, 0, 0, 'startPoint'));
+                    _this.startingMarker.openPopup();
+                });
             }
 
             // Add an ending marker to any line except the last line.
             if (lineIndex < this.model.get('lineCount') - 1) {
-                point = lineString[lineString.length - 1];
-                popup = this.createPopup(point, lineIndex, 9999999999, 'endPoint');
-                this.endingMarker = L.marker({lat: point[1], lng: point[0]}, {icon: this.endIcon, draggable: false}).bindPopup(popup).addTo(this.markerGroup);
+                var endPoint = lineString[lineString.length - 1];
+                this.endingMarker = L.marker({lat: endPoint[1], lng: endPoint[0]}, {
+                    icon: this.endIcon,
+                    riseOnHover: true,
+                    draggable: false
+                }).addTo(this.markerGroup);
+                // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
+                this.endingMarker.on('click', function() {
+                    _this.popupopen = true;
+                    _this.endingMarker.bindPopup(_this.createPopup(endPoint, lineIndex, 9999999999, 'endPoint'));
+                    _this.endingMarker.openPopup();
+                });
             }
             // Only add the feature group if it contains one of the two markers.
             // If there is only one line on the map, the marker Group will be empty.
             if (this.startingMarker || this.endingMarker) {
                 this.markerGroup.addTo(this.map);
             }
+            // Fire the mouseOut method the first time the mouse moves off of this line.
+            this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
         },
 
         createPopup: function (point, lineIndex, pointIndex, triggerId) {
-            return L.popup({offset: L.point(0, -35)}).setContent(this.template({
+            var _this = this;
+            return L.popup({offset: L.point(0, 0)}).setContent(this.template({
                 latitude: Math.round(point[1] * 100000) / 100000,
                 longitude: Math.round(point[0] * 100000) / 100000,
                 distance: Math.round(point[2] * this.metersToMiles * 100) / 100,
                 triggerId: triggerId
-            }));
+            })).on('popupclose', function() {
+                _this.popupopen = false;
+                _this.onMouseout()
+            });
         },
 
-        onMouseout: function(event) {
-            this.logEvent(event);
-            this.lineLayer.setStyle(this.style);
-            this.clearMarkers();
+        onMouseout: function() {
+            // Ignore the first mouse out if popup is open so that
+            // user can move the mouse to the popup without unhighlighting line.
+            if (!this.popupopen) {
+                this.lineLayer.setStyle(this.style);
+                this.clearMarkers();
+            }
         },
 
         clearMarkers: function () {

@@ -1,37 +1,24 @@
-define([
-    'underscore',
-    'backbone',
-    'leaflet',
-    'apps/MapEventDispatcher',
-    'models/ActivitySearch',
-    'models/MapProvider',
-    'models/MapLayer',
-    //'models/BingMapProvider',
-    'models/OsmMapProvider',
-    'models/GoogleMapProvider',
-    'models/Location',
-    'collections/MapProviders',
-    'demos/demo5/views/MapSearchView',
-    'views/maps/MapZoomControlsView',
-    'views/maps/MapProviderControlsView',
-    'views/maps/MapTypeControlsView',
-    'views/maps/MapOverlayControlsView'
-], function (_, Backbone,
-             L,
-             MapEventDispatcher,
-             ActivitySearch,
-             MapProvider,
-             MapLayer,
-             //BingMapProvider,
-             OsmMapProvider,
-             GoogleMapProvider,
-             Location,
-             MapProviders,
-             MapSearchView,
-             MapZoomControlsView,
-             MapProviderControlsView,
-             MapTypeControlsView,
-             MapOverlayControlsView) {
+"use strict";
+define(function(require) {
+    var $                       = require('jquery'),
+        _                       = require('underscore'),
+        Backbone                = require('backbone'),
+        L                       = require('leaflet'),
+        MapEventDispatcher      = require('apps/MapEventDispatcher'),
+        ActivitySearch          = require('models/ActivitySearch'),
+        MapProvider             = require('models/MapProvider'),
+        MapLayer                = require('models/MapLayer'),
+        OsmMapProvider          = require('models/OsmMapProvider'),
+        GoogleMapProvider       = require('models/GoogleMapProvider'),
+        Location                = require('models/Location'),
+        MapProviders            = require('collections/MapProviders'),
+        MapSearchView           = require('demos/demo5/views/MapSearchView'),
+        MapZoomControlsView     = require('views/maps/MapZoomControlsView'),
+        MapProviderControlsView = require('views/maps/MapProviderControlsView'),
+        MapTypeControlsView     = require('views/maps/MapTypeControlsView'),
+        MapOverlayControlsView  = require('views/maps/MapOverlayControlsView');
+        //BingMapProvider       = require('models/BingMapProvider');
+    require('leaflet_active_layers');
 
     var MapView = Backbone.View.extend({
 

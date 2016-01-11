@@ -3,13 +3,14 @@
  * It contains the attributed necessary to support the Leaflet OSM plugin.
  * Its main responsibility is initializing the various MapLayer models supported by OSM.
  */
-define([
-    'models/MapProvider',
-    'models/MapLayer',
-    'models/OsmGeoCoder',
-    'collections/MapLayers',
-    'leaflet'
-], function (MapProvider, MapLayer, OsmGeoCoder, MapLayers, L) {
+"use strict";
+define(function(require) {
+    var MapProvider              = require('models/MapProvider'),
+        MapLayer                 = require('models/MapLayer'),
+        MapLayers                = require('collections/MapLayers'),
+        MapQuestLocationService = require('services/MapQuestLocationService'),
+        L                        = require('leaflet');
+
     var OsmMapProvider = MapProvider.extend({
 
         /**
@@ -57,7 +58,7 @@ define([
         },
 
         getGeoCoder: function() {
-            return new OsmGeoCoder();
+            return new MapQuestLocationService();
         }
     });
 

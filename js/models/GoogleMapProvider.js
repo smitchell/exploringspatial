@@ -3,13 +3,15 @@
  * It contains the attributed necessary to support the Leaflet Google plugin.
  * Its main responsibility is initializing the various MapLayer models supported by Google.
  */
-define([
-    'models/MapProvider',
-    'models/MapLayer',
-    'models/GoogleGeoCoder',
-    'collections/MapLayers',
-    'leaflet_google'
-], function (MapProvider, MapLayer, GoogleGeoCoder, MapLayers) {
+"use strict";
+define(function(require) {
+    var MapProvider             = require('models/MapProvider'),
+        MapLayer                = require('models/MapLayer'),
+        MapLayers               = require('collections/MapLayers'),
+        GoogleLocationService  = require('services/GoogleLocationService'),
+        L                       = require('leaflet');
+    require('leaflet_google');
+
     var GoogleMapProvider = MapProvider.extend({
 
         /**
@@ -39,19 +41,19 @@ define([
                 dispatcher: this.dispatcher,
                 leafletLayer: new L.Google('ROADMAP', mapOptions)
             });
-            googleLayers[1]= new MapLayer({
+            googleLayers[1] = new MapLayer({
                 type: MapLayer.SATELLITE,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
                 leafletLayer: new L.Google('SATELLITE', mapOptions)
             });
-            googleLayers[2]= new MapLayer({
+            googleLayers[2] = new MapLayer({
                 type: MapLayer.HYBRID,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
                 leafletLayer: new L.Google('HYBRID', mapOptions)
             });
-            googleLayers[3]= new MapLayer({
+            googleLayers[3] = new MapLayer({
                 type: MapLayer.TERRAIN,
                 isBaseLayer: true,
                 dispatcher: this.dispatcher,
@@ -61,7 +63,7 @@ define([
         },
 
         getGeoCoder: function() {
-            return new GoogleGeoCoder();
+            return new GoogleLocationService();
         }
     });
 

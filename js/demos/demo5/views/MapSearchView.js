@@ -1,12 +1,13 @@
 /**
  * The purpose of the MapSearchView is to control user interaction with the map search filter.
  */
-define([
-    'underscore',
-    'backbone',
-    'text!demos/demo5/templates/MapSearchView.html',
-    'jquery_ui'
-], function (_, Backbone, templateHtml) {
+"use strict";
+define(function(require) {
+    var $              = require('jquery'),
+        _              = require('underscore'),
+        Backbone       = require('backbone'),
+        templateHtml   = require('text!demos/demo5/templates/MapSearchView.html');
+        require('jquery_ui');
 
     var MapSearchView = Backbone.View.extend({
 
@@ -87,35 +88,30 @@ define([
             }
         },
 
-        changeLocation: function (location) {
+        changeLocation: function (geoCodeQuery) {
             var $searchButton = this.$('#searchButton');
             // Show the search in progress indicator
             $searchButton.addClass('searching');
 
             // Throw out things that don't belong in a keyword search.
-            location = this.scrubInput(location);
+            geoCodeQuery = this.scrubInput(geoCodeQuery);
 
             var geoCoder = this.mapProviders.getSelectedProvider().getGeoCoder();
 
-            // Clear the previous search results
-            geoCoder.clear({silent: true});
-
-            // Execute the search. If the query is successful the MapView will be notified
-            // because it is bound to the Location model sync event.
-            geoCoder.set('query', location);
             var _self = this;
             geoCoder.fetch({
-                success: function () {
-                    _self.location.set(geoCoder.toJSON());
+                query: geoCodeQuery,
+                success: function (response) {
+                    _self.location.set(response.location.toJSON());
                     _self.location.trigger('sync');
                 },
                 complete: function () {
                     $searchButton.removeClass('searching');
                     $('.location').val('');
                 },
-                error: function (object, xhr, options) {
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
+                error: function (location, status) {
+                    if (console.log) {
+                        console.log("Error geocoding '" + location.get('query') + "' " + status);
                     }
                 }
             });

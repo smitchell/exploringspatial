@@ -1,11 +1,12 @@
+"use strict";
 /**
  * Location is a Backbone model representing a place in the world. It is used by the GeoCode examples.
  *
  */
-define([
-    'jquery',
-    'backbone'
-], function ($, Backbone) {
+define(function (require) {
+    var $        = require('jquery'),
+        Backbone = require('backbone');
+
     var Location = Backbone.Model.extend({
         defaults: {
             lat: 38.35888,

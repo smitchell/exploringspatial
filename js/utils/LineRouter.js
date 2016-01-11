@@ -3,77 +3,135 @@
  * Fetches directions for Lines in a sequential manner.
  */
 define(function (require) {
-    var GoogleDirections = require('models/GoogleDirections');
+    var GoogleDirectionService = require('services/GoogleDirectionService');
+    var MapQuestDirectionService = require('services/MapQuestDirectionService');
 
-    var LineRouter = function () {
-        this.initialize.apply(this, arguments);
+    var LineRouter = function (args) {
+        this.initialize(args);
     };
 
-    LineRouter.prototype({
+    LineRouter.prototype.initialize = function (args) {
+        this.throttleMilliseconds = 250;
+        this.directionRequests = [];
+        this.directionRequest = null;
+        this.transitMode = args.transitMode;
+        this.dispatcher = args.dispatcher;
+        this.activeLayers = args.activeLayers;
+        this.lastTimestamp = 0;
+    };
 
-        initialize: function (args) {
-            this.directionRequests = [];
-            this.directionRequest = null;
-            this.mapLayerName = 'google';
-        },
+    LineRouter.prototype.getDirections = function (options) {
+        this.directionRequests.push(options);
+        this._fetchNextDirections();
+    };
 
-        getDirections: function (options) {
-            this.directionRequests.push(options);
-            this._fetchDirections();
-        },
-
-        _fetchDirections: function () {
-            if (this.directionRequest === null) {
+    LineRouter.prototype._fetchNextDirections = function () {
+        if (this.directionRequest === null && this.directionRequests.length > 0) {
+            var elapsedTime = new Date().getTime() - this.lastTimestamp;
+            if (elapsedTime > this.throttleMilliseconds) {
                 this.directionRequest = this.directionRequests.pop();
-                switch (this.mapLayerName) {
-                    case 'google':
+                var currentBaseMap = this.activeLayers.getActiveBaseLayer();
+                switch (currentBaseMap.name) {
+                    case 'Google':
                         this._googleDirections(this.directionRequest.line);
                         break;
                     default:
                         this._mapQuestDirections(this.directionRequest.line);
                         break;
                 }
+            } else {
+                var _this = this;
+                setTimeout(function(){
+                    _this._fetchNextDirections();
+                }, this.throttleMilliseconds);
             }
-        },
-
-        _onSuccess: function (lineString) {
-            // update the current line
-            if (this.directionRequest !== null) {
-                this.directionRequest.success(lineString);
-                this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGE, {
-                    line: this.directionRequest.line
-                });
-                this.directionRequest = null;
-            }
-            if (this.directionRequests.length > 0) {
-                this._fetchDirections();
-            }
-        },
-
-        _googleDirections: function (line) {
-            var _this = this;
-            var start = line[0];
-            var finish = line[line.length - 1];
-            var googleDirections = new GoogleDirections();
-            googleDirections.set({origin: start, destination: finish});
-            googleDirections.fetch({
-                success: function () {
-                    _this.onSuccess({'lineString': this.googleDirections.get('polyline')});
-                },
-                error: function (object, xhr) {
-                    _this.loading -= 1;
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
-                    }
-                }
-            });
-
-        },
-
-        _mapQuestDirections: function (line) {
-
         }
-    });
+    };
+
+    LineRouter.prototype._onSuccess = function (result) {
+        if (this.directionRequest !== null) {
+            this.directionRequest.success(result.lineString);
+            this.directionRequest = null;
+        }
+        this._fetchNextDirections();
+    };
+
+    LineRouter.prototype._onError = function (response, status) {
+        if (this.directionRequest !== null) {
+            this.directionRequest.error(response, status);
+            this.directionRequest = null;
+        }
+        if (console.log) {
+            console.log(response);
+            console.log(status);
+        }
+        this._fetchNextDirections();
+    };
+
+    LineRouter.prototype._googleDirections = function (line) {
+        var _this = this;
+        var start = line[0];
+        var finish = line[line.length - 1];
+        this.lastTimestamp = new Date().getTime();
+        var googleDirectionService = new GoogleDirectionService({
+            transitMode: this.transitMode});
+        googleDirectionService.fetch({
+            origin: start,
+            destination: finish,
+            success: function (response) {
+                _this._onSuccess({'lineString': response.points});
+            },
+            error: function (response, status) {
+                if (status === 'OVER_QUERY_LIMIT') {
+                    setTimeout(function(){
+                        _this._fetchNextDirections();
+                    }, _this.throttleMilliseconds);
+                }  else {
+                    _this._onError(response, status);
+                }
+                if (console.log && status) {
+                    console.log(status);
+                }
+            }
+        });
+
+    };
+
+    LineRouter.prototype._mapQuestDirections = function (line) {
+        var _this = this;
+        var start = line[0];
+        var finish = line[line.length - 1];
+        this.lastTimestamp = new Date().getTime();
+        var mapQuestDirectionService = new MapQuestDirectionService({
+                    transitMode: this.transitMode});
+        mapQuestDirectionService.fetch({
+            origin: start,
+            destination: finish,
+            success: function (response) {
+                _this._onSuccess({'lineString': response.points});
+            },
+            error: function (response, status) {
+                _this._onError(response, status);
+                if (console.log && status) {
+                    console.log(status);
+                }
+            }
+        });
+    };
+
+    LineRouter.prototype.getTransitMode = function () {
+        return this.transitMode;
+    };
+
+    LineRouter.prototype.setTransitMode = function (transitMode) {
+        this.transitMode = transitMode;
+    };
+
+
+    LineRouter.TRANSIT_MODE_BICYCLING = 'Bicycling';
+    LineRouter.TRANSIT_MODE_RUNNING = 'Running';
+    LineRouter.TRANSIT_MODE_WALKING = 'Walking';
+
     return LineRouter;
 });
 

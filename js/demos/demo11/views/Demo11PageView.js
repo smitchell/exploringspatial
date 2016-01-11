@@ -5,11 +5,9 @@ define(function(require) {
         Backbone               = require('backbone'),
         L                      = require('leaflet'),
         MapEventDispatcher     = require('apps/MapEventDispatcher'),
-        Location               = require('models/Location'),
-        GoogleGeoCoder         = require('models/GoogleGeoCoder'),
         Feature                = require('models/Feature'),
         Command                = require('models/Command'),
-        GoogleDirections       = require('models/GoogleDirections'),
+        LineRouter             = require('utils/LineRouter'),
         Commands               = require('collections/Commands'),
         MapLocationControlView = require('demos/demo11/views/MapLocationControlView'),
         RoutePropertiesView    = require('demos/demo11/views/RoutePropertiesView'),
@@ -19,6 +17,7 @@ define(function(require) {
         RouteLinesView         = require('demos/demo11/views/RouteLinesView'),
         templateHtml           = require('text!demos/demo11/templates/Demo11PageView.html');
         require('leaflet_google');
+        require('leaflet_active_layers');
 
      var Demo11PageView = Backbone.View.extend({
 
@@ -38,7 +37,6 @@ define(function(require) {
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
             this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.handleMarkerDelete, this);
-            this.googleDirections = new GoogleDirections({dispatcher: this.dispatcher, transitMode: 'Bicycling'});
             this.model = new Feature();
             this.model.get('properties').set('name', '');
             this.model.get('properties').set('meters', 0);
@@ -84,11 +82,13 @@ define(function(require) {
                 'OSM': osmLayer,
                 'MapQuest': mapQuestLayer
             };
-            L.control.layers(baseLayers).addTo(this.map);
+            var activeLayers = L.control.activeLayers(baseLayers).addTo(this.map);
+            this.lineRouter = new LineRouter({dispatcher: this.dispatcher, transitMode: LineRouter.TRANSIT_MODE_BICYCLING, activeLayers: activeLayers});
             this.map.setView({lat: 38.974974, lng: -94.657152}, 16);
             this.MapLocationControlView = new MapLocationControlView({
                 map: this.map,
                 model: this.model,
+                activeLayers: activeLayers,
                 el: this.$('#locationContainer')
             });
             this.routePropertiesView = new RoutePropertiesView({
@@ -100,7 +100,7 @@ define(function(require) {
                 commands: this.commands,
                 dispatcher: this.dispatcher,
                 snapToRoads: this.snapToRoads,
-                googleDirections: this.googleDirections,
+                lineRouter: this.lineRouter,
                 el: this.$('#controlsContainer')
             });
             if (this.elevationChartView) {
@@ -138,7 +138,8 @@ define(function(require) {
                 model: this.model,
                 dispatcher: this.dispatcher,
                 snapToRoads: this.snapToRoads,
-                googleDirections: this.googleDirections
+                lineRouter: this.lineRouter,
+                activeLayers: activeLayers
             });
         },
 

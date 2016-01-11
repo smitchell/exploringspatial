@@ -3,6 +3,7 @@ define(function(require) {
     var $            = require('jquery'),
         _            = require('underscore'),
         Backbone     = require('backbone'),
+        LineRouter   = require('utils/LineRouter'),
         templateHtml = require('text!demos/demo11/templates/RouteControlsView.html');
 
     var RouteControlsView = Backbone.View.extend({
@@ -19,7 +20,7 @@ define(function(require) {
         initialize: function (args) {
             this.dispatcher = args.dispatcher;
             this.snapToRoads = args.snapToRoads;
-            this.googleDirections = args.googleDirections;
+            this.lineRouter = args.lineRouter;
             this.commands = args.commands;
             this.commands.on('change', this.commandChanged, this);
             this.template = _.template(templateHtml);
@@ -28,10 +29,10 @@ define(function(require) {
 
         render: function() {
             var snapToRoads = this.snapToRoads ? 'checked' : '';
-            var transitMode = this.googleDirections.get('transitMode');
-            var walkingSelected = transitMode == 'Walking' ? 'selected' : '';
-            var runningSelected = transitMode == 'Running' ? 'selected' : '';
-            var bikingSelected = transitMode == 'Bicycling' ? 'selected' : '';
+            var transitMode = this.lineRouter.getTransitMode();
+            var walkingSelected = transitMode == LineRouter.TRANSIT_MODE_WALKING ? 'selected' : '';
+            var runningSelected = transitMode == LineRouter.TRANSIT_MODE_RUNNING ? 'selected' : '';
+            var bikingSelected = transitMode == LineRouter.TRANSIT_MODE_BICYCLING ? 'selected' : '';
             this.$el.html(this.template({
                 snapToRoads: snapToRoads,
                 walkingSelected: walkingSelected,
@@ -72,8 +73,7 @@ define(function(require) {
         },
 
         transitModeChange: function() {
-
-            this.googleDirections.set({'transitMode': this.$( "#transitMode option:selected" ).text()});
+            this.lineRouter.setTransitMode(this.$( "#transitMode option:selected" ).text());
         },
 
 

@@ -4,7 +4,7 @@ define(function(require) {
         _              = require('underscore'),
         Backbone       = require('backbone'),
         Location       = require('models/Location'),
-        GoogleGeoCoder = require('models/GoogleGeoCoder'),
+        GeoCoder = require('utils/GeoCoder'),
         templateHtml   = require('text!demos/demo11/templates/MapLocationControlView.html');
 
     var MapLocationControlView = Backbone.View.extend({
@@ -16,6 +16,7 @@ define(function(require) {
 
         initialize: function (args) {
             this.map = args.map;
+            this.activeLayers = args.activeLayers;
             this.template = _.template(templateHtml);
             this.location = new Location();
             // listen for location changes from the map search view.
@@ -28,34 +29,29 @@ define(function(require) {
         },
 
         changeLocation: function () {
-            var location = this.$('#location').val().trim();
-            if (location.length < 3) {
+            var geoCodeQuery = this.$('#location').val().trim();
+            if (geoCodeQuery.length < 3) {
                 return;
             }
 
             // Throw out things that don't belong in a keyword search.
-            location = this.scrubInput(location);
+            geoCodeQuery = this.scrubInput(geoCodeQuery);
 
-            var geoCoder = new GoogleGeoCoder();
+            var geoCoder = new GeoCoder({activeLayers: this.activeLayers});
 
-            // Clear the previous search results
-            geoCoder.clear({silent: true});
-
-            // Execute the search. If the query is successful the MapView will be notified
-            // because it is bound to the Location model sync event.
-            geoCoder.set('query', location);
             var _self = this;
-            geoCoder.fetch({
-                success: function () {
-                    _self.location.set(geoCoder.toJSON());
+            geoCoder.geoCodeLocation({
+                query: geoCodeQuery,
+                success: function (response) {
+                    _self.location.set(response.location.toJSON());
                     _self.location.trigger('sync');
                 },
                 complete: function () {
                     $('.location').val('');
                 },
-                error: function (object, xhr, options) {
-                    if (console.log && xhr && xhr.responseText) {
-                        console.log(xhr.status + " " + xhr.responseText);
+                error: function (location, status) {
+                    if (console.log) {
+                        console.log("Error geocoding '" + location.get('query') + "' " + status);
                     }
                 }
             });
