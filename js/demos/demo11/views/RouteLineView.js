@@ -32,6 +32,9 @@ define(function (require) {
                 weight: 8
             };
             this.metersToMiles = 0.000621371;
+            this.draggingLineId = this.model.get('lineIndex');
+            this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onPublishedDragStart, this);
+            this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onPublishedDragEnd, this);
             if (this.snapToRoads) {
                 this.fetchData();
             } else {
@@ -93,29 +96,32 @@ define(function (require) {
         },
 
         onMouseover: function (event) {
-            var _this = this;
-            this.lineLayer.setStyle(this.highlight);
-            this.clearMarkers();
-            var lineString = this.model.get('lineString');
-            this.markerGroup = L.layerGroup().addTo(this.map);
             var lineIndex = this.model.get('lineIndex');
-            // Add a starting marker to any line except the first line.
-            if (lineIndex > 0) {
-                this.startingMarker = this.addStartMarker(lineString[0]);
-            }
+            if (this.draggingLineId === lineIndex) {
+                var _this = this;
+                this.lineLayer.setStyle(this.highlight);
+                this.clearMarkers();
+                var lineString = this.model.get('lineString');
+                this.markerGroup = L.layerGroup().addTo(this.map);
 
-            // Add an ending marker to any line except the last line.
-            if (lineIndex < this.model.get('lineCount') - 1) {
-                this.endingMarker = this.addEndMarker(lineString[lineString.length - 1]);
-            }
+                // Add a starting marker to any line except the first line.
+                if (lineIndex > 0) {
+                    this.startingMarker = this.addStartMarker(lineString[0]);
+                }
 
-            // Only add the feature group if it contains one of the two markers.
-            // If there is only one line on the map, the marker Group will be empty.
-            if (this.startingMarker || this.endingMarker) {
-                this.markerGroup.addTo(this.map);
+                // Add an ending marker to any line except the last line.
+                if (lineIndex < this.model.get('lineCount') - 1) {
+                    this.endingMarker = this.addEndMarker(lineString[lineString.length - 1]);
+                }
+
+                // Only add the feature group if it contains one of the two markers.
+                // If there is only one line on the map, the marker Group will be empty.
+                if (this.startingMarker || this.endingMarker) {
+                    this.markerGroup.addTo(this.map);
+                }
+                // Fire the mouseOut method the first time the mouse moves off of this line.
+                this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
             }
-            // Fire the mouseOut method the first time the mouse moves off of this line.
-            this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
         },
 
         addStartMarker: function (point) {
@@ -185,7 +191,8 @@ define(function (require) {
         onMouseout: function () {
             // Ignore the first mouse out if popup is open so that
             // user can move the mouse to the popup without unhighlighting line.
-            if (!this.popupopen) {
+            var lineIndex = this.model.get('lineIndex');
+            if (!this.popupopen && this.draggingLineId === lineIndex) {
                 this.lineLayer.setStyle(this.style);
                 this.clearMarkers();
             }
@@ -242,12 +249,20 @@ define(function (require) {
             this.map.closePopup(popup);
         },
 
+        // If another line is being dragged, ignore the mouseover/mouseout events
+        onPublishedDragStart: function(event) {
+            this.draggingLineId = event.lineIndex;
+        },
+
+        // Restore lineIndex so processing of mouseover/mouseout events resumes
+        onPublishedDragEnd: function(event) {
+            this.draggingLineId = this.model.get('lineIndex');
+        },
+
         onDragStart: function (event) {
-            var pointIndex;
+            var pointIndex = 0;
             var lineIndex = this.model.get('lineIndex');
-            if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
-                pointIndex = 0;
-            } else {
+            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
                 /* The points in the polyline change when Direction service is called.
                  * Setting a large value then and adjusting it here solves that problem.
                  */
@@ -267,25 +282,21 @@ define(function (require) {
 
         onDragging: function (event) {
             this.rubberBandLayer.clearLayers();
-            if (this.startingMarker) {
-                var lineIndex = this.model.get('lineIndex');
-                var latLng = event.target._latlng;
-                var pointIndex;
-                if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
-                    pointIndex = 0;
-                } else {
-                    /* The points in the polyline change when Direction service is called.
-                     * Setting a large value then and adjusting it here solves that problem.
-                     */
-                    pointIndex = 999999999;
-                }
-                this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
-                    lineIndex: lineIndex,
-                    pointIndex: pointIndex,
-                    latLng: latLng,
-                    originalEvent: event
-                });
+            var lineIndex = this.model.get('lineIndex');
+            var latLng = event.target._latlng;
+            var pointIndex = 0;
+            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
+                /* The points in the polyline change when Direction service is called.
+                 * Setting a large value then and adjusting it here solves that problem.
+                 */
+                pointIndex = 999999999;
             }
+            this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                lineIndex: lineIndex,
+                pointIndex: pointIndex,
+                latLng: latLng,
+                originalEvent: event
+            });
         },
 
         handleMouseout: function () {

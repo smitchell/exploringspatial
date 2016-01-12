@@ -159,28 +159,24 @@ define(function(require) {
 
         onDragging: function (event) {
             this.rubberBandLayer.clearLayers();
-            if (this.startingMarker) {
-                if (this.model.get('type') === 'MultiLineString') {
-                    var lineIndex, pointIndex;
-                    if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
-                        pointIndex = 0;
-                        lineIndex = 0;
-                    } else {
-                        // Get the last point of the last line.
-                        var lineStrings = this.model.get('coordinates');
-                        var lineString = lineStrings[lineStrings.length - 1];
-                        lineIndex = lineStrings.length - 1;
-                        pointIndex = lineString.length - 1;
-                    }
-                    var latLng = event.target._latlng;
-
-                    this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
-                        lineIndex: lineIndex,
-                        pointIndex: pointIndex,
-                        latLng: latLng,
-                        originalEvent: event
-                    });
+            if (this.model.get('type') === 'MultiLineString') {
+                var lineIndex = 0;
+                var pointIndex = 0;
+                if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
+                    // Get the last point of the last line.
+                    var lineStrings = this.model.get('coordinates');
+                    var lineString = lineStrings[lineStrings.length - 1];
+                    lineIndex = lineStrings.length - 1;
+                    pointIndex = lineString.length - 1;
                 }
+                var latLng = event.target._latlng;
+
+                this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                    lineIndex: lineIndex,
+                    pointIndex: pointIndex,
+                    latLng: latLng,
+                    originalEvent: event
+                });
             }
         },
 
