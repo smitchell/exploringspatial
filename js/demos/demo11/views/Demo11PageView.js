@@ -36,6 +36,7 @@ define(function(require) {
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOUT, this.onChartMouseOut, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onDragStart, this);
+            this.dispatcher.on(this.dispatcher.Events.DRAGGING, this.onDragging, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
             this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.handleMarkerDelete, this);
             this.model = new Feature();
@@ -129,10 +130,12 @@ define(function(require) {
             } else {
                 $mapContainer.css('cursor', '');
             }
+            this.rubberBandLayer = L.layerGroup().addTo(this.map);
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
                 model: geometry,
-                dispatcher: this.dispatcher
+                dispatcher: this.dispatcher,
+                rubberBandLayer: this.rubberBandLayer
             });
             this.routeLinesView = new RouteLinesView({
                 map: this.map,
@@ -141,7 +144,8 @@ define(function(require) {
                 snapToRoads: this.snapToRoads,
                 lineRouter: this.lineRouter,
                 routeManager: this.routeManager,
-                activeLayers: activeLayers
+                activeLayers: activeLayers,
+                rubberBandLayer: this.rubberBandLayer
             });
         },
 
@@ -230,6 +234,59 @@ define(function(require) {
             this.commands.add(command);
             this.commands.trigger('change');
         },
+
+         onDragging: function(args) {
+             var lineIndex = args.lineIndex;
+             var pointIndex = args.pointIndex;
+             var latLng = args.latLng;
+             var geometry = this.model.get('geometry');
+             if (geometry.get('type') === 'MultiLineString') {
+                 var lineStrings = geometry.get('coordinates');
+                 var lineString, previousPoint, nextPoint;
+                 lineString = lineStrings[lineIndex];
+                 if (pointIndex === 0 ) {
+                     // *** DAGGING FIRST POINT IN LINE ***
+                     // Draw rubber band from dragging point to end of this line
+                     lineString = lineStrings[lineIndex];
+                     nextPoint = lineString[lineString.length - 1];
+                     L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], {
+                         color: '#808080',
+                         weight: '2',
+                         dashArray: "1, 5"
+                     }).addTo(this.rubberBandLayer);
+                     if (lineIndex > 0) {
+                         // Draw rubber band from dragging point to first point of previous line
+                         lineString = lineStrings[lineIndex - 1];
+                         previousPoint = lineString[0];
+                         L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], {
+                             color: '#808080',
+                             weight: '2',
+                             dashArray: "1, 5"
+                         }).addTo(this.rubberBandLayer);
+                     }
+                 } else {
+                     // *** DAGGING LAST POINT IN LINE ***
+                     // Draw rubber band from dragging point to beginning of this line
+                     lineString = lineStrings[lineIndex];
+                     previousPoint = lineString[0];
+                     L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], {
+                         color: '#808080',
+                         weight: '2',
+                         dashArray: "1, 5"
+                     }).addTo(this.rubberBandLayer);
+                     if (lineIndex < lineStrings.length - 1) {
+                         // Draw rubber band from dragging point to end point of next line
+                         lineString = lineStrings[lineIndex + 1];
+                         nextPoint = lineString[lineString.length - 1];
+                         L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], {
+                             color: '#808080',
+                             weight: '2',
+                             dashArray: "1, 5"
+                         }).addTo(this.rubberBandLayer);
+                     }
+                 }
+             }
+         },
 
         onDragEnd: function (event) {
             if (this.dragStartEvent) {

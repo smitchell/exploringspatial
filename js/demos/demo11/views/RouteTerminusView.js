@@ -11,6 +11,7 @@ define(function(require) {
         initialize: function (args) {
             this.map = args.map;
             this.dispatcher = args.dispatcher;
+            this.rubberBandLayer = args.rubberBandLayer;
             this.template = _.template(templateHtml);
             var CustomIcon = L.Icon.extend({
                 options: {
@@ -28,7 +29,7 @@ define(function(require) {
 
         render: function () {
             this.clearMarkers();
-            this.clearRubberBands();
+
             var point, lineString, popup;
 
             if (this.model.get('type') === 'Point') {
@@ -64,38 +65,14 @@ define(function(require) {
                 this.startingMarker = L.marker(latLng, {icon: this.startIcon, draggable: true}).bindPopup(popup);
                 this.markerGroup = L.layerGroup([this.startingMarker]).addTo(this.map);
             }
-            var _this = this;
-            this.startingMarker.on('dragstart', function (event) {
-                _this.onDragStart(event);
-            });
-            this.startingMarker.on('drag', function (event) {
-                _this.onDragging(event);
-            });
-            this.startingMarker.on('dragend', function (event) {
-                _this.onDragEnd(event);
-            });
-            this.startingMarker.on('popupopen', function (event) {
-                _this.onPopupOpen(event);
-            });
+            this.addMarkerListeners(this.startingMarker);
         },
 
         addEndingPoint: function (point, popup) {
             this.endingPoint = point;
             var latLng = L.latLng(point[1], point[0]);
             this.endingMarker = L.marker(latLng, {icon: this.endIcon, draggable: true}).bindPopup(popup).addTo(this.markerGroup);
-            var _this = this;
-            this.endingMarker.on('dragstart', function (event) {
-                _this.onDragStart(event);
-            });
-            this.endingMarker.on('drag', function (event) {
-                _this.onDragging(event);
-            });
-            this.endingMarker.on('dragend', function (event) {
-                _this.onDragEnd(event);
-            });
-            this.endingMarker.on('popupopen', function (event) {
-                _this.onPopupOpen(event);
-            });
+            this.addMarkerListeners(this.endingMarker);
         },
 
         createPopup: function (point, pointIndex, triggerId) {
@@ -114,6 +91,22 @@ define(function(require) {
                 _this.onDeleteClick(event, popup);
             });
 
+        },
+
+        addMarkerListeners: function(marker) {
+            var _this = this;
+            marker.on('dragstart', function (event) {
+                _this.onDragStart(event);
+            });
+            marker.on('drag', function (event) {
+                _this.onDragging(event);
+            });
+            marker.on('dragend', function (event) {
+                _this.onDragEnd(event);
+            });
+            marker.on('popupopen', function (event) {
+                _this.onPopupOpen(event);
+            });
         },
 
         onDragStart: function (event) {
@@ -165,46 +158,41 @@ define(function(require) {
         },
 
         onDragging: function (event) {
-            this.clearRubberBands();
-            if (this.model.get('type') === 'MultiLineString') {
-                var lineStrings = this.model.get('coordinates');
-                var lineString, oppositePoint;
-                var latLng = event.target._latlng;
-                if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
-                    lineString = lineStrings[0];
-                    oppositePoint = lineString[lineString.length - 1];
-                } else {
-                    lineString = lineStrings[lineStrings.length - 1];
-                    oppositePoint = lineString[0];
-                }
-                if (this.rubberBandLayer) {
-                    L.polyline([latLng, L.latLng(oppositePoint[1], oppositePoint[0])], {
-                        color: '#808080',
-                        weight: '2',
-                        dashArray: "1, 5"
-                    }).addTo(this.rubberBandLayer);
-                } else {
-                    var polyline = L.polyline([latLng, L.latLng(oppositePoint[1], oppositePoint[0])], {
-                        color: '#808080',
-                        weight: '2',
-                        dashArray: "1, 5"
+            this.rubberBandLayer.clearLayers();
+            if (this.startingMarker) {
+                if (this.model.get('type') === 'MultiLineString') {
+                    var lineIndex, pointIndex;
+                    if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
+                        pointIndex = 0;
+                        lineIndex = 0;
+                    } else {
+                        // Get the last point of the last line.
+                        var lineStrings = this.model.get('coordinates');
+                        var lineString = lineStrings[lineStrings.length - 1];
+                        lineIndex = lineStrings.length - 1;
+                        pointIndex = lineString.length - 1;
+                    }
+                    var latLng = event.target._latlng;
+
+                    this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                        lineIndex: lineIndex,
+                        pointIndex: pointIndex,
+                        latLng: latLng,
+                        originalEvent: event
                     });
-                    this.rubberBandLayer = L.layerGroup([polyline]).addTo(this.map);
                 }
             }
         },
 
-        handleMouseout: function (event) {
-            this.clearRubberBands();
+        handleMouseout: function () {
+            this.rubberBandLayer.clearLayers();
         },
 
-        clearRubberBands: function () {
-            if (this.rubberBandLayer) {
-                this.rubberBandLayer.clearLayers();
-            }
-        },
 
         clearMarkers: function () {
+            if(this.rubberBandLayer) {
+                this.rubberBandLayer.clearLayers();
+            }
             if (this.markerGroup) {
                 this.markerGroup.clearLayers();
             }

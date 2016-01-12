@@ -14,6 +14,7 @@ define(function(require) {
             this.dispatcher = args.dispatcher;
             this.lineRouter = args.lineRouter;
             this.routeManager = args.routeManager;
+            this.rubberBandLayer = args.rubberBandLayer;
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
@@ -50,6 +51,7 @@ define(function(require) {
                     _this.lineViews[i] = new RouteLineView({
                         map: _this.map,
                         lineRouter: _this.lineRouter,
+                        rubberBandLayer: _this.rubberBandLayer,
                         model: new Line({
                             lineCount: lineStrings.length,
                             lineIndex: i,

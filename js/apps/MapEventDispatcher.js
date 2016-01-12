@@ -33,6 +33,7 @@ define([
         // Demo 11
         DRAG_START:           'DRAG_START',
         DRAG_END:             'DRAG_END',
+        DRAGGING:             'DRAGGING',
         CHANGE_SNAP_TO_ROAD:  'CHANGE_SNAP_TO_ROAD',
         LINE_CHANGE:          'LINE_CHANGE',
         MARKER_CLICK:         'MARKER_CLICK',

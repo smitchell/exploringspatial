@@ -16,6 +16,7 @@ define(function (require) {
             this.linesGroup = args.linesGroup;
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
+            this.rubberBandLayer = args.rubberBandLayer;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
@@ -92,7 +93,6 @@ define(function (require) {
         },
 
         onMouseover: function (event) {
-            this.logEvent(event);
             var _this = this;
             this.lineLayer.setStyle(this.highlight);
             this.clearMarkers();
@@ -123,39 +123,45 @@ define(function (require) {
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.startIcon,
                 riseOnHover: true,
-                draggable: false
+                draggable: true
             }).addTo(this.markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
             marker.on('click', function () {
                 _this.popupopen = true;
                 var popup = _this.createPopup(point, 0, RouteLineView.START_TRIGGER_ID);
                 marker.bindPopup(popup);
-                marker.openPopup().on('popupclose', function (event) {_this.onClosePopup(event);});
+                marker.openPopup().on('popupclose', function (event) {
+                    _this.onClosePopup(event);
+                });
                 // Bind new click event
                 $(popup._container).on('click', '.popupTrigger', function (event) {
                     _this.onDeleteClick(event, popup);
                 });
             });
+            this.addMarkerListeners(marker);
             return marker;
         },
 
-        addEndMarker: function(point) {
+        addEndMarker: function (point) {
             var _this = this;
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.endIcon,
                 riseOnHover: true,
-                draggable: false
+                draggable: true
             }).addTo(this.markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
             var popup = _this.createPopup(point, 9999999999, RouteLineView.END_TRIGGER_ID);
             marker.on('click', function () {
                 _this.popupopen = true;
                 marker.bindPopup(popup);
-                marker.openPopup().on('popupclose', function (event) {_this.onClosePopup(event);});
+                marker.openPopup().on('popupclose', function (event) {
+                    _this.onClosePopup(event);
+                });
                 $(popup._container).on('click', '.popupTrigger', function (event) {
                     _this.onDeleteClick(event, popup);
                 });
             });
+            this.addMarkerListeners(marker);
             return marker;
         },
 
@@ -168,7 +174,7 @@ define(function (require) {
             }));
         },
 
-        onClosePopup: function(event) {
+        onClosePopup: function (event) {
             $(event.popup._container).off('click', '.popupTrigger');
             this.popupopen = false;
             this.lineLayer.setStyle(this.style);
@@ -198,16 +204,29 @@ define(function (require) {
             }
         },
 
+        addMarkerListeners: function(marker) {
+            var _this = this;
+            marker.on('dragstart', function (event) {
+                _this.onDragStart(event);
+            });
+            marker.on('drag', function (event) {
+                _this.onDragging(event);
+            });
+            marker.on('dragend', function (event) {
+                _this.onDragEnd(event);
+            });
+            marker.on('popupopen', function (event) {
+                _this.onPopupOpen(event);
+            });
+        },
+
         onDeleteClick: function (event, popup) {
-            this.logEvent(event);
             var pointIndex, point;
             var lineIndex = this.model.get('lineIndex');
             if (event.target.id === RouteLineView.START_TRIGGER_ID) {
                 pointIndex = 0;
                 point = this.startingPoint;
             } else {
-                // Get the last point of the last line.
-                var lineStrings = this.model.get('coordinates');
                 /* The points in the polyline change when Direction service is called.
                  * Setting a large value then and adjusting it here solves that problem.
                  */
@@ -223,10 +242,54 @@ define(function (require) {
             this.map.closePopup(popup);
         },
 
-        logEvent: function (event) {
-            if (event && console.log) {
-                console.log(event.type + ' leaflet Id' + event.target._leaflet_id);
+        onDragStart: function (event) {
+            var pointIndex;
+            var lineIndex = this.model.get('lineIndex');
+            if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
+                pointIndex = 0;
+            } else {
+                /* The points in the polyline change when Direction service is called.
+                 * Setting a large value then and adjusting it here solves that problem.
+                 */
+                pointIndex = 999999999;
             }
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
+                lineIndex: lineIndex,
+                pointIndex: pointIndex,
+                latLng: event.target._latlng,
+                originalEvent: event
+            });
+        },
+
+        onDragEnd: function (event) {
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
+        },
+
+        onDragging: function (event) {
+            this.rubberBandLayer.clearLayers();
+            if (this.startingMarker) {
+                var lineIndex = this.model.get('lineIndex');
+                var latLng = event.target._latlng;
+                var pointIndex;
+                if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
+                    pointIndex = 0;
+                } else {
+                    /* The points in the polyline change when Direction service is called.
+                     * Setting a large value then and adjusting it here solves that problem.
+                     */
+                    pointIndex = 999999999;
+                }
+                this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                    lineIndex: lineIndex,
+                    pointIndex: pointIndex,
+                    latLng: latLng,
+                    originalEvent: event
+                });
+            }
+        },
+
+        handleMouseout: function () {
+            this.rubberBandLayer.clearLayers();
         },
 
         destroy: function () {
