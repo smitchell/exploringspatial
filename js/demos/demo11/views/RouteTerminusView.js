@@ -133,7 +133,8 @@ define(function(require) {
         onDragEnd: function (event) {
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
                 type: this.dispatcher.Events.DRAG_END,
-                originalEvent: event
+                target: event.target,
+                originalEvent: event.originalEvent
             });
         },
 

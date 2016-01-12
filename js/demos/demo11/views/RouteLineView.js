@@ -32,6 +32,7 @@ define(function (require) {
                 weight: 8
             };
             this.metersToMiles = 0.000621371;
+            this.isDragging = false;
             this.draggingLineId = this.model.get('lineIndex');
             this.dispatcher.on(this.dispatcher.Events.DRAG_START, this.onPublishedDragStart, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onPublishedDragEnd, this);
@@ -195,7 +196,7 @@ define(function (require) {
             // Ignore the first mouse out if popup is open so that
             // user can move the mouse to the popup without unhighlighting line.
             var lineIndex = this.model.get('lineIndex');
-            if (!this.popupopen && this.draggingLineId === lineIndex) {
+            if (!this.popupopen && !this.isDragging) {
                 this.lineLayer.setStyle(this.style);
                 this.clearMarkers();
             }
@@ -266,6 +267,7 @@ define(function (require) {
 
         onDragStart: function (event) {
             this.logEvent(event);
+            this.isDragging = true;
             var pointIndex = 0;
             var lineIndex = this.model.get('lineIndex');
             if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
@@ -285,14 +287,15 @@ define(function (require) {
 
         onDragEnd: function (event) {
             this.logEvent(event);
+            this.isDragging = false;
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
                 type: this.dispatcher.Events.DRAG_END,
-                originalEvent: event
+                target: event.target,
+                originalEvent: event.originalEvent
             });
         },
 
         onDragging: function (event) {
-            this.logEvent(event);
             this.rubberBandLayer.clearLayers();
             var lineIndex = this.model.get('lineIndex');
             var latLng = event.target._latlng;
@@ -319,7 +322,12 @@ define(function (require) {
 
         logEvent: function (event) {
             if (console.table) {
-                console.table(event);
+                if (event.type) {
+                    console.log("event.type = " + event.type);
+                } else if (event.originalEvent && event.originalEvent.type) {
+                    console.log("event.originalEvent.type = " + event.originalEvent.type);
+                }
+                //console.table(event);
             }
         },
 
