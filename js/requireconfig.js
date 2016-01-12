@@ -7,6 +7,7 @@ var require = {
         underscore: 'underscore-min',
         backbone: 'backbone-min',
         highcharts: 'highcharts',
+        immutable: 'https://cdnjs.cloudflare.com/ajax/libs/immutable/3.7.6/immutable.min.js',
         router: '../router',
         leaflet: 'leaflet/beta/leaflet-1.0.0-b1',
         //leaflet: 'leaflet/leaflet-src',

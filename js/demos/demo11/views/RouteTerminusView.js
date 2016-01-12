@@ -154,7 +154,6 @@ define(function(require) {
             } else {
                 // Get the last point of the last line.
                 var lineStrings = this.model.get('coordinates');
-                var lineString = lineStrings[lineStrings.length - 1];
                 lineIndex = lineStrings.length - 1;
                 /* The points in the polyline change when Direction service is called.
                  * Setting a large value then and adjusting it here solves that problem.

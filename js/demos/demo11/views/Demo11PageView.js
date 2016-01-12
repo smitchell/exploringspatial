@@ -153,9 +153,12 @@ define(function(require) {
          handleMarkerDelete: function(args) {
              this. logEvent(event);
              var _this = this;
+
              var command = new Command();
              var geometry = this.model.get('geometry');
              var coordinates = geometry.get('coordinates');
+             var originalType = geometry.get('type');
+             var originalCoordinates = coordinates.slice(0);
              var lineIndex = args.lineIndex;
              var pointIndex = args.pointIndex;
              var point;
@@ -174,14 +177,9 @@ define(function(require) {
              };
 
              command.undo = function () {
-                 if (lineIndex == 0 && pointIndex == 0 && geometry.get('type') === 'MultiLineString') {
-                     var firstLine = coordinates[0];
-                     coordinates.unshift([point, firstLine[0]]);
-                     geometry.set({'coordinates': coordinates});
-                     geometry.trigger('change:coordinates');
-                 } else {
-                     _this.addPoint({latlng: {lat: point[1], lng: point[0]}});
-                 }
+                 geometry.set({'type': originalType});
+                 geometry.set({'coordinates': originalCoordinates});
+                 geometry.trigger('change:coordinates');
              };
              command.do();
              this.commands.add(command);
@@ -196,8 +194,11 @@ define(function(require) {
                 lineStrings = geometry.get('coordinates'); // Array of line strings
                 var newLineStrings = [];
                 var pointIndex = args.pointIndex;
-                var nextLine, previousLine;
+                var nextLine, previousLine, lastPointInLine, firstPointInLine, onlyOneLineInRoute;
                 $.each(lineStrings, function(i, lineString) {
+                    firstPointInLine = pointIndex === 0;
+                    lastPointInLine = pointIndex === lineString.length - 1;
+                    onlyOneLineInRoute = lineStrings.length === 1;
                     /* The points in the polyline change when Direction service is called.
                      * Setting a large value then and adjusting it here solves that problem.
                      */
@@ -205,50 +206,39 @@ define(function(require) {
                         pointIndex = lineString.length - 1;
                     }
                     if (i == args.lineIndex) {
-                        // Delete point from linestring
-                        if (pointIndex == 0) {
-                            // Deleting the first point is the same as deleting the whole line.
-                            // The intermediate points were just added by the Directions service
-                            lineString = [lineString[lineString.length - 1]];
-                        } else if (pointIndex == lineString.length - 1) {
-                            // Deleting the last point is the same as deleting the whole line.
-                            // The intermediate points were just added by the Directions service
-                            lineString = [lineString[0]];
-                        }
-
-                        // Determine disposition of remaining points in this line based on context
-                        if (lineString.length == 0) {
-                            if (lineStrings.length == 1) {
-                                geometry.set({type: '', coordinates: []});
-                                this.addToolTip()
-                            } else if (i > 0 && i < lineStrings.length - 1) {
-                                // combine the adjacent lines
+                        if (onlyOneLineInRoute) {
+                            // Deleting the start or end of the only line in the route.
+                            type = 'Point';
+                            newLineStrings = lineString[pointIndex];
+                        } else if (i === 0) {
+                            /// Deleting start or end of first line in ourte
+                            if (lastPointInLine) {
+                                // combine the first line with the next line.
+                                nextLine = lineStrings[i + 1];
+                                lineStrings[i + 1] = [lineString[0], nextLine[nextLine.length - 1]];
+                            }
+                            // Nothing to do if firstPointInLine. This line will not get copied to new array.
+                        } else if (i === lineStrings.length - 1) {
+                            // Deleting start or end from the last line in the route
+                            if (firstPointInLine) {
+                                // combine the last line with the previous line.
                                 // Remove the previous line from newLineStrings.
                                 previousLine = newLineStrings.pop();
-
-                                // Replace the points of the next line with starting point of the
-                                // previous line and the last point of the next line. This will
-                                // trigger directions to be called if snap-to-roads is enabled.
-                                nextLine = lineStrings[i + 1];
-                                lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
+                                lineString = [previousLine[0], lineString[lineString.length - 1]];
+                                newLineStrings.push(lineString)
                             }
-                        } else if (lineString.length == 1) {
-                            if (lineStrings.length == 1) {
-                                type = 'Point';
-                                newLineStrings = lineString[0];
-                            }  else if (i > 0 && i < lineStrings.length - 1) {
-                                // combine the adjacent lines
-                                // Remove the previous line from newLineStrings.
-                                previousLine = newLineStrings.pop();
+                            // Nothing to do if lastPointInLine. This line will not get copied to new array.
+                        } else if (i > 0 && i < lineStrings.length - 1) {
+                            // combine the adjacent lines
+                            // Remove the previous line from newLineStrings.
+                            previousLine = newLineStrings.pop();
 
-                                // Replace the points of the next line with starting point of the
-                                // previous line and the last point of the next line. This will
-                                // trigger directions to be called if snap-to-roads is enabled.
-                                nextLine = lineStrings[i + 1];
-                                lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
-                            }
-                        } else {
-                            newLineStrings.push(lineString)
+                            // Replace the points of the next line with starting point of the
+                            // previous line and the last point of the next line. This will
+                            // trigger directions to be called if snap-to-roads is enabled.
+                            nextLine = lineStrings[i + 1];
+                            lineStrings[i + 1] = [previousLine[0], nextLine[nextLine.length - 1]];
+
                         }
                     } else {
                         newLineStrings.push(lineString)
@@ -282,15 +272,16 @@ define(function(require) {
             };
             var geometry = this.model.get('geometry');
             var coordinates = geometry.get('coordinates');
+            var originalType = geometry.get('type');
+            var originalCoordinates = coordinates.slice(0);
             var lineIndex = 0;
             if (geometry.get('type') === 'MultiLineString') {
                 lineIndex = coordinates.length; // don't subtract one since command.do hasn't executed
             }
             command.undo = function () {
-                /* The points in the polyline change when Direction service is called. Setting
-                 * a large value then and adjusting it in onMarkerDelete solves that problem.
-                 */
-                _this.onMarkerDelete({lineIndex: lineIndex, pointIndex: 9999999999});
+                geometry.set({'type': originalType});
+                geometry.set({'coordinates': originalCoordinates});
+                geometry.trigger('change:coordinates');
             };
             command.do();
             this.commands.add(command);
@@ -332,6 +323,9 @@ define(function(require) {
                 var lineIndex = this.dragStartEvent.lineIndex;
                 var pointIndex = this.dragStartEvent.pointIndex;
                 var dragStartLatLng = this.dragStartEvent.latLng;
+                var geometry = this.model.get('geometry');
+                var coordinates = geometry.get('coordinates');
+                var originalCoordinates = coordinates.slice(0);
                 var _this = this;
                 command.do = function () {
                     _this.moveMarker({
@@ -341,11 +335,14 @@ define(function(require) {
                     });
                 };
                 command.undo = function () {
-                    _this.moveMarker({
-                        lineIndex: lineIndex,
-                        pointIndex: pointIndex,
-                        latLng: dragStartLatLng
-                    });
+                    var originalLine = originalCoordinates[lineIndex];
+                    if (pointIndex == 0) {
+                        originalCoordinates[lineIndex] = [[dragStartLatLng.lng, dragStartLatLng.lat, 0, 0], originalLine[originalLine.length - 1]];
+                    } else {
+                        originalCoordinates[lineIndex] = [originalLine[0], [dragStartLatLng.lng, dragStartLatLng.lat, 0, 0]];
+                    }
+                    geometry.set({'coordinates': originalCoordinates});
+                    geometry.trigger('change:coordinates');
                 };
                 command.do();
                 delete this.dragStartEvent;

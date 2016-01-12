@@ -10,9 +10,10 @@
  * The value of the coordinates member is always an array. The structure for the elements in this array is determined by the type of geometry.
  *
  */
-define([
-    'backbone'
-], function (Backbone) {
+"use strict";
+define(function(require) {
+    var Backbone = require('backbone');
+
     var Geometry = Backbone.Model.extend({
         defaults: {
             // type: (required) "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", or "GeometryCollection"
