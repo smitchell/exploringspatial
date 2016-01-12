@@ -31,7 +31,10 @@ define([
          */
         onMapProviderChanged: function() {
             if (this.get('isSelected')) {
-                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CHANGED, {mapProvider: this});
+                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CHANGED, {
+                    type: this.dispatcher.Events.PROVIDER_CHANGED,
+                    mapProvider: this
+                });
             }
         }
     });

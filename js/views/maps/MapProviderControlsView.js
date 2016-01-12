@@ -36,7 +36,7 @@ define([
          */
         onToggleSelected: function(e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE);
+            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE, {type: this.dispatcher.Events.MENU_STATE_CHANGE});
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -70,7 +70,10 @@ define([
             if (!$target.hasClass('selected')) {
                 this.$('.item').removeClass('selected'); // otherwise toggle the selected provider
                 $target.addClass('selected');
-                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CLICKED, {target: $target});
+                this.dispatcher.trigger(this.dispatcher.Events.PROVIDER_CLICKED, {
+                    type: this.dispatcher.Events.PROVIDER_CLICKED,
+                    target: $target
+                });
             }
 
         }

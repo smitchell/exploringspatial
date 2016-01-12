@@ -129,7 +129,10 @@ define([
 
         onRaceSelected: function () {
             this.raceType = $('input:radio[name=race]:checked').val();
-            this.dispatcher.trigger(this.dispatcher.Events.RACE_SELECTED, {meters: this.getRaceDistance(this.raceType)});
+            this.dispatcher.trigger(this.dispatcher.Events.RACE_SELECTED, {
+                type: this.dispatcher.Events.RACE_SELECTED,
+                meters: this.getRaceDistance(this.raceType)
+            });
         },
 
         getRaceDistance: function (race) {

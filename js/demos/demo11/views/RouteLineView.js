@@ -67,6 +67,7 @@ define(function (require) {
         onSuccess: function (lineString) {
             this.model.set({'lineString': lineString});
             this.dispatcher.trigger(this.dispatcher.Events.LINE_CHANGE, {
+                type: this.dispatcher.Events.LINE_CHANGE,
                 line: this.model
             });
             this.render();
@@ -96,6 +97,7 @@ define(function (require) {
         },
 
         onMouseover: function (event) {
+            this.logEvent(event);
             var lineIndex = this.model.get('lineIndex');
             if (this.draggingLineId === lineIndex) {
                 var _this = this;
@@ -188,7 +190,8 @@ define(function (require) {
             this.clearMarkers();
         },
 
-        onMouseout: function () {
+        onMouseout: function (event) {
+            this.logEvent(event);
             // Ignore the first mouse out if popup is open so that
             // user can move the mouse to the popup without unhighlighting line.
             var lineIndex = this.model.get('lineIndex');
@@ -228,6 +231,7 @@ define(function (require) {
         },
 
         onDeleteClick: function (event, popup) {
+            this.logEvent(event);
             var pointIndex, point;
             var lineIndex = this.model.get('lineIndex');
             if (event.target.id === RouteLineView.START_TRIGGER_ID) {
@@ -241,6 +245,7 @@ define(function (require) {
                 point = this.endingPoint;
             }
             this.dispatcher.trigger(this.dispatcher.Events.MARKER_DELETE, {
+                type: this.dispatcher.Events.MARKER_DELETE,
                 lineIndex: lineIndex,
                 pointIndex: pointIndex,
                 point: point,
@@ -255,11 +260,12 @@ define(function (require) {
         },
 
         // Restore lineIndex so processing of mouseover/mouseout events resumes
-        onPublishedDragEnd: function(event) {
+        onPublishedDragEnd: function() {
             this.draggingLineId = this.model.get('lineIndex');
         },
 
         onDragStart: function (event) {
+            this.logEvent(event);
             var pointIndex = 0;
             var lineIndex = this.model.get('lineIndex');
             if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
@@ -269,6 +275,7 @@ define(function (require) {
                 pointIndex = 999999999;
             }
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
+                type: this.dispatcher.Events.DRAG_START,
                 lineIndex: lineIndex,
                 pointIndex: pointIndex,
                 latLng: event.target._latlng,
@@ -277,10 +284,15 @@ define(function (require) {
         },
 
         onDragEnd: function (event) {
-            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
+            this.logEvent(event);
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
+                type: this.dispatcher.Events.DRAG_END,
+                originalEvent: event
+            });
         },
 
         onDragging: function (event) {
+            this.logEvent(event);
             this.rubberBandLayer.clearLayers();
             var lineIndex = this.model.get('lineIndex');
             var latLng = event.target._latlng;
@@ -292,6 +304,7 @@ define(function (require) {
                 pointIndex = 999999999;
             }
             this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                type: this.dispatcher.Events.DRAGGING,
                 lineIndex: lineIndex,
                 pointIndex: pointIndex,
                 latLng: latLng,
@@ -299,8 +312,15 @@ define(function (require) {
             });
         },
 
-        handleMouseout: function () {
+        handleMouseout: function (event) {
+            this.logEvent(event);
             this.rubberBandLayer.clearLayers();
+        },
+
+        logEvent: function (event) {
+            if (console.table) {
+                console.table(event);
+            }
         },
 
         destroy: function () {

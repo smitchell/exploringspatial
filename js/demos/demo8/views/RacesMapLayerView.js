@@ -143,7 +143,9 @@ define([
             var endPoint = polyline[polyline.length - 1];
             this.activityStart = L.marker([startPoint[1], startPoint[0]], {icon: this.startIcon}).addTo(mainland);
             this.activityEnd = L.marker([endPoint[1], endPoint[0]], {icon: this.endIcon}).addTo(mainland);
-            this.dispatcher.trigger(this.dispatcher.Events.RACE_ZOOMED);
+            this.dispatcher.trigger(this.dispatcher.Events.RACE_ZOOMED, {
+                type: this.dispatcher.Events.RACE_ZOOMED
+            });
         },
 
         onReturnToSearch: function (event) {

@@ -23,7 +23,10 @@ define([
          */
         onBaseLayerChanged: function() {
             if (this.get('isBaseLayer') && this.get('isSelected')) {
-                this.dispatcher.trigger(this.dispatcher.Events.BASE_LAYER_CHANGED, {mapLayer: this});
+                this.dispatcher.trigger(this.dispatcher.Events.BASE_LAYER_CHANGED, {
+                    type: this.dispatcher.Events.BASE_LAYER_CHANGED,
+                    mapLayer: this
+                });
             }
         }
     });

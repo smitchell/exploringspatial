@@ -105,7 +105,7 @@ define([
          */
         onToggleSelected: function (e) {
             e.preventDefault();
-            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE);
+            this.dispatcher.trigger(this.dispatcher.Events.MENU_STATE_CHANGE, {type: this.dispatcher.Events.MENU_STATE_CHANGE});
             var mapMenu = this.$('.map-menu');
             mapMenu.stop(true, true);
             mapMenu.show(); // show selected menu
@@ -137,7 +137,10 @@ define([
             e.preventDefault();
             var $overlay = $(e.target);
             $overlay.toggleClass('selected');
-            this.dispatcher.trigger(this.dispatcher.Events.OVERLAY_CLICKED, {target: $overlay});
+            this.dispatcher.trigger(this.dispatcher.Events.OVERLAY_CLICKED, {
+                type: this.dispatcher.Events.OVERLAY_CLICKED,
+                target: $overlay
+            });
         }
     });
 

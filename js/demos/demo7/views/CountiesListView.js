@@ -47,12 +47,18 @@ define([
 
         onMouseover: function (event) {
             $(event.currentTarget).addClass(this.highlightClass);
-            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOVER, {geoid: $(event.currentTarget).attr('id')});
+            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOVER, {
+                type: this.dispatcher.Events.LIST_MOUSEOVER,
+                geoid: $(event.currentTarget).attr('id')
+            });
         },
 
         onMouseout: function (event) {
             $(event.currentTarget).removeClass(this.highlightClass);
-            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOUT, {geoid: $(event.currentTarget).attr('id')});
+            this.dispatcher.trigger(this.dispatcher.Events.LIST_MOUSEOUT, {
+                type: this.dispatcher.Events.LIST_MOUSEOUT,
+                geoid: $(event.currentTarget).attr('id')
+            });
         },
 
         scrollToElement: function(elem) {

@@ -31,13 +31,19 @@ define([
             $('#palette1').html(color1);
             $('#palette2').html(color2);
             $('#palette3').html(color3);
-            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {style: style});
+            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {
+                type: this.dispatcher.Events.CHANGE_STYLE,
+                style: style
+            });
         },
 
         updateOutlineColor: function () {
             var color = $('#outlineColor').val();
             $('#outlineHex').html(color);
-            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {style: {'outlineColor': color}});
+            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {
+                type: this.dispatcher.Events.CHANGE_STYLE,
+                style: {'outlineColor': color}
+            });
         },
 
         updateStyle: function (event) {
@@ -51,7 +57,10 @@ define([
                     elem.html(event.target.value);
                 }
             }
-            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {style: style});
+            this.dispatcher.trigger(this.dispatcher.Events.CHANGE_STYLE, {
+                type: this.dispatcher.Events.CHANGE_STYLE,
+                style: style
+            });
         },
 
         fromMpsToPace: function (metersPerSecond) {

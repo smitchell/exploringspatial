@@ -158,12 +158,18 @@ define([
 
         onMouseover: function (event) {
             event.target.setStyle(this.highlightStyle);
-            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOVER, {geoid: event.target.feature.properties.geoid});
+            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOVER, {
+                type: this.dispatcher.Events.LAYER_MOUSEOVER,
+                geoid: event.target.feature.properties.geoid
+            });
         },
 
         onMouseout: function (event) {
             event.target.setStyle(this.defaultStyle);
-            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOUT, {geoid: event.target.feature.properties.geoid});
+            this.dispatcher.trigger(this.dispatcher.Events.LAYER_MOUSEOUT, {
+                type: this.dispatcher.Events.LAYER_MOUSEOUT,
+                geoid: event.target.feature.properties.geoid
+            });
         },
         clearLogo: function () {
             var logo = $('.logo');

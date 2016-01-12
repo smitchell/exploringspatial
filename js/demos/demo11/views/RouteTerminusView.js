@@ -122,6 +122,7 @@ define(function(require) {
                 pointIndex = lineString.length - 1;
             }
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
+                type: this.dispatcher.Events.DRAG_START,
                 lineIndex: lineIndex,
                 pointIndex: pointIndex,
                 latLng: event.target._latlng,
@@ -130,7 +131,10 @@ define(function(require) {
         },
 
         onDragEnd: function (event) {
-            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
+            this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
+                type: this.dispatcher.Events.DRAG_END,
+                originalEvent: event
+            });
         },
 
         onDeleteClick: function (event) {
@@ -150,6 +154,7 @@ define(function(require) {
                 point = this.endingPoint;
             }
             this.dispatcher.trigger(this.dispatcher.Events.MARKER_DELETE, {
+                type: this.dispatcher.Events.MARKER_DELETE,
                 lineIndex: lineIndex,
                 pointIndex: pointIndex,
                 point: point,
@@ -172,6 +177,7 @@ define(function(require) {
                 var latLng = event.target._latlng;
 
                 this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
+                    type: this.dispatcher.Events.DRAGGING,
                     lineIndex: lineIndex,
                     pointIndex: pointIndex,
                     latLng: latLng,

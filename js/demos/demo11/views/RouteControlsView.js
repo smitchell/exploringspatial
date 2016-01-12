@@ -63,6 +63,7 @@ define(function(require) {
         toggleSnapToRoads: function () {
             this.snapToRoads = this.$('#snapToRoads').is(':checked');
             this.dispatcher.trigger(this.dispatcher.Events.CHANGE_SNAP_TO_ROAD, {
+                type: this.dispatcher.Events.CHANGE_SNAP_TO_ROAD,
                 snapToRoads: this.snapToRoads
             });
             if(this.snapToRoads) {
