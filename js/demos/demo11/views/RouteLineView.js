@@ -198,7 +198,7 @@ define(function (require) {
             }
         },
 
-        onDeleteClick: function (event) {
+        onDeleteClick: function (event, popup) {
             this.logEvent(event);
             var pointIndex, point;
             var lineIndex = this.model.get('lineIndex');
@@ -220,6 +220,7 @@ define(function (require) {
                 point: point,
                 layer: event.target
             });
+            this.map.closePopup(popup);
         },
 
         logEvent: function (event) {

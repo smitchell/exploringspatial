@@ -196,15 +196,15 @@ define(function(require) {
                 var pointIndex = args.pointIndex;
                 var nextLine, previousLine, lastPointInLine, firstPointInLine, onlyOneLineInRoute;
                 $.each(lineStrings, function(i, lineString) {
-                    firstPointInLine = pointIndex === 0;
-                    lastPointInLine = pointIndex === lineString.length - 1;
-                    onlyOneLineInRoute = lineStrings.length === 1;
                     /* The points in the polyline change when Direction service is called.
                      * Setting a large value then and adjusting it here solves that problem.
                      */
                     if (args.pointIndex > lineString.length - 1) {
                         pointIndex = lineString.length - 1;
                     }
+                    firstPointInLine = pointIndex === 0;
+                    lastPointInLine = pointIndex === lineString.length - 1;
+                    onlyOneLineInRoute = lineStrings.length === 1;
                     if (i == args.lineIndex) {
                         if (onlyOneLineInRoute) {
                             // Deleting the start or end of the only line in the route.
