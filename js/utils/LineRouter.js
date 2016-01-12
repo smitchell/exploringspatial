@@ -85,7 +85,7 @@ define(function (require) {
                 if (status === 'OVER_QUERY_LIMIT') {
                     setTimeout(function(){
                         _this._fetchNextDirections();
-                    }, _this.throttleMilliseconds);
+                    }, _this.throttleMilliseconds * 4);
                 }  else {
                     _this._onError(response, status);
                 }

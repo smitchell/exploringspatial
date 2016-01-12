@@ -151,7 +151,6 @@ define(function(require) {
         },
 
          handleMarkerDelete: function(args) {
-             this. logEvent(event);
              var _this = this;
 
              var command = new Command();

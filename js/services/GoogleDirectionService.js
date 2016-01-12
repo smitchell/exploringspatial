@@ -21,9 +21,7 @@ define(function (require) {
     GoogleDirectionService.prototype.fetch = function (options) {
         var _this = this;
         var start = {lat: options.origin[1], lng: options.origin[0]};
-        console.log(JSON.stringify(start));
         var finish = {lat: options.destination[1], lng: options.destination[0]};
-        console.log(JSON.stringify(finish));
         var transitMode = google.maps.TravelMode.WALKING;
         if (this.transitMode == 'Bicycling') {
             transitMode = google.maps.TravelMode.BICYCLING;
