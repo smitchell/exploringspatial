@@ -64,8 +64,6 @@ define(function(require) {
                 this.startingMarker = L.marker(latLng, {icon: this.startIcon, draggable: true}).bindPopup(popup);
                 this.markerGroup = L.layerGroup([this.startingMarker]).addTo(this.map);
             }
-            // dragstart, predrag, drag, dragend
-            console.log('Start marker ' + this.startingMarker._leaflet_id);
             var _this = this;
             this.startingMarker.on('dragstart', function (event) {
                 _this.onDragStart(event);
@@ -119,7 +117,6 @@ define(function(require) {
         },
 
         onDragStart: function (event) {
-            this.logEvent(event);
             var lineIndex, pointIndex;
             if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
                 lineIndex = 0;
@@ -140,12 +137,10 @@ define(function(require) {
         },
 
         onDragEnd: function (event) {
-            this.logEvent(event);
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, event);
         },
 
         onDeleteClick: function (event) {
-            this.logEvent(event);
             var lineIndex, pointIndex, point;
             if (event.target.id === RouteTerminusView.START_TRIGGER_ID) {
                 lineIndex = 0;
@@ -206,17 +201,6 @@ define(function(require) {
         clearRubberBands: function () {
             if (this.rubberBandLayer) {
                 this.rubberBandLayer.clearLayers();
-            }
-        },
-
-        logEvent: function (event) {
-            if (event && console.log) {
-                var latLng = event.target._latlng;
-                var msg = event.type + " " + event.target._leaflet_id;
-                if (latLng) {
-                    msg += " " + latLng.lat + " " + latLng.lng;
-                }
-                console.log(msg);
             }
         },
 

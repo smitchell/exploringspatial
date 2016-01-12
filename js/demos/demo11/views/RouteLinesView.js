@@ -13,6 +13,7 @@ define(function(require) {
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
             this.lineRouter = args.lineRouter;
+            this.routeManager = args.routeManager;
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
@@ -72,45 +73,11 @@ define(function(require) {
         },
 
         onLineChanged: function (event) {
-            var geometry = this.model.get('geometry');
-            var lineStrings = geometry.get('coordinates');
-            var polyline = event.line.get('lineString');
-            var lineIndex = event.line.get('lineIndex');
-            lineStrings[lineIndex] = polyline;
-            var distanceMeters = 0;
-            if (lineIndex > 0) {
-                var previousLine = lineStrings[lineIndex - 1];
-                // set last point of previous line to first point of changed line and recommpute distance
-                var secondToLastPoint = previousLine[previousLine.length - 2];
-                distanceMeters = secondToLastPoint[2];
-                var firstPoint = polyline[0];
-                distanceMeters += L.latLng(secondToLastPoint[1], secondToLastPoint[0]).distanceTo(L.latLng(firstPoint[1], firstPoint[0]));
-                polyline[0][2] = distanceMeters;
-                previousLine[previousLine.length - 1] = polyline[0];
-            }
-            var prevPoint;
-            if (lineIndex < lineStrings.length - 1) {
-                var nextLine = lineStrings[lineIndex + 1];
-                // set first point of next line to last point of changed line
-                nextLine[0] = polyline[polyline.length - 1];
-                for (var i = lineIndex; i < lineStrings.length; i++) {
-                    prevPoint = null;
-                    // Assign distances to points
-                    $.each(lineStrings[i], function (i, point) {
-                        var latLng = L.latLng(point[1], point[0]);
-                        if (prevPoint != null) {
-                            distanceMeters += latLng.distanceTo(prevPoint);
-                            point[2] = distanceMeters;
-                        } else {
-                            // zero or distanceMeters for last point in previous line
-                            point[2] = distanceMeters;
-                        }
-                        prevPoint = latLng;
-                    });
-                }
-            }
-            geometry.set({'coordinates': lineStrings});
-            geometry.trigger('change:coordinates');
+            this.routeManager.updateLine({
+                geometry: this.model.get('geometry'),
+                polyline: event.line.get('lineString'),
+                lineIndex: event.line.get('lineIndex')
+            });
         },
 
         onChangeSnapToRoads: function (args) {
