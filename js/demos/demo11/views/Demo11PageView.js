@@ -81,7 +81,7 @@ define(function(require) {
                   maxZoom: 18,
                   subdomains: '1234'
                 });
-            this.map = L.map('map_container').addLayer(googleLayer);
+            this.map = L.map('map_container').addLayer(mapQuestLayer);
             var baseLayers = {
                 'Google': googleLayer,
                 'OSM': osmLayer,
@@ -89,7 +89,7 @@ define(function(require) {
             };
             var activeLayers = L.control.activeLayers(baseLayers).addTo(this.map);
             this.lineRouter = new LineRouter({dispatcher: this.dispatcher, transitMode: LineRouter.TRANSIT_MODE_BICYCLING, activeLayers: activeLayers});
-            this.map.setView({lat: 38.974974, lng: -94.657152}, 16);
+            this.map.setView({lat: 38.974974, lng: -94.657152}, 14);
             this.MapLocationControlView = new MapLocationControlView({
                 map: this.map,
                 model: this.model,

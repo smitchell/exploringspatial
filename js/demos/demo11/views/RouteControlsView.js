@@ -55,6 +55,7 @@ define(function(require) {
                 this.commands.reset([]);
                 var geometry = this.model.get('geometry');
                 geometry.set({type: '', coordinates: []});
+                geometry.trigger('change:coordinates');
                 this.model.get('properties').set({'meters':0});
                 this.commands.trigger('change');
             }

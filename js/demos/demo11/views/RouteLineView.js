@@ -203,6 +203,10 @@ define(function (require) {
         },
 
         clearMarkers: function () {
+            this.isDragging = false;
+            if (this.rubberBandLayer) {
+                this.rubberBandLayer.clearLayers();
+            }
             $('.popupTrigger').off('click');
             if (this.markerGroup) {
                 this.markerGroup.clearLayers();
@@ -225,9 +229,6 @@ define(function (require) {
             });
             marker.on('dragend', function (event) {
                 _this.onDragEnd(event);
-            });
-            marker.on('popupopen', function (event) {
-                _this.onPopupOpen(event);
             });
         },
 
@@ -262,6 +263,7 @@ define(function (require) {
 
         // Restore lineIndex so processing of mouseover/mouseout events resumes
         onPublishedDragEnd: function() {
+            this.isDragging = false;
             this.draggingLineId = this.model.get('lineIndex');
         },
 
@@ -332,7 +334,6 @@ define(function (require) {
         },
 
         destroy: function () {
-
             this.clearMarkers();
             // Remove view from DOM
             this.remove();

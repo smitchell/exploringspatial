@@ -97,16 +97,26 @@ define(function (require) {
             var lineStrings = geometry.get('coordinates');
             if (lineStrings.length > 0) {
                 lineString = lineStrings[lineIndex];
-                lineString[pointIndex] = point;
+                if (pointIndex > lineString.length - 1) {
+                    pointIndex = lineString.length - 1;
+                }
                 // clear intermediate points to force directions to be refetch.
-                lineStrings[lineIndex] = [lineString[0], lineString[lineString.length - 1]];
+                if (pointIndex === 0) {
+                    lineString = [point, lineString[lineString.length - 1]];
+                } else {
+                    lineString = [lineString[0], point];
+                    // Rebase pose index for fewer points
+                    pointIndex = lineString.length - 1;
+                }
+                lineStrings[lineIndex] = lineString;
+
                 // Adjust adjacent lines
                 if (pointIndex === 0 && lineIndex > 0) {
                     var previousLine = lineStrings[lineIndex - 1];
-                    previousLine[previousLine.length - 1] = lineString[pointIndex];
-                } else if (pointIndex === lineString.length - 1 && lineIndex < lineStrings.length - 1) {
+                    lineStrings[lineIndex - 1] = [previousLine[0], point];
+                }else if (pointIndex === lineString.length - 1 && lineIndex < lineStrings.length - 1) {
                     var nextLine = lineStrings[lineIndex + 1];
-                    nextLine[0] = lineString[pointIndex];
+                    lineStrings[lineIndex + 1] = [point, nextLine[nextLine.length - 1]]
                 }
                 geometry.set('coordinates', lineStrings);
                 geometry.trigger('change:coordinates');
@@ -150,7 +160,6 @@ define(function (require) {
         var geometry = args.geometry;
         var polyline = args.polyline;
         var lineIndex = args.lineIndex;
-
         var lineStrings = geometry.get('coordinates');
         lineStrings[lineIndex] = polyline;
         var distanceMeters = 0;
