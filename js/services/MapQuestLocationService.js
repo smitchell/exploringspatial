@@ -9,11 +9,12 @@ define(function (require) {
     var OsmGeoCoder = function (args) {};
 
     OsmGeoCoder.prototype._buildUrl = function (query) {
-        return "http://nominatim.openstreetmaps.org/search" + this._buildQuery(query) + '&limit=1&format=json';
+        var baseURL = "http://www.mapquestapi.com/geocoding/v1/address?key=E1aPfpcd72j9wfglxliaYXnCeKO4pFD1&inFormat=kvp&outFormat=json&maxResults=1&thumbMaps=false";
+        return baseURL + this._buildQuery(query);
     };
 
     OsmGeoCoder.prototype._buildQuery = function (query) {
-        return '?q=' + query.split(' ').join('+');
+        return '&location=' + query.split(' ').join('+');
     };
 
     OsmGeoCoder.prototype.fetch = function (options) {
@@ -21,15 +22,18 @@ define(function (require) {
         $.ajax({
             url: this._buildUrl(options.query),
             method: 'GET',
-            dataType: 'json',
             jsonp: true,
             success: function (response) {
-                if (response.length > 0) {
-                    var place = response[0];
-                    location.set({lat: place.lat, lon: place.lon, boundingbox: place.boundingbox});
+
+                var info = response.info;
+                if (info.statuscode === 0) {
+                    var results = response.results[0];
+                    var place = results.locations[0];
+                    var latLng = place.latLng;
+                    location.set({lat: latLng.lat, lon: latLng.lng});
                     options.success({location: location});
                 } else {
-                    options.error("No results");
+                    options.error(info.messages, info.statuscode);
                 }
             },
             error: function (response, status) {
