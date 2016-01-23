@@ -81,7 +81,9 @@ define(function(require) {
                   maxZoom: 18,
                   subdomains: '1234'
                 });
-            this.map = L.map('map_container').addLayer(mapQuestLayer);
+            this.map = L.map('map_container').setView({lat: 38.974974, lng: -94.657152}, 14);
+
+            this.map.addLayer(mapQuestLayer);
             var baseLayers = {
                 'Google': googleLayer,
                 'OSM': osmLayer,
@@ -89,7 +91,6 @@ define(function(require) {
             };
             var activeLayers = L.control.activeLayers(baseLayers).addTo(this.map);
             this.lineRouter = new LineRouter({dispatcher: this.dispatcher, transitMode: LineRouter.TRANSIT_MODE_BICYCLING, activeLayers: activeLayers});
-            this.map.setView({lat: 38.974974, lng: -94.657152}, 14);
             this.MapLocationControlView = new MapLocationControlView({
                 map: this.map,
                 model: this.model,
@@ -162,9 +163,11 @@ define(function(require) {
          },
 
         addToolTip: function (event) {
-            this.clearDotMarker();
+            this.clearToolTip();
             if (event.latlng) {
-                this.bullseyeLabel = L.marker(event.latlng, {icon: this.toolTipCssIcon}).addTo(this.map);
+                this.toolTip = L.marker(event.latlng, {
+                    icon: this.toolTipCssIcon
+                }).addTo(this.map);
             }
         },
 
@@ -175,7 +178,14 @@ define(function(require) {
 
          disableTooltip: function () {
              this.map.off('mousemove');
-             this.clearDotMarker();
+             this.clearToolTip();
+         },
+
+         clearToolTip: function () {
+             if (this.toolTip) {
+                 this.map.removeLayer(this.toolTip);
+                 delete this.toolTip;
+             }
          },
 
 
@@ -244,45 +254,24 @@ define(function(require) {
                  var lineStrings = geometry.get('coordinates');
                  var lineString, previousPoint, nextPoint;
                  lineString = lineStrings[lineIndex];
+                 var lineStyle = { color: '#808080', weight: '2', dashArray: "1, 5"};
                  if (pointIndex === 0 ) {
-                     // *** DAGGING FIRST POINT IN LINE ***
-                     // Draw rubber band from dragging point to end of this line
                      lineString = lineStrings[lineIndex];
                      nextPoint = lineString[lineString.length - 1];
-                     L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], {
-                         color: '#808080',
-                         weight: '2',
-                         dashArray: "1, 5"
-                     }).addTo(this.rubberBandLayer);
+                     L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      if (lineIndex > 0) {
-                         // Draw rubber band from dragging point to first point of previous line
                          lineString = lineStrings[lineIndex - 1];
                          previousPoint = lineString[0];
-                         L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], {
-                             color: '#808080',
-                             weight: '2',
-                             dashArray: "1, 5"
-                         }).addTo(this.rubberBandLayer);
+                         L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      }
                  } else {
-                     // *** DAGGING LAST POINT IN LINE ***
-                     // Draw rubber band from dragging point to beginning of this line
                      lineString = lineStrings[lineIndex];
                      previousPoint = lineString[0];
-                     L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], {
-                         color: '#808080',
-                         weight: '2',
-                         dashArray: "1, 5"
-                     }).addTo(this.rubberBandLayer);
+                     L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      if (lineIndex < lineStrings.length - 1) {
-                         // Draw rubber band from dragging point to end point of next line
                          lineString = lineStrings[lineIndex + 1];
                          nextPoint = lineString[lineString.length - 1];
-                         L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], {
-                             color: '#808080',
-                             weight: '2',
-                             dashArray: "1, 5"
-                         }).addTo(this.rubberBandLayer);
+                         L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      }
                  }
              }
@@ -299,15 +288,14 @@ define(function(require) {
          * The lat lon of click will not necessarily match the lat lon of the drag end, and the no correlation ids exist in the
          * click event indicating it was initiated as a drag. If the mouse is moved off the map, then there is no click event.
          *
-         * In order distinguish between a click (add marker) and dragend click (move marker), the ignoreClick flag is added to signify that
-         * a drag operation just finished and the next click should be ignored.
+         * In order distinguish between a click (add marker) and dragend click (move marker), we test for the presence of event.originalEvent.
          * @param event
          */
         handleMoveMarker: function (event) {
             if (this.dragStartEvent) {
                 var latLng;
                 if (event.originalEvent) {
-                    // Handle click event following drag end (when drag end occurs within map bounds)
+                    // Handle drag that ended with the map viewport.
 
                     // Adjust x and y for offset of cursor relative to icon anchor.
                     var x = event.originalEvent.layerX - event.originalEvent.offsetX;

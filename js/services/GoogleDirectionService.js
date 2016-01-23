@@ -19,21 +19,12 @@ define(function (require) {
     };
 
     GoogleDirectionService.prototype.fetch = function (options) {
-        var _this = this;
         var start = {lat: options.origin[1], lng: options.origin[0]};
         var finish = {lat: options.destination[1], lng: options.destination[0]};
         var transitMode = google.maps.TravelMode.WALKING;
-        if (this.transitMode == 'Bicycling') {
-            transitMode = google.maps.TravelMode.BICYCLING;
-        }
-        var directionsRequest = {
-            origin: start,
-            destination: finish,
-            travelMode: transitMode,
-            provideRouteAlternatives: false,
-            avoidHighways: true,
-            avoidTolls: true
-        };
+        if (this.transitMode == 'Bicycling') {transitMode = google.maps.TravelMode.BICYCLING;}
+        var directionsRequest = {origin: start, destination: finish, travelMode: transitMode,
+            provideRouteAlternatives: false, avoidHighways: true, avoidTolls: true};
         this.directionService.route(directionsRequest, function (response, status) {
             if (status == google.maps.DirectionsStatus.OK) {
                 var directionsRoute = response.routes[0];

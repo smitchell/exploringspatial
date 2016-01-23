@@ -47,12 +47,9 @@ define(function (require) {
             var line = this.model.get('lineString');
             var start = line[0];
             var finish = line[line.length - 1];
-            // Temporary "loading" line
-            this.lineLayer = L.polyline([L.latLng(start[1], start[0]), L.latLng(finish[1], finish[0])], {
-                color: '#808080',
-                weight: '2',
-                dashArray: "1, 5"
-            }).addTo(this.linesGroup);
+            var placeHolderStyle = { color: '#808080', weight: '2', dashArray: "1, 5"};
+            this.lineLayer = L.polyline([L.latLng(start[1], start[0]), L.latLng(finish[1], finish[0])], placeHolderStyle)
+                .addTo(this.linesGroup);
             var _this = this;
             this.lineRouter.getDirections({
                 line: line,
@@ -88,9 +85,9 @@ define(function (require) {
             $.each(line, function (i, point) {
                 latLngs.push(L.latLng(point[1], point[0]));
             });
-            var _this = this;
-            this.lineLayer = L.polyline(latLngs, this.style).addTo(this.linesGroup);
 
+            this.lineLayer = L.polyline(latLngs, this.style).addTo(this.linesGroup);
+            var _this = this;
             this.lineLayer.on('mouseover', function (event) {
                 _this.onMouseover(event);
             });
@@ -101,39 +98,39 @@ define(function (require) {
             this.logEvent(event);
             var lineIndex = this.model.get('lineIndex');
             if (this.draggingLineId === lineIndex) {
-                var _this = this;
                 this.lineLayer.setStyle(this.highlight);
                 this.clearMarkers();
                 var lineString = this.model.get('lineString');
-                this.markerGroup = L.layerGroup().addTo(this.map);
+                var markerGroup = L.layerGroup();
 
                 // Add a starting marker to any line except the first line.
                 if (lineIndex > 0) {
-                    this.startingMarker = this.addStartMarker(lineString[0]);
+                    this.startingMarker = this.addStartMarker(lineString[0], markerGroup);
                 }
 
                 // Add an ending marker to any line except the last line.
                 if (lineIndex < this.model.get('lineCount') - 1) {
-                    this.endingMarker = this.addEndMarker(lineString[lineString.length - 1]);
+                    this.endingMarker = this.addEndMarker(lineString[lineString.length - 1], markerGroup);
                 }
 
                 // Only add the feature group if it contains one of the two markers.
                 // If there is only one line on the map, the marker Group will be empty.
-                if (this.startingMarker || this.endingMarker) {
-                    this.markerGroup.addTo(this.map);
+                if (markerGroup.getLayers().length > 0) {
+                    markerGroup.addTo(this.map);
+                    this.markerGroup = markerGroup;
                 }
                 // Fire the mouseOut method the first time the mouse moves off of this line.
                 this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
             }
         },
 
-        addStartMarker: function (point) {
+        addStartMarker: function (point, markerGroup) {
             var _this = this;
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.startIcon,
                 riseOnHover: true,
                 draggable: true
-            }).addTo(this.markerGroup);
+            }).addTo(markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
             marker.on('click', function () {
                 _this.popupopen = true;
@@ -151,13 +148,13 @@ define(function (require) {
             return marker;
         },
 
-        addEndMarker: function (point) {
+        addEndMarker: function (point, markerGroup) {
             var _this = this;
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.endIcon,
                 riseOnHover: true,
                 draggable: true
-            }).addTo(this.markerGroup);
+            }).addTo(markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
             var popup = _this.createPopup(point, 9999999999, RouteLineView.END_TRIGGER_ID);
             marker.on('click', function () {
