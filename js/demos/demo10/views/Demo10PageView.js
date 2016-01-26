@@ -27,7 +27,7 @@ define([
                 options: {
                     iconSize: [16, 16],
                     iconAnchor: [8, 8],
-                    iconUrl: 'http://www.exploringspatial.com/media/target.png'
+                    iconUrl: 'media/bullseye_16x16.png'
                 }
             });
             this.metersToMiles = 0.000621371;
@@ -44,13 +44,13 @@ define([
             var activityId = 143414934;
             this.activity = new Activity({'activityId': activityId});
             this.activity.urlRoot = 'http://data.exploringspatial.com/measurements/';
-            var _this = this;
+            var self = this;
             this.activity.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
-                    _this.loading -= 1;
+                    self.loading -= 1;
                     if (console.log && xhr && xhr.responseText) {
                         console.log(xhr.status + " " + xhr.responseText);
                     }
@@ -155,7 +155,7 @@ define([
         generateSpeedData: function (coordinates) {
             var lat, lng, speed;
             var data = [];
-            var _this = this;
+            var self = this;
             var latIndex = this.activity.getMetricIndex('lat');
             var lonIndex = this.activity.getMetricIndex('lon');
             var speedIndex = this.activity.getMetricIndex('metersPerSecond');
@@ -164,7 +164,7 @@ define([
                 lng = coordinate[lonIndex];
                 speed = coordinate[speedIndex];
                 if (lat && lng && speed) {
-                    data.push([lat, lng, speed * _this.rangeMultiplier]);
+                    data.push([lat, lng, speed * self.rangeMultiplier]);
                 }
             });
             return data;

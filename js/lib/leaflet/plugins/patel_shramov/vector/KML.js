@@ -48,8 +48,8 @@ L.KML = L.FeatureGroup.extend({
 	},
 
 	addKML: function(url, options, async) {
-		var _this = this;
-		var cb = function(gpx, options) { _this._addKML(gpx, options); };
+		var self = this;
+		var cb = function(gpx, options) { self._addKML(gpx, options); };
 		this.loadXML(url, cb, options, async);
 	},
 

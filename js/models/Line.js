@@ -1,8 +1,7 @@
-"use strict";
-define([
-    'jquery',
-    'backbone'
-], function ($, Backbone) {
+define(function(require) {
+    "use strict";
+    var Backbone = require('backbone');
+
     var Line = Backbone.Model.extend({
 
     });

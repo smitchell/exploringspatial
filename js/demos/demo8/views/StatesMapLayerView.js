@@ -19,20 +19,20 @@ define([
             this.dispatcher.on(this.dispatcher.Events.RACE_ADDED, this.onRaceAdded, this);
             this.dispatcher.on(this.dispatcher.Events.RACE_SELECTED, this.onRaceSelected, this);
             this.dispatcher.on(this.dispatcher.Events.RACE_ZOOMED, this.onRaceSelected, this);
-            var _this = this;
+            var self = this;
             $(window).resize (function() {
-                _this.maps['mainland'].fitBounds(_this.mainlandLayer.getBounds());
-                _this.maps['alaska'].fitBounds(_this.alaskaLayer.getBounds());
-                _this.maps['hawaii'].fitBounds(_this.hawaiiLayer.getBounds());
+                self.maps['mainland'].fitBounds(self.mainlandLayer.getBounds());
+                self.maps['alaska'].fitBounds(self.alaskaLayer.getBounds());
+                self.maps['hawaii'].fitBounds(self.hawaiiLayer.getBounds());
             });
         },
 
         render: function () {
             var mainland = this.maps['mainland'];
-            var _this = this;
+            var self = this;
             if (this.mainlandLayer != null && this.mainlandMap.hasLayer(this.mainlandLayer)) {
                 this.mainlandLayer.getLayers().forEach(function (layer) {
-                    _this.mainlandLayer.removeLayer(layer);
+                    self.mainlandLayer.removeLayer(layer);
                 });
                 mainland.removeLayer(this.mainlandLayer);
             }
@@ -43,21 +43,21 @@ define([
                 },
                 style: {weight: 1}
             }).addTo(mainland);
-            this.maps['mainland'].fitBounds(_this.mainlandLayer.getBounds());
+            this.maps['mainland'].fitBounds(self.mainlandLayer.getBounds());
             this.alaskaLayer = L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3563";
                 },
                 style: {weight: 1}
             }).addTo(this.maps['alaska']);
-            this.maps['alaska'].fitBounds(_this.alaskaLayer.getBounds());
+            this.maps['alaska'].fitBounds(self.alaskaLayer.getBounds());
             this.hawaiiLayer = L.geoJson(this.collection.toJSON(), {
                 filter: function (feature, layers) {
                     return feature.properties.adm1_code == "USA-3517";
                 },
                 style: {weight: 1}
             }).addTo(this.maps['hawaii']);
-            this.maps['hawaii'].fitBounds(_this.hawaiiLayer.getBounds());
+            this.maps['hawaii'].fitBounds(self.hawaiiLayer.getBounds());
         },
 
         // Unhighlight the previously selected states.

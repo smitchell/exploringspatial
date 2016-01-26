@@ -1,8 +1,8 @@
 /**
  * The purpose of the MapSearchView is to control user interaction with the map search filter.
  */
-"use strict";
 define(function(require) {
+    "use strict";
     var $              = require('jquery'),
         _              = require('underscore'),
         Backbone       = require('backbone'),

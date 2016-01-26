@@ -51,19 +51,19 @@ define([
             this.router = args.router;
             this.template = _.template(templateHtml);
             this.initialLoad = true;
-            var _this = this;
+            var self = this;
             $(window).resize (function () {
-                _this.resizeDemo();
-                _this.resizeOverlay();
+                self.resizeDemo();
+                self.resizeOverlay();
             });
         },
 
         loadData: function(demoId) {
-            var _this = this;
+            var self = this;
             this.collection = new Demos();
             this.collection.fetch({
                 success: function() {
-                    _this.render(demoId);
+                    self.render(demoId);
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -74,7 +74,7 @@ define([
         } ,
 
         render: function (demoId) {
-            var _this = this;
+            var self = this;
             if (demoId == 'current') {
                 demoId = this.collection.length;
             }
@@ -87,7 +87,7 @@ define([
             // Look for a demo description matching the demoId.
             this.collection.each(function (demo) {
                 if (demoId === demo.get('demoId')) {
-                    _this.demoModel = demo;
+                    self.demoModel = demo;
                 }
             });
 
@@ -97,7 +97,7 @@ define([
             }
             this.destroyCurrentView();
             this.$el.html(this.template({}));
-            this.$('#demoTitle').html(_this.demoModel.get('title'));
+            this.$('#demoTitle').html(self.demoModel.get('title'));
             if (demoId <= 1) {
                 this.$('.left').hide();
             } else {

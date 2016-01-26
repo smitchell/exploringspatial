@@ -2,8 +2,8 @@
  * GoogleDirections is a Backbone model representing a set of driving directions from Google.
  *
  */
-"use strict";
-define(function (require) {
+define(function () {
+    "use strict";
     var GoogleDirectionService = function (args) {
         this.initialize(args);
     };

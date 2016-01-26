@@ -15,7 +15,7 @@ var BlogPosts = Backbone.Collection.extend({
     url: function() {
         var url = [];
         url.push(this.baseUrl);
-        var _this = this;
+        var self = this;
         var i = 0;
         $.each(this.parameters, function(name, value){
             if (i++ == 0) {

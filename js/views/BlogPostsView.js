@@ -18,11 +18,11 @@ define([
             this.$el.html(this.template());
             var $items = this.$('.items');
             $items.html("<div class='loading'></div>");
-            var _this = this;
+            var self = this;
             this.blogPosts = new BlogPosts();
             this.blogPosts.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -36,7 +36,7 @@ define([
             this.$el.html(this.template());
             var $items = this.$('.items');
             var model, month, day, year;
-            var _this = this;
+            var self = this;
             this.blogPosts.each(function (blogPost) {
                 model = blogPost.toJSON();
                 var d = blogPost.get('date');
@@ -54,7 +54,7 @@ define([
                     model.date = [month, day, year].join('/');
 
                 }
-                $items.append(_this.blogPostTemplate(model));
+                $items.append(self.blogPostTemplate(model));
             });
         }
     });

@@ -1,9 +1,9 @@
-"use strict";
 /**
  * Route Manager manages route create/edit operations
  *
  */
 define(function (require) {
+    "use strict";
     var $ = require('jquery');
     var L = require('leaflet');
 
@@ -11,9 +11,7 @@ define(function (require) {
         this.initialize(args);
     };
 
-    RouteManager.prototype.initialize = function (args) {
-
-    };
+    RouteManager.prototype.initialize = function (args) {};
 
     RouteManager.prototype.deleteMarker = function (args) {
         var lineIndex = args.lineIndex;
@@ -87,9 +85,9 @@ define(function (require) {
     RouteManager.prototype.moveMarker = function (args) {
         var geometry = args.geometry;
         var point = args.point;
-        var pointIndex = args.pointIndex;
+        var dragPosition = args.dragPosition;
         var lineIndex = args.lineIndex;
-
+        var latLng = args.latLng;
         var lineString;
         if (geometry.get('type') === 'Point') {
             geometry.set('coordinates', point);
@@ -97,27 +95,34 @@ define(function (require) {
             var lineStrings = geometry.get('coordinates');
             if (lineStrings.length > 0) {
                 lineString = lineStrings[lineIndex];
-                if (pointIndex > lineString.length - 1) {
-                    pointIndex = lineString.length - 1;
-                }
-                // clear intermediate points to force directions to be refetch.
-                if (pointIndex === 0) {
+                if (dragPosition === 'start') {
                     lineString = [point, lineString[lineString.length - 1]];
-                } else {
+                    lineStrings[lineIndex] = lineString;
+                    if (lineIndex > 0) {
+                        var previousLine = lineStrings[lineIndex - 1];
+                        lineStrings[lineIndex - 1] = [previousLine[0], point];
+                    }
+                } else if (dragPosition === 'middle') {
+                    var newLineStrings = [];
+                    $.each(lineStrings, function(i, lineString){
+                        if (i === lineIndex) {
+                            point = [latLng.lng, latLng.lat, 0, 0];
+                            newLineStrings.push([lineString[0], point]);
+                            newLineStrings.push([point, lineString[lineString.length - 1]]);
+                        } else {
+                            newLineStrings[i] = lineString;
+                        }
+                    });
+                    lineStrings = newLineStrings;
+                } else if (dragPosition === 'end') {
                     lineString = [lineString[0], point];
-                    // Rebase pose index for fewer points
-                    pointIndex = lineString.length - 1;
+                    lineStrings[lineIndex] = lineString;
+                    if (lineIndex < lineStrings.length - 1) {
+                        var nextLine = lineStrings[lineIndex + 1];
+                        lineStrings[lineIndex + 1] = [point, nextLine[nextLine.length - 1]]
+                    }
                 }
-                lineStrings[lineIndex] = lineString;
 
-                // Adjust adjacent lines
-                if (pointIndex === 0 && lineIndex > 0) {
-                    var previousLine = lineStrings[lineIndex - 1];
-                    lineStrings[lineIndex - 1] = [previousLine[0], point];
-                }else if (pointIndex === lineString.length - 1 && lineIndex < lineStrings.length - 1) {
-                    var nextLine = lineStrings[lineIndex + 1];
-                    lineStrings[lineIndex + 1] = [point, nextLine[nextLine.length - 1]]
-                }
                 geometry.set('coordinates', lineStrings);
                 geometry.trigger('change:coordinates');
             }

@@ -3,8 +3,8 @@
  * It contains the attributed necessary to support the Leaflet OSM plugin.
  * Its main responsibility is initializing the various MapLayer models supported by OSM.
  */
-"use strict";
 define(function(require) {
+    "use strict";
     var MapProvider              = require('models/MapProvider'),
         MapLayer                 = require('models/MapLayer'),
         MapLayers                = require('collections/MapLayers'),

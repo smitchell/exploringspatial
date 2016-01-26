@@ -117,10 +117,10 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		var script = document.createElement('script');
 		script.type = 'text/javascript';
 		script.src = this.options.serverURL + url + '&nocache='+(new Date()).getTime();
-		var _this = this;
+		var self = this;
 		script.onload = function(e) {
 			document.body.removeChild(this);
-			if (reload) _this.loadBugs();
+			if (reload) self.loadBugs();
 		};
 		document.body.appendChild(script);
 	},
@@ -228,13 +228,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		}
 
 		var ul = L.DomUtil.create('ul', null, newContent);
-		var _this = this;
+		var self = this;
 		var bug = this.bugs[id];
 
 		function showComment(title, add_comment) {
 			h1.textContent_old = h1.textContent;
 			h1.textContent = L.i18n(title);
-			var form = _this.createCommentForm();
+			var form = self.createCommentForm();
 			form.osbid.value = id;
 			form.cancel.onclick = function (e) {
 				h1.textContent = h1.textContent_old;
@@ -244,9 +244,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			form.ok.onclick = function(e) {
 				bug.closePopup();
 				if (!add_comment)
-					_this.closeBug(form);
+					self.closeBug(form);
 				else
-					_this.submitComment(form);
+					self.submitComment(form);
 				return false;
 			};
 			newContent.appendChild(form);
@@ -263,7 +263,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			a.onclick = function(e) { return showComment('Close bug', false); };
 		}
 		var a_josm = create_link(ul, 'JOSM');
-		a_josm.onclick = function() { _this.remoteEdit(rawbug[0]); };
+		a_josm.onclick = function() { self.remoteEdit(rawbug[0]); };
 
 		var a_link = create_link(ul, 'Link');
 		var vars = {lat:rawbug[0].lat, lon:rawbug[0].lng, zoom:this.options.permalinkZoom, bugid:id};
@@ -325,17 +325,17 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		newContent.innerHTML += '<div class="osbCreateInfo">'+L.i18n('Find your bug?')+'<br />'+L.i18n('Contact details and someone will fix it.')+'</div>';
 
 		var popup = new L.Popup();
-		var _this = this;
+		var self = this;
 		var form = this.createCommentForm(newContent);
 		form.osblat.value = e.latlng.lat;
 		form.osblon.value = e.latlng.lng;
 		form.ok.value = L.i18n('Add comment');
 		form.onsubmit = function(e) {
-			_this._map.closePopup(popup);
-			_this.createBug(form);
+			self._map.closePopup(popup);
+			self.createBug(form);
 			return false;
 		};
-		form.cancel.onclick = function(e) { _this._map.closePopup(popup); };
+		form.cancel.onclick = function(e) { self._map.closePopup(popup); };
 
 		popup.setLatLng(e.latlng);
 		popup.setContent(newContent);

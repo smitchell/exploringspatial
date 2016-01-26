@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var $                      = require('jquery'),
         _                      = require('underscore'),
         Backbone               = require('backbone'),
@@ -24,13 +24,6 @@ define(function(require) {
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            this.smallIcon = L.Icon.extend({
-                options: {
-                    iconSize: [16, 16],
-                    iconAnchor: [8, 8],
-                    iconUrl: 'http://www.exploringspatial.com/media/target.png'
-                }
-            });
             this.metersToMiles = 0.000621371;
             this.dispatcher = MapEventDispatcher;
             this.dispatcher.on(this.dispatcher.Events.CHART_MOUSEOVER, this.onChartMouseOver, this);
@@ -39,6 +32,7 @@ define(function(require) {
             this.dispatcher.on(this.dispatcher.Events.DRAGGING, this.onDragging, this);
             this.dispatcher.on(this.dispatcher.Events.DRAG_END, this.onDragEnd, this);
             this.dispatcher.on(this.dispatcher.Events.MARKER_DELETE, this.handleMarkerDelete, this);
+            this.routeManager = new RouteManager();
             this.model = new Feature();
             this.model.get('properties').set('name', '');
             this.model.get('properties').set('meters', 0);
@@ -46,7 +40,7 @@ define(function(require) {
                 options: {
                     iconSize: [16, 16],
                     iconAnchor: [8, 8],
-                    iconUrl: 'http://www.exploringspatial.com/media/target.png'
+                    iconUrl: 'media/bullseye_16x16.png'
                 }
             });
             this.toolTipCssIcon = L.divIcon({
@@ -57,7 +51,6 @@ define(function(require) {
             });
             this.commands = new Commands();
             this.snapToRoads = true;
-            this.routeManager = new RouteManager();
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.onCoordinatesChanged);
             this.render();
@@ -119,9 +112,9 @@ define(function(require) {
                 });
             }
 
-            var _this = this;
-            this.map.on('click', _this.handleAddPoint, this);
-            this.map.on('mouseout', _this.handleMouseout, this);
+            var self = this;
+            this.map.on('click', self.handleAddPoint, this);
+            this.map.on('mouseout', self.handleMouseout, this);
             var geometry = this.model.get('geometry');
             var $mapContainer = $('#map_container');
             $mapContainer.css('cursor', 'crosshair');
@@ -132,6 +125,7 @@ define(function(require) {
                 $mapContainer.css('cursor', '');
             }
             this.rubberBandLayer = L.layerGroup().addTo(this.map);
+            this.lineControlLayer = L.layerGroup().addTo(this.map);
             this.routeTerminusView = new RouteTerminusView({
                 map: this.map,
                 model: geometry,
@@ -146,7 +140,8 @@ define(function(require) {
                 lineRouter: this.lineRouter,
                 routeManager: this.routeManager,
                 activeLayers: activeLayers,
-                rubberBandLayer: this.rubberBandLayer
+                rubberBandLayer: this.rubberBandLayer,
+                lineControlLayer: this.lineControlLayer
             });
         },
 
@@ -190,7 +185,7 @@ define(function(require) {
 
 
          handleMarkerDelete: function(args) {
-             var _this = this;
+             var self = this;
 
              var command = new Command();
              var geometry = this.model.get('geometry');
@@ -200,7 +195,7 @@ define(function(require) {
              var lineIndex = args.lineIndex;
              var pointIndex = args.pointIndex;
              command.do = function () {
-                 _this.routeManager.deleteMarker({
+                 self.routeManager.deleteMarker({
                      lineIndex: lineIndex,
                      pointIndex: pointIndex,
                      geometry: geometry
@@ -218,7 +213,7 @@ define(function(require) {
          },
 
         handleAddPoint: function (event) {
-            var _this = this;
+            var self = this;
             var geometry = this.model.get('geometry');
            var coordinates = geometry.get('coordinates');
            var originalType = geometry.get('type');
@@ -226,8 +221,8 @@ define(function(require) {
            var lineIndex = 0;
             var command = new Command();
             command.do = function () {
-                _this.routeManager.addPoint({
-                    point: _this.toPointFromEvent(event),
+                self.routeManager.addPoint({
+                    point: self.toPointFromEvent(event),
                     geometry: geometry
                 });
             };
@@ -247,7 +242,7 @@ define(function(require) {
 
          onDragging: function(args) {
              var lineIndex = args.lineIndex;
-             var pointIndex = args.pointIndex;
+             var dragPosition = args.dragPosition;
              var latLng = args.latLng;
              var geometry = this.model.get('geometry');
              if (geometry.get('type') === 'MultiLineString') {
@@ -255,7 +250,7 @@ define(function(require) {
                  var lineString, previousPoint, nextPoint;
                  lineString = lineStrings[lineIndex];
                  var lineStyle = { color: '#808080', weight: '2', dashArray: "1, 5"};
-                 if (pointIndex === 0 ) {
+                 if (dragPosition === 'start' ) {
                      lineString = lineStrings[lineIndex];
                      nextPoint = lineString[lineString.length - 1];
                      L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], lineStyle).addTo(this.rubberBandLayer);
@@ -264,7 +259,7 @@ define(function(require) {
                          previousPoint = lineString[0];
                          L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      }
-                 } else {
+                 } else if (dragPosition === 'end' ){
                      lineString = lineStrings[lineIndex];
                      previousPoint = lineString[0];
                      L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], lineStyle).addTo(this.rubberBandLayer);
@@ -273,7 +268,13 @@ define(function(require) {
                          nextPoint = lineString[lineString.length - 1];
                          L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], lineStyle).addTo(this.rubberBandLayer);
                      }
-                 }
+                 } else if (dragPosition === 'middle' ){
+                      lineString = lineStrings[lineIndex];
+                      previousPoint = lineString[0];
+                      L.polyline([latLng, L.latLng(previousPoint[1], previousPoint[0])], lineStyle).addTo(this.rubberBandLayer);
+                      nextPoint = lineString[lineString.length - 1];
+                      L.polyline([latLng, L.latLng(nextPoint[1], nextPoint[0])], lineStyle).addTo(this.rubberBandLayer);
+                  }
              }
          },
 
@@ -309,27 +310,28 @@ define(function(require) {
 
                 var command = new Command();
                 var lineIndex = this.dragStartEvent.lineIndex;
-                var pointIndex = this.dragStartEvent.pointIndex;
+                var dragPosition = this.dragStartEvent.dragPosition;
                 var dragStartLatLng = this.dragStartEvent.latLng;
                 var geometry = this.model.get('geometry');
                 var coordinates = geometry.get('coordinates');
                 var originalCoordinates = coordinates.slice(0);
-                var _this = this;
+                var self = this;
                 command.do = function () {
-                    _this.routeManager.moveMarker({
+                    self.routeManager.moveMarker({
                         lineIndex: lineIndex,
-                        pointIndex: pointIndex,
+                        dragPosition: dragPosition,
                         latLng: latLng,
-                        point: _this.toPointFromLatLng(latLng),
-                        geometry: geometry
+                        point: self.toPointFromLatLng(latLng),
+                        geometry: geometry,
+                        zoom: self.map.getZoom()
                     });
 
                 };
                 command.undo = function () {
                     var originalLine = originalCoordinates[lineIndex];
-                    if (pointIndex == 0) {
+                    if (dragPosition == 'start') {
                         originalCoordinates[lineIndex] = [[dragStartLatLng.lng, dragStartLatLng.lat, 0, 0], originalLine[originalLine.length - 1]];
-                    } else {
+                    } else if (dragPosition == 'end') {
                         originalCoordinates[lineIndex] = [originalLine[0], [dragStartLatLng.lng, dragStartLatLng.lat, 0, 0]];
                     }
                     geometry.set({'coordinates': originalCoordinates});

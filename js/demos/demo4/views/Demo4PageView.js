@@ -24,10 +24,10 @@ define([
          */
         fetchData: function() {
             this.model = new Activity({activityId: 155155867});
-            var _this = this;
+            var self = this;
             this.model.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

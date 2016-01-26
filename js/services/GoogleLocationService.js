@@ -2,8 +2,8 @@
  * GoogleGeoCoder is a Backbone model representing a place on a Google map
  *
  */
-"use strict";
 define(function (require) {
+    "use strict";
     var Location = require('models/Location');
 
     var GoogleLocationService = function (args) {

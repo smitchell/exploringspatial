@@ -18,10 +18,10 @@ define([
             this.startIcon = new CustomIcon({iconUrl: 'media/pin_start.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/pin_end.png'});
             this.render();
-            var _this = this;
+            var self = this;
             $(window).resize (function() {
-                if (_this.map && _this.activityLayer) {
-                    _this.map.fitBounds(_this.activityLayer);
+                if (self.map && self.activityLayer) {
+                    self.map.fitBounds(self.activityLayer);
                 }
             })
         },

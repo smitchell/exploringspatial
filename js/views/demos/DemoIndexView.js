@@ -12,13 +12,13 @@ define([
             this.template = _.template(templateHtml);
             this.itemsTemplate = _.template(itemTemplateHtml);
             this.collection = new Demos();
-            var _this = this;
+            var self = this;
             this.$el.html(this.template());
             var $items = this.$('.items');
             $items.html("<div class='loading'></div>");
             this.collection.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

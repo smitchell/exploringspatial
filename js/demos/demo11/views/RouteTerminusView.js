@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var $            = require('jquery'),
         _            = require('underscore'),
         Backbone     = require('backbone'),
@@ -86,45 +86,43 @@ define(function(require) {
 
         onPopupOpen: function (event) {
             var popup = event.popup;
-            var _this = this;
+            var self = this;
             $(popup._container).on('click', '.popupTrigger', function (event) {
-                _this.onDeleteClick(event, popup);
+                self.onDeleteClick(event, popup);
             });
 
         },
 
         addMarkerListeners: function(marker) {
-            var _this = this;
+            var self = this;
             marker.on('dragstart', function (event) {
-                _this.onDragStart(event);
+                self.onDragStart(event);
             });
             marker.on('drag', function (event) {
-                _this.onDragging(event);
+                self.onDragging(event);
             });
             marker.on('dragend', function (event) {
-                _this.onDragEnd(event);
+                self.onDragEnd(event);
             });
             marker.on('popupopen', function (event) {
-                _this.onPopupOpen(event);
+                self.onPopupOpen(event);
             });
         },
 
         onDragStart: function (event) {
-            var lineIndex, pointIndex;
-            if (event.target._leaflet_id === this.startingMarker._leaflet_id) {
+            var lineIndex;
+            var dragPosition = this.getDragPosition(event);
+            if (dragPosition === 'start') {
                 lineIndex = 0;
-                pointIndex = 0;
             } else {
                 // Get the last point of the last line.
                 var lineStrings = this.model.get('coordinates');
-                var lineString = lineStrings[lineStrings.length - 1];
                 lineIndex = lineStrings.length - 1;
-                pointIndex = lineString.length - 1;
             }
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
                 type: this.dispatcher.Events.DRAG_START,
                 lineIndex: lineIndex,
-                pointIndex: pointIndex,
+                dragPosition: dragPosition,
                 latLng: event.target._latlng,
                 originalEvent: event
             });
@@ -133,6 +131,7 @@ define(function(require) {
         onDragEnd: function (event) {
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
                 type: this.dispatcher.Events.DRAG_END,
+                dragPosition: this.getDragPosition(event),
                 target: event.target,
                 originalEvent: event.originalEvent
             });
@@ -167,24 +166,30 @@ define(function(require) {
             this.rubberBandLayer.clearLayers();
             if (this.model.get('type') === 'MultiLineString') {
                 var lineIndex = 0;
-                var pointIndex = 0;
-                if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
+                var dragPosition = this.getDragPosition(event);
+                if (dragPosition === 'end') {
                     // Get the last point of the last line.
                     var lineStrings = this.model.get('coordinates');
-                    var lineString = lineStrings[lineStrings.length - 1];
                     lineIndex = lineStrings.length - 1;
-                    pointIndex = lineString.length - 1;
                 }
                 var latLng = event.target._latlng;
 
                 this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
                     type: this.dispatcher.Events.DRAGGING,
                     lineIndex: lineIndex,
-                    pointIndex: pointIndex,
+                    dragPosition: dragPosition,
                     latLng: latLng,
                     originalEvent: event
                 });
             }
+        },
+
+        getDragPosition: function(event) {
+            var dragPosition = 'start';
+            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
+                dragPosition = 'end';
+            }
+            return dragPosition;
         },
 
         handleMouseout: function () {

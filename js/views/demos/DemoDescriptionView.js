@@ -20,10 +20,10 @@ define([
         render: function () {
             $('body').append(this.template());
             $('.overlay').show();
-            var _this = this;
+            var self = this;
             var boxClose = $('#boxclose');
             boxClose.click(function (event) {
-                _this.destroy();
+                self.destroy();
                 event.stopPropagation();
            		return false;
             });

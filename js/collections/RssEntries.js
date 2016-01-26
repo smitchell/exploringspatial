@@ -14,7 +14,7 @@ var RssEntries = Backbone.Collection.extend({
 	},
 
 	fetch: function() {
-		var _this = this;
+		var self = this;
 		this.feed.load(function(result) {
 			var models = [];
 			if (!result.error) {
@@ -31,7 +31,7 @@ var RssEntries = Backbone.Collection.extend({
                     }));
                 });
 			}
-			_this.reset(models);
+			self.reset(models);
 		});
 	}
 });

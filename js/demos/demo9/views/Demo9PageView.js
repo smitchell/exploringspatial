@@ -25,10 +25,10 @@ define([
         fetchData: function() {
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
-            var _this = this;
+            var self = this;
             this.activities.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -67,7 +67,7 @@ define([
             // Use Leaftet.pip to find only those layers that started from Sport+Spine so we can test geofencing.
             var pageDiv = this.$(".paging");
             var i = 1;
-            var _this = this;
+            var self = this;
             var layers, latLng, geometry, coordinates, triggerId;
             var className = 'page selected'; // make the first page selected.
             var firstMatch = true;
@@ -75,13 +75,13 @@ define([
                 geometry = activity.get('geometry');
                 coordinates = geometry.get('coordinates');
                 latLng = L.latLng(coordinates[1], coordinates[0]);
-                layers = leafletPip.pointInLayer(latLng, _this.geoFence, true);
+                layers = leafletPip.pointInLayer(latLng, self.geoFence, true);
                 // Did this activity match, and do we have less than 10 sample activities so far.
                 if (layers.length > 0 && i <= 10) {
                     triggerId = activity.get('properties').get('activityId');
                     pageDiv.append($("<div class='" + className + "' id='" + triggerId + "' >" + i++ + "</div>"));
                     if (firstMatch) {
-                        _this.loadActivity(triggerId);
+                        self.loadActivity(triggerId);
                         firstMatch = false;
                         className = 'page';
                     }
@@ -99,10 +99,10 @@ define([
 
         loadActivity: function (activityId) {
             this.activity = new Activity({activityId: activityId});
-            var _this = this;
+            var self = this;
             this.activity.fetch({
                 success: function () {
-                    _this.onActivityFetched();
+                    self.onActivityFetched();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -113,9 +113,9 @@ define([
         },
 
         onActivityFetched: function () {
-            var _this = this;
+            var self = this;
             this.activityGroup.getLayers().forEach(function (layer) {
-                _this.activityGroup.removeLayer(layer);
+                self.activityGroup.removeLayer(layer);
             });
             var latLng;
             var layers;
@@ -130,7 +130,7 @@ define([
                 latLng = L.latLng(coordinate[1], coordinate[0]);
                 // Don't check anymore once we've left the geofence.
                 if (insideFence) {
-                    layers = leafletPip.pointInLayer(latLng, _this.geoFence, true);
+                    layers = leafletPip.pointInLayer(latLng, self.geoFence, true);
                     if (layers.length == 0) {
                         fencedStart.push(latLng);
                         insideFence = false;
@@ -157,7 +157,7 @@ define([
                 latLng = middle[i];
                 // Don't check anymore once we've left the geofence.
                 if (insideFence) {
-                    layers = leafletPip.pointInLayer(latLng, _this.geoFence, true);
+                    layers = leafletPip.pointInLayer(latLng, self.geoFence, true);
                     if (layers.length == 0) {
                         insideFence = false;
                     }
@@ -192,7 +192,7 @@ define([
 
             // but then zoom into the privacy geofence
             setTimeout(function () {
-                _this.map.setView(L.latLng(_this.startLat, _this.startLon), 17, {animate: true});
+                self.map.setView(L.latLng(self.startLat, self.startLon), 17, {animate: true});
             }, 1400);
         },
 

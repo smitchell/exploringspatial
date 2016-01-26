@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var _            = require('underscore'),
         Backbone     = require('backbone'),
         templateHtml = require('text!demos/demo11/templates/RoutePropertiesView.html');

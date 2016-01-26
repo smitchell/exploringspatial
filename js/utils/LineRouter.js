@@ -1,8 +1,8 @@
-"use strict";
 /**
  * Fetches directions for Lines in a sequential manner.
  */
 define(function (require) {
+    "use strict";
     var GoogleDirectionService = require('services/GoogleDirectionService');
     var MapQuestDirectionService = require('services/MapQuestDirectionService');
 
@@ -40,9 +40,9 @@ define(function (require) {
                         break;
                 }
             } else {
-                var _this = this;
+                var self = this;
                 setTimeout(function(){
-                    _this._fetchNextDirections();
+                    self._fetchNextDirections();
                 }, this.throttleMilliseconds);
             }
         }
@@ -69,7 +69,7 @@ define(function (require) {
     };
 
     LineRouter.prototype._googleDirections = function (line) {
-        var _this = this;
+        var self = this;
         var start = line[0];
         var finish = line[line.length - 1];
         this.lastTimestamp = new Date().getTime();
@@ -79,15 +79,15 @@ define(function (require) {
             origin: start,
             destination: finish,
             success: function (response) {
-                _this._onSuccess({'lineString': response.points});
+                self._onSuccess({'lineString': response.points});
             },
             error: function (response, status) {
                 if (status === 'OVER_QUERY_LIMIT') {
                     setTimeout(function(){
-                        _this._fetchNextDirections();
-                    }, _this.throttleMilliseconds * 4);
+                        self._fetchNextDirections();
+                    }, self.throttleMilliseconds * 4);
                 }  else {
-                    _this._onError(response, status);
+                    self._onError(response, status);
                 }
                 if (console.log && status) {
                     console.log(status);
@@ -98,7 +98,7 @@ define(function (require) {
     };
 
     LineRouter.prototype._mapQuestDirections = function (line) {
-        var _this = this;
+        var self = this;
         var start = line[0];
         var finish = line[line.length - 1];
         this.lastTimestamp = new Date().getTime();
@@ -108,10 +108,10 @@ define(function (require) {
             origin: start,
             destination: finish,
             success: function (response) {
-                _this._onSuccess({'lineString': response.points});
+                self._onSuccess({'lineString': response.points});
             },
             error: function (response, status) {
-                _this._onError(response, status);
+                self._onError(response, status);
                 if (console.log && status) {
                     console.log(status);
                 }

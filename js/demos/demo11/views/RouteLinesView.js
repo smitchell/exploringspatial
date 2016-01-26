@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var $             = require('jquery'),
         Backbone      = require('backbone'),
         L             = require('leaflet'),
@@ -15,6 +15,7 @@ define(function(require) {
             this.lineRouter = args.lineRouter;
             this.routeManager = args.routeManager;
             this.rubberBandLayer = args.rubberBandLayer;
+            this.lineControlLayer = args.lineControlLayer;
             var geometry = this.model.get('geometry');
             this.listenTo(geometry, 'change:coordinates', this.render);
             this.lineViews = [];
@@ -31,7 +32,7 @@ define(function(require) {
             var geometry = this.model.get('geometry');
             if (geometry.get('type') === 'MultiLineString') {
                 var lineStrings = geometry.get('coordinates');
-                var _this = this;
+                var self = this;
                 var prevPoint;
                 var distanceMeters = 0;
                 $.each(lineStrings, function (i, lineString) {
@@ -48,22 +49,23 @@ define(function(require) {
                         }
                         prevPoint = latLng;
                     });
-                    _this.lineViews[i] = new RouteLineView({
-                        map: _this.map,
-                        lineRouter: _this.lineRouter,
-                        rubberBandLayer: _this.rubberBandLayer,
+                    self.lineViews[i] = new RouteLineView({
+                        map: self.map,
+                        lineRouter: self.lineRouter,
+                        rubberBandLayer: self.rubberBandLayer,
+                        lineControlLayer: self.lineControlLayer,
                         model: new Line({
                             lineCount: lineStrings.length,
                             lineIndex: i,
                             lineString: lineString,
                             meters: distanceMeters
                         }),
-                        linesGroup: _this.linesGroup,
+                        linesGroup: self.linesGroup,
                         // Magic number... if length is two "presumes" directions have not been fetched yet.
                         // (we don't want to call directions for every line segement each time the route gets extended.
                         // The line must be set back to two points to force directions to be called again.
-                        snapToRoads: _this.snapToRoads && lineString.length === 2,
-                        dispatcher: _this.dispatcher
+                        snapToRoads: self.snapToRoads && lineString.length === 2,
+                        dispatcher: self.dispatcher
                     });
                 });
 
@@ -91,6 +93,9 @@ define(function(require) {
 
 
         clearLines: function () {
+            if (this.rubberBandLayer) {
+                this.rubberBandLayer.clearLayers();
+            }
             if (this.linesGroup) {
                 this.linesGroup.clearLayers();
             }

@@ -22,15 +22,15 @@ define([
             this.$el.html(this.template());
             this.collection.reset();
             this.$('.items').html("<div class='loading'></div>");
-            var _this = this;
+            var self = this;
             this.blogPosts = new BlogPosts();
             this.blogPosts.searchString = keywords.split('+').join(',');
             this.searchesRunning += 1;
             this.blogPosts.fetch({
                 success: function () {
-                    _this.searchesRunning -= 1;
+                    self.searchesRunning -= 1;
                     var model, month, day, year;
-                    _this.blogPosts.each(function (blogPost) {
+                    self.blogPosts.each(function (blogPost) {
                         var blogJSON = blogPost.toJSON();
                         var model = {};
                         model.title = blogJSON.title;
@@ -38,16 +38,16 @@ define([
                         model.url = blogJSON.URL;
                         model.date = blogPost.get('date');
                         model.iconClass = 'wordpress';
-                        _this.collection.add(new SearchResult(model));
+                        self.collection.add(new SearchResult(model));
                     });
-                    _this.checkCompleted();
+                    self.checkCompleted();
                 },
                 error: function (object, xhr, options) {
-                    _this.searchesRunning -= 1;
+                    self.searchesRunning -= 1;
                     if (console.log && xhr && xhr.responseText) {
                         console.log(xhr.status + " " + xhr.responseText);
                     }
-                    _this.checkCompleted();
+                    self.checkCompleted();
                 }
             });
 
@@ -56,15 +56,15 @@ define([
             var matches = [];
             this.demos.fetch({
                 success: function () {
-                    _this.searchesRunning -= 1;
+                    self.searchesRunning -= 1;
                     var content;
-                    _this.demos.each(function (demo) {
+                    self.demos.each(function (demo) {
                         content = demo.get('title').toLowerCase() + demo.get('description').toLowerCase();
                         var index;
                         $.each(keywords.toLowerCase().split('+'), function (index, keyword) {
                             index = content.indexOf(keyword);
                             if (index > -1) {
-                                var isUnmatched = _this.isUnmatched(demo, matches);
+                                var isUnmatched = self.isUnmatched(demo, matches);
                                 if (isUnmatched) {
                                     matches.push(demo);
                                 }
@@ -82,22 +82,22 @@ define([
                             parseInt(parts[0], 10) - 1,
                             parseInt(parts[1], 10));
                         model.iconClass = 'demo';
-                        _this.collection.add(new SearchResult(model));
+                        self.collection.add(new SearchResult(model));
                     });
-                    _this.checkCompleted();
+                    self.checkCompleted();
                 },
                 error: function (object, xhr, options) {
-                    _this.searchesRunning -= 1;
+                    self.searchesRunning -= 1;
                     if (console.log && xhr && xhr.responseText) {
                         console.log(xhr.status + " " + xhr.responseText);
                     }
-                    _this.checkCompleted();
+                    self.checkCompleted();
                 }
             });
         },
 
         render: function () {
-            var _this = this;
+            var self = this;
             this.collection.sort();
             this.collection.each(function (searchResult) {
                 var json = searchResult.toJSON();
@@ -116,7 +116,7 @@ define([
                     json.date = [month, day, year].join('/');
 
                 }
-                _this.$('.items').append(_this.searchResultTemplate(json));
+                self.$('.items').append(self.searchResultTemplate(json));
             })
         },
 

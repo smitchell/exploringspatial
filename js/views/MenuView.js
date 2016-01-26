@@ -9,15 +9,15 @@ define([
         initialize: function () {
             this.template = _.template(templateHtml);
             this.render();
-            var _this = this;
+            var self = this;
             $('.search a').click(function(event) {
-                _this.search();
+                self.search();
             });
             $('.search input').on('keypress', function(event) {
                 if (event.keyCode != 13) {
                     return;
                 }
-                _this.search();
+                self.search();
             });
         },
         render: function () {

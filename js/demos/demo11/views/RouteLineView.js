@@ -1,5 +1,5 @@
-"use strict";
 define(function (require) {
+    "use strict";
     var $        = require('jquery'),
         Backbone = require('backbone'),
         _        = require('underscore'),
@@ -17,12 +17,14 @@ define(function (require) {
             this.snapToRoads = args.snapToRoads;
             this.dispatcher = args.dispatcher;
             this.rubberBandLayer = args.rubberBandLayer;
+            this.lineControlLayer = args.lineControlLayer;
             var CustomIcon = L.Icon.extend({
                 options: {
                     iconSize: [16, 16],
                     iconAnchor: [8, 8]
                 }
             });
+            this.bullseyeIcon = new CustomIcon({iconUrl: 'media/white_16x16.png'});
             this.startIcon = new CustomIcon({iconUrl: 'media/green_16x16.png'});
             this.endIcon = new CustomIcon({iconUrl: 'media/red_16x16.png'});
             this.style = {
@@ -50,14 +52,14 @@ define(function (require) {
             var placeHolderStyle = { color: '#808080', weight: '2', dashArray: "1, 5"};
             this.lineLayer = L.polyline([L.latLng(start[1], start[0]), L.latLng(finish[1], finish[0])], placeHolderStyle)
                 .addTo(this.linesGroup);
-            var _this = this;
+            var self = this;
             this.lineRouter.getDirections({
                 line: line,
                 success: function (lineString) {
-                    _this.onSuccess(lineString)
+                    self.onSuccess(lineString)
                 },
                 error: function (response, xtr) {
-                    _this.onError(response, xtr)
+                    self.onError(response, xtr)
                 }
             });
         },
@@ -87,19 +89,20 @@ define(function (require) {
             });
 
             this.lineLayer = L.polyline(latLngs, this.style).addTo(this.linesGroup);
-            var _this = this;
+            var self = this;
             this.lineLayer.on('mouseover', function (event) {
-                _this.onMouseover(event);
+                self.onLineMouseover(event);
             });
 
         },
 
-        onMouseover: function (event) {
+        onLineMouseover: function (event) {
             this.logEvent(event);
             var lineIndex = this.model.get('lineIndex');
             if (this.draggingLineId === lineIndex) {
                 this.lineLayer.setStyle(this.highlight);
                 this.clearMarkers();
+                this.addBullseyeMarker(event.latlng);
                 var lineString = this.model.get('lineString');
                 var markerGroup = L.layerGroup();
 
@@ -120,12 +123,18 @@ define(function (require) {
                     this.markerGroup = markerGroup;
                 }
                 // Fire the mouseOut method the first time the mouse moves off of this line.
-                this.map.addOneTimeEventListener('mouseover', this.onMouseout, this);
+                this.map.addOneTimeEventListener('mouseover', this.onMapMouseOver, this);
+            }
+        },
+
+        removeBullseye: function () {
+            if (this.lineControlLayer) {
+                this.lineControlLayer.clearLayers();
             }
         },
 
         addStartMarker: function (point, markerGroup) {
-            var _this = this;
+            var self = this;
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.startIcon,
                 riseOnHover: true,
@@ -133,15 +142,15 @@ define(function (require) {
             }).addTo(markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
             marker.on('click', function () {
-                _this.popupopen = true;
-                var popup = _this.createPopup(point, 0, RouteLineView.START_TRIGGER_ID);
+                self.popupopen = true;
+                var popup = self.createPopup(point, 0, RouteLineView.START_TRIGGER_ID);
                 marker.bindPopup(popup);
                 marker.openPopup().on('popupclose', function (event) {
-                    _this.onClosePopup(event);
+                    self.onClosePopup(event);
                 });
                 // Bind new click event
                 $(popup._container).on('click', '.popupTrigger', function (event) {
-                    _this.onDeleteClick(event, popup);
+                    self.onDeleteClick(event, popup);
                 });
             });
             this.addMarkerListeners(marker);
@@ -149,24 +158,35 @@ define(function (require) {
         },
 
         addEndMarker: function (point, markerGroup) {
-            var _this = this;
+            var self = this;
             var marker = L.marker({lat: point[1], lng: point[0]}, {
                 icon: this.endIcon,
                 riseOnHover: true,
                 draggable: true
             }).addTo(markerGroup);
             // bind popup on the fly so popupopen flag can be set, otherwise, mouseout will remove the highlighted line and popup
-            var popup = _this.createPopup(point, 9999999999, RouteLineView.END_TRIGGER_ID);
+            var popup = self.createPopup(point, 9999999999, RouteLineView.END_TRIGGER_ID);
             marker.on('click', function () {
-                _this.popupopen = true;
+                self.popupopen = true;
                 marker.bindPopup(popup);
                 marker.openPopup().on('popupclose', function (event) {
-                    _this.onClosePopup(event);
+                    self.onClosePopup(event);
                 });
                 $(popup._container).on('click', '.popupTrigger', function (event) {
-                    _this.onDeleteClick(event, popup);
+                    self.onDeleteClick(event, popup);
                 });
             });
+            this.addMarkerListeners(marker);
+            return marker;
+        },
+
+        addBullseyeMarker: function (latLng) {
+            var marker = L.marker(latLng, {
+                icon: this.bullseyeIcon,
+                riseOnHover: true,
+                draggable: true
+            }).addTo(this.lineControlLayer);
+            var self = this;
             this.addMarkerListeners(marker);
             return marker;
         },
@@ -188,8 +208,8 @@ define(function (require) {
             this.clearMarkers();
         },
 
-        onMouseout: function (event) {
-            this.logEvent(event);
+        onMapMouseOver: function (event) {
+            this.removeBullseye();
             // Ignore the first mouse out if popup is open so that
             // user can move the mouse to the popup without unhighlighting line.
             var lineIndex = this.model.get('lineIndex');
@@ -204,6 +224,9 @@ define(function (require) {
             if (this.rubberBandLayer) {
                 this.rubberBandLayer.clearLayers();
             }
+            if (this.lineControlLayer) {
+                this.lineControlLayer.clearLayers();
+            }
             $('.popupTrigger').off('click');
             if (this.markerGroup) {
                 this.markerGroup.clearLayers();
@@ -217,15 +240,15 @@ define(function (require) {
         },
 
         addMarkerListeners: function(marker) {
-            var _this = this;
+            var self = this;
             marker.on('dragstart', function (event) {
-                _this.onDragStart(event);
+                self.onDragStart(event);
             });
             marker.on('drag', function (event) {
-                _this.onDragging(event);
+                self.onDragging(event);
             });
             marker.on('dragend', function (event) {
-                _this.onDragEnd(event);
+                self.onDragEnd(event);
             });
         },
 
@@ -267,18 +290,11 @@ define(function (require) {
         onDragStart: function (event) {
             this.logEvent(event);
             this.isDragging = true;
-            var pointIndex = 0;
             var lineIndex = this.model.get('lineIndex');
-            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
-                /* The points in the polyline change when Direction service is called.
-                 * Setting a large value then and adjusting it here solves that problem.
-                 */
-                pointIndex = 999999999;
-            }
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_START, {
                 type: this.dispatcher.Events.DRAG_START,
                 lineIndex: lineIndex,
-                pointIndex: pointIndex,
+                dragPosition: this.getDragPosition(event),
                 latLng: event.target._latlng,
                 originalEvent: event
             });
@@ -290,6 +306,7 @@ define(function (require) {
             this.dispatcher.trigger(this.dispatcher.Events.DRAG_END, {
                 type: this.dispatcher.Events.DRAG_END,
                 target: event.target,
+                dragPosition: this.getDragPosition(event),
                 originalEvent: event.originalEvent
             });
         },
@@ -298,20 +315,23 @@ define(function (require) {
             this.rubberBandLayer.clearLayers();
             var lineIndex = this.model.get('lineIndex');
             var latLng = event.target._latlng;
-            var pointIndex = 0;
-            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
-                /* The points in the polyline change when Direction service is called.
-                 * Setting a large value then and adjusting it here solves that problem.
-                 */
-                pointIndex = 999999999;
-            }
             this.dispatcher.trigger(this.dispatcher.Events.DRAGGING, {
                 type: this.dispatcher.Events.DRAGGING,
                 lineIndex: lineIndex,
-                pointIndex: pointIndex,
+                dragPosition: this.getDragPosition(event),
                 latLng: latLng,
                 originalEvent: event
             });
+        },
+
+        getDragPosition: function(event) {
+            var dragPosition = 'middle';
+            if (typeof this.endingMarker !== 'undefined' && event.target._leaflet_id === this.endingMarker._leaflet_id) {
+                dragPosition = 'end';
+            } else  if (typeof this.startingMarker !== 'undefined' && event.target._leaflet_id === this.startingMarker._leaflet_id) {
+                dragPosition = 'start'
+            }
+            return dragPosition;
         },
 
         handleMouseout: function (event) {
@@ -320,13 +340,12 @@ define(function (require) {
         },
 
         logEvent: function (event) {
-            if (console.table) {
+            if (console.log) {
                 if (event.type) {
                     console.log("event.type = " + event.type);
                 } else if (event.originalEvent && event.originalEvent.type) {
                     console.log("event.originalEvent.type = " + event.originalEvent.type);
                 }
-                //console.table(event);
             }
         },
 

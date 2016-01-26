@@ -23,10 +23,10 @@ define([
 
         fetchData: function() {
             this.collection = new CodeDefinitions("COUNTRY");
-            var _this = this;
+            var self = this;
             this.collection.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

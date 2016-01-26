@@ -102,10 +102,10 @@ define([
             this.originalCenter = mainland.getCenter();
             this.originalZoom = mainland.getZoom();
             this.activity = new Activity({activityId: event.target.id});
-            var _this = this;
+            var self = this;
             this.activity.fetch({
                 success: function () {
-                    _this.renderActivity();
+                    self.renderActivity();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

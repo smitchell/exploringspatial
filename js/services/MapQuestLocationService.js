@@ -2,8 +2,8 @@
  * OsmGeoCoder is a Backbone model representing a place on an OSM map
  *
  */
-"use strict";
 define(function (require) {
+    "use strict";
     var Location = require('models/Location');
 
     var OsmGeoCoder = function (args) {};

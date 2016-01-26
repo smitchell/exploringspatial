@@ -39,7 +39,7 @@ L.BingLayer = L.TileLayer.extend({
 	loadMetadata: function() {
 		if (this.metaRequested) return;
 		this.metaRequested = true;
-		var _this = this;
+		var self = this;
 		var cbid = '_bing_metadata_' + L.Util.stamp(this);
 		window[cbid] = function (meta) {
 			window[cbid] = undefined;
@@ -48,7 +48,7 @@ L.BingLayer = L.TileLayer.extend({
 			if (meta.errorDetails) {
 				return;
 			}
-			_this.initMetadata(meta);
+			self.initMetadata(meta);
 		};
 		var urlScheme = (document.location.protocol === 'file:') ? 'http' : document.location.protocol.slice(0, -1);
 		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/'

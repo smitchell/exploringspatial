@@ -32,10 +32,10 @@ define([
             this.activitySearch = args.activitySearch;
             this.activitySearch.on('change', this.render, this);
             this.render();
-            var _this = this;
+            var self = this;
             $(window).resize (function () {
-                if (_this.map && _this.activityLayer) {
-                    _this.map.fitBounds(_this.activityLayer);
+                if (self.map && self.activityLayer) {
+                    self.map.fitBounds(self.activityLayer);
                 }
             })
         },
@@ -135,10 +135,10 @@ define([
             this.originalCenter = this.map.getCenter();
             this.originalZoom = this.map.getZoom();
             this.activity = new Activity({activityId: event.target.id});
-            var _this = this;
+            var self = this;
             this.activity.fetch({
                 success: function () {
-                    _this.renderActivity();
+                    self.renderActivity();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

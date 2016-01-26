@@ -27,7 +27,7 @@ L.DeferredLayer = L.LayerGroup.extend({
 	_loadScripts: function(scripts, cb, args) {
 		if (!scripts || scripts.length === 0)
 			return cb(args);
-		var _this = this, s = scripts.pop(), c;
+		var self = this, s = scripts.pop(), c;
 		c = this._script_cache[s];
 		if (c === undefined) {
 			c = {url: s, wait: []};
@@ -43,7 +43,7 @@ L.DeferredLayer = L.LayerGroup.extend({
 			c.e = script;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
-		function _cb() { _this._loadScripts(scripts, cb, args); }
+		function _cb() { self._loadScripts(scripts, cb, args); }
 		c.wait.push(_cb);
 		if (c.e.readyState === 'completed')
 			_cb();

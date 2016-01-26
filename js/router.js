@@ -31,7 +31,7 @@ define([
         router.on('route:defaultRoute', function (actions) {
             $('.overlay').hide();
             $('#keywords').val('');
-            var _this = this;
+            var self = this;
             switch (actions) {
                 case 'about':
                 {
@@ -65,9 +65,9 @@ define([
                 case 'license':
                 {
                     if (typeof this.modules.license == 'undefined') {
-                        _this.modules.license = new LicensePageView({el: $('#content')});
+                        self.modules.license = new LicensePageView({el: $('#content')});
                     }
-                    _this.modules.license.render();
+                    self.modules.license.render();
                     break;
                 }
                 default:

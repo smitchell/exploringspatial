@@ -25,10 +25,10 @@ define([
         fetchData: function() {
             this.collection = new Activities();
             this.collection.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
-            var _this = this;
+            var self = this;
             this.collection.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

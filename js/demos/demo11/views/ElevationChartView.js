@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var Backbone   = require('backbone'),
         Highcharts = require('highcharts');
 
@@ -12,7 +12,7 @@ define(function(require) {
 
 
         render: function () {
-            var _this = this;
+            var self = this;
             var metersToMiles = 0.000621371;
             var metersToFeet = 3.28084;
             var milesToMeters = 1609.34;
@@ -106,16 +106,16 @@ define(function(require) {
                             point: {
                                 events: {
                                     mouseOver: function (event) {
-                                        _this.dispatcher.trigger(_this.dispatcher.Events.CHART_MOUSEOVER, {distanceMeters: event.target.x * milesToMeters});
+                                        self.dispatcher.trigger(self.dispatcher.Events.CHART_MOUSEOVER, {distanceMeters: event.target.x * milesToMeters});
                                     },
                                     mouseOut: function (event) {
-                                        _this.dispatcher.trigger(_this.dispatcher.Events.CHART_MOUSEOUT);
+                                        self.dispatcher.trigger(self.dispatcher.Events.CHART_MOUSEOUT);
                                     }
                                 }
                             },
                             events: {
                                 mouseOut: function () {
-                                    _this.dispatcher.trigger(_this.dispatcher.Events.CHART_MOUSEOUT);
+                                    self.dispatcher.trigger(self.dispatcher.Events.CHART_MOUSEOUT);
                                 }
                             }
                         }

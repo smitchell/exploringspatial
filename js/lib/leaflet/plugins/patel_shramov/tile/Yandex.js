@@ -117,15 +117,15 @@ L.Google = L.Layer.extend({
 			backgroundColor: this.options.mapOptions.backgroundColor
 		});
 
-		var _this = this;
+		var self = this;
 		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
-			function() { _this.onReposition(); });
+			function() { self.onReposition(); });
 		this._google = map;
 
 		google.maps.event.addListenerOnce(map, 'idle',
-			function() { _this._checkZoomLevels(); });
+			function() { self._checkZoomLevels(); });
 		google.maps.event.addListenerOnce(map, 'tilesloaded',
-			function() { _this.fire('load'); });
+			function() { self.fire('load'); });
 		//Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},

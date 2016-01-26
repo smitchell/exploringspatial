@@ -28,10 +28,10 @@ define([
 
        fetchData: function() {
             this.states = new States();
-            var _this = this;
+            var self = this;
             this.states.fetch({
                 success: function () {
-                    _this.onStatesFetched();
+                    self.onStatesFetched();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {
@@ -44,10 +44,10 @@ define([
         onStatesFetched: function () {
             this.activities = new Activities();
             this.activities.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
-            var _this = this;
+            var self = this;
             this.activities.fetch({
                 success: function () {
-                    _this.render();
+                    self.render();
                 },
                 error: function (object, xhr, options) {
                     if (console.log && xhr && xhr.responseText) {

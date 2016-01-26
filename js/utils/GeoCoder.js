@@ -1,9 +1,9 @@
-"use strict";
 /**
  * GeoCoder is an abstraction of geolocation services tied to the selected base map.
  *
  */
 define(function (require) {
+    "use strict";
     var GoogleLocationService = require('services/GoogleLocationService');
     var MapQuestLocationService = require('services/MapQuestLocationService');
 
@@ -41,9 +41,9 @@ define(function (require) {
                         break;
                 }
             } else {
-                var _this = this;
+                var self = this;
                 setTimeout(function(){
-                    _this._fetchNextLocation();
+                    self._fetchNextLocation();
                 }, this.throttleMilliseconds);
             }
         }
@@ -74,54 +74,54 @@ define(function (require) {
     };
 
     GeoCoder.prototype._getLocationFromGoogle = function (query) {
-        var _this = this;
+        var self = this;
         this.lastTimestamp = new Date().getTime();
         this.googleLocationService.fetch({
             query: query,
             success: function (response) {
-                _this._onSuccess({'location': response.location});
+                self._onSuccess({'location': response.location});
             },
             error: function (response, status) {
                 if (status === 'OVER_QUERY_LIMIT') {
                     setTimeout(function(){
-                        _this._fetchNextLocation();
-                    }, _this.throttleMilliseconds);
+                        self._fetchNextLocation();
+                    }, self.throttleMilliseconds);
                 }  else {
-                    _this._onError(response, status);
+                    self._onError(response, status);
                 }
                 if (console.log && status) {
                     console.log(status);
                 }
             },
             complete: function() {
-                _this._onComplete();
+                self._onComplete();
             }
 
         });
     };
 
     GeoCoder.prototype._getLocationFromMapQuest = function (query) {
-        var _this = this;
+        var self = this;
         this.lastTimestamp = new Date().getTime();
         this.mapQuestLocationService.fetch({
             query: query,
             success: function (response) {
-                _this._onSuccess({'location': response.location});
+                self._onSuccess({'location': response.location});
             },
             error: function (response, status) {
                 if (status === 'OVER_QUERY_LIMIT') {
                     setTimeout(function(){
-                        _this._fetchNextLocation();
-                    }, _this.throttleMilliseconds);
+                        self._fetchNextLocation();
+                    }, self.throttleMilliseconds);
                 }  else {
-                    _this._onError(response, status);
+                    self._onError(response, status);
                 }
                 if (console.log && status) {
                     console.log(status);
                 }
             },
             complete: function() {
-                _this._onComplete();
+                self._onComplete();
             }
         });
     };

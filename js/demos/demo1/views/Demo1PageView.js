@@ -1,5 +1,5 @@
-"use strict";
 define(function(require) {
+    "use strict";
     var $            = require('jquery'),
         _            = require('underscore'),
         Backbone     = require('backbone'),
@@ -12,10 +12,10 @@ define(function(require) {
 
         initialize: function () {
             this.template = _.template(templateHtml);
-            var _this = this;
+            var self = this;
             $(window).resize (function() {
-                if (_this.map && _this.overlays) {
-                    _this.map.fitBounds(_this.overlays);
+                if (self.map && self.overlays) {
+                    self.map.fitBounds(self.overlays);
                 }
             });
             this.render();

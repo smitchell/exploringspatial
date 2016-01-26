@@ -46,8 +46,8 @@ L.GPX = L.FeatureGroup.extend({
 	},
 
 	addGPX: function(url, options, async) {
-		var _this = this;
-		var cb = function(gpx, options) { _this._addGPX(gpx, options); };
+		var self = this;
+		var cb = function(gpx, options) { self._addGPX(gpx, options); };
 		this.loadXML(url, cb, options, async);
 	},
 

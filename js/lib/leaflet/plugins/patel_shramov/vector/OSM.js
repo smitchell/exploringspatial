@@ -29,8 +29,8 @@ L.OSM = L.FeatureGroup.extend({
 	},
 
 	addXML: function(url, options, async) {
-		var _this = this;
-		var cb = function(xml, options) { _this._addXML(xml, options); };
+		var self = this;
+		var cb = function(xml, options) { self._addXML(xml, options); };
 		this.loadXML(url, cb, options, async);
 	},
 

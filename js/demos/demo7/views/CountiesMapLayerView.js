@@ -33,10 +33,10 @@ define([
             this.render();
             this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOVER, this.onListMouseover, this);
             this.dispatcher.on(this.dispatcher.Events.LIST_MOUSEOUT, this.onListMouseout, this);
-            var _this = this;
+            var self = this;
             $(window).resize (function() {
-                if (_this.map && _this.countiesLayer) {
-                    _this.map.fitBounds(_this.countiesLayer);
+                if (self.map && self.countiesLayer) {
+                    self.map.fitBounds(self.countiesLayer);
                 }
             })
         },
@@ -45,12 +45,12 @@ define([
             if (this.countiesLayer != null && this.map.hasLayer(this.countiesLayer)) {
                 this.map.removeLayer(this.countiesLayer);
             }
-            var _this = this;
+            var self = this;
             this.countiesLayer = L.geoJson(this.collection.toJSON(),
                 {
-                    style: _this.defaultStyle,
+                    style: self.defaultStyle,
                     onEachFeature: function (feature, layer) {
-                        _this.onEachFeature(feature, layer);
+                        self.onEachFeature(feature, layer);
                     }
                 }).addTo(this.map);
             this.addCollegeOverlays();
@@ -58,26 +58,26 @@ define([
         },
 
         addCollegeOverlays: function() {
-            var _this = this;
+            var self = this;
             var overlays = L.featureGroup().addTo(this.map).on('mouseover', function (event) {
                 event.layer.setStyle({
                     fillOpacity: 0.50
                 });
-                _this.showLogo(event.layer.options.className);
+                self.showLogo(event.layer.options.className);
             }).on('mouseout', function (event) {
                 event.layer.setStyle({
                     fillOpacity: 0.5
                 });
-                _this.clearLogo();
-                _this.unhighlightCounties(event);
+                self.clearLogo();
+                self.unhighlightCounties(event);
             }).on('mousemove', function(event) {
 
                 // Broadcast mouseout to all layers
-                _this.unhighlightCounties(event);
+                self.unhighlightCounties(event);
 
                 // Use the Leaflet-PIP (point in polygon) library to find any county
                 // layers containing the point of the circle's mousemove event.
-                var layers = leafletPip.pointInLayer(event.latlng, _this.countiesLayer, true);
+                var layers = leafletPip.pointInLayer(event.latlng, self.countiesLayer, true);
 
                 // Highlight any matches (there should be just one), by firing its mouseover event.
                 layers.forEach(function (layer) {
@@ -129,30 +129,30 @@ define([
         },
 
         onListMouseover: function (args) {
-            var _this = this;
+            var self = this;
             this.countiesLayer.eachLayer(function (layer) {
                 if (layer.feature.properties.geoid == args.geoid) {
-                    layer.setStyle(_this.highlightStyle)
+                    layer.setStyle(self.highlightStyle)
                 }
             });
         },
 
         onListMouseout: function (args) {
-            var _this = this;
+            var self = this;
             this.countiesLayer.eachLayer(function (layer) {
                 if (layer.feature.properties.geoid == args.geoid) {
-                    layer.setStyle(_this.defaultStyle)
+                    layer.setStyle(self.defaultStyle)
                 }
             });
         },
 
         onEachFeature: function (feature, layer) {
             layer.setStyle(this.defaultStyle);
-            var _this = this;
+            var self = this;
             layer.on({
-                mouseover: _this.onMouseover,
-                mouseout: _this.onMouseout
-            }, _this);
+                mouseover: self.onMouseover,
+                mouseout: self.onMouseout
+            }, self);
 
         },
 
