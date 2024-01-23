@@ -8,7 +8,7 @@ define([
 ], function(Backbone, Feature) {
 var Counties = Backbone.Collection.extend({
 	state: 'ks',
-	url: "http://data.exploringspatial.com/states/ks/counties",
+	url: "http://data.byteworksinc.com/states/ks/counties",
 	model: Feature,
 
 	/**

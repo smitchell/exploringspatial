@@ -18,4 +18,4 @@ Allow: /#demo/6
 Allow: /#demo/7
 Allow: /#demo/8
 Allow: /#demo/9
-Sitemap: http://exploringspatial.com/sitemap.xml
+Sitemap: http://exploringspatial.byteworksinc.com/sitemap.xml

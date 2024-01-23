@@ -56,7 +56,7 @@ define([
                         options: {
                             iconSize: [5, 5],
                             iconAnchor: [2, 2],
-                            iconUrl: 'http://www.exploringspatial.com/media/Red-dot-5px.png'
+                            iconUrl: 'http://exploringspatial.byteworksinc.com/media/Red-dot-5px.png'
                         }
                     });
                     return L.marker(latlng, {icon: new smallIcon()});

@@ -10,7 +10,7 @@ var ActivityMeasurements = Backbone.Collection.extend({
     activityId: '',
 
 	url: function() {
-        return "http://data.exploringspatial.com/measurements/" + this.activityId;
+        return "http://data.byteworksinc.com/measurements/" + this.activityId;
     },
 	model: ActivityMeasurement,
 

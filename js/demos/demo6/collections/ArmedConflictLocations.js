@@ -12,7 +12,7 @@ var ArmedConflictLocations = Backbone.Collection.extend({
     
 	model: ArmedConflictLocation,
 
-    url: function() {return "http://data.exploringspatial.com/acled/" + this.countryName + "/index";},
+    url: function() {return "http://data.byteworksinc.com/acled/" + this.countryName + "/index";},
 
 	/**
 	 * Override Backbone parse to convert properties of properties into child Backbone models.

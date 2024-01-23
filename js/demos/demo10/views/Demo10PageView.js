@@ -43,7 +43,7 @@ define([
         fetchData: function () {
             var activityId = 143414934;
             this.activity = new Activity({'activityId': activityId});
-            this.activity.urlRoot = 'http://data.exploringspatial.com/measurements/';
+            this.activity.urlRoot = 'http://data.byteworksinc.com/measurements/';
             var self = this;
             this.activity.fetch({
                 success: function () {

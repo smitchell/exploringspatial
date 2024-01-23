@@ -7,7 +7,7 @@ define([
         'models/Feature'
 ], function(Backbone, Feature) {
 var States = Backbone.Collection.extend({
-	url: "http://data.exploringspatial.com/states/states.json",
+	url: "http://data.byteworksinc.com/states/states.json",
 	model: Feature,
 
 	/**

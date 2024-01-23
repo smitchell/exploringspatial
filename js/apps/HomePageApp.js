@@ -1,5 +1,5 @@
 /**
- * The home page application bootstraps the single page web site exploringspatial.com
+ * The home page application bootstraps the single page web site exploringspatial.byteworksinc.com
  * by initialing the Backbone router for the site.
  */
 define([

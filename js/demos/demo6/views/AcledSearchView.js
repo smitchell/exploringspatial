@@ -225,7 +225,7 @@ define([
             if ($target.val() != -1 && $selectedOption.length > 0) {
                 var locations = new CodeDefinitions();
                 var label = $selectedOption[0].label;
-                locations.url = "http://data.exploringspatial.com/acled/" + label.split(' ').join('') + "/LOCATIONS.json";
+                locations.url = "http://data.byteworksinc.com/acled/" + label.split(' ').join('') + "/LOCATIONS.json";
                 locations.fetch({
                     success: function () {
                         locations.each(function (codeDefinition) {

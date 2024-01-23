@@ -20,7 +20,7 @@ define([
     'models/Properties'
 ], function (_, Backbone, Geometry, Properties) {
     var Activity = Backbone.Model.extend({
-        urlRoot: "http://data.exploringspatial.com/activity/",
+        urlRoot: "http://data.byteworksinc.com/activity/",
         idAttribute: "activityId",
 
         default: {

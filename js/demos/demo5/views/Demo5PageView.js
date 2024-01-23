@@ -24,7 +24,7 @@ define([
          */
         fetchData: function() {
             this.collection = new Activities();
-            this.collection.url = 'http://data.exploringspatial.com/activities/kc-mitchell';
+            this.collection.url = 'http://data.byteworksinc.com/activities/kc-mitchell';
             var self = this;
             this.collection.fetch({
                 success: function () {
